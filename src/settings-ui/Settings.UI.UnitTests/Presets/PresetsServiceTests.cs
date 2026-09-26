@@ -1,8 +1,10 @@
-// Copyright (c) Microsoft Corporation
+﻿// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Linq;
+using System.Text.Json;
 
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
@@ -71,7 +73,7 @@ namespace SettingsUITests
             var preset = PresetsCatalog.GetById("Office");
 
             // 记录场景未涉及的工具状态
-            var untouchedModules = System.Enum.GetValues(typeof(ModuleType))
+            var untouchedModules = Enum.GetValues(typeof(ModuleType))
                 .Cast<ModuleType>()
                 .Where(m => !preset.EnableModules.Contains(m) && !preset.DisableModules.Contains(m))
                 .Select(m => (m, before: ModuleHelper.GetIsModuleEnabled(config, m)))
@@ -89,12 +91,36 @@ namespace SettingsUITests
         }
 
         [TestMethod]
+        public void Apply_ShouldNeverDisableAlreadyEnabledModules()
+        {
+            // "只开不关"保证：预启用一批与场景无关的工具，应用后必须保持启用
+            var config = new GeneralSettings();
+            var preset = PresetsCatalog.GetById("Learning");
+
+            var unrelated = Enum.GetValues(typeof(ModuleType))
+                .Cast<ModuleType>()
+                .Where(m => !preset.EnableModules.Contains(m))
+                .ToList();
+            foreach (var m in unrelated)
+            {
+                ModuleHelper.SetIsModuleEnabled(config, m, true);
+            }
+
+            PresetsService.Apply(preset, config);
+
+            foreach (var m in unrelated)
+            {
+                Assert.IsTrue(ModuleHelper.GetIsModuleEnabled(config, m), $"已启用工具 {m} 不应被场景应用关闭");
+            }
+        }
+
+        [TestMethod]
         public void Apply_NullArguments_ShouldThrow()
         {
-            Assert.ThrowsException<System.ArgumentNullException>(() =>
+            Assert.ThrowsException<ArgumentNullException>(() =>
                 PresetsService.Apply(null, new GeneralSettings()));
-            Assert.ThrowsException<System.ArgumentNullException>(() =>
+            Assert.ThrowsException<ArgumentNullException>(() =>
                 PresetsService.Apply(PresetsCatalog.All[0], null));
         }
-    }
 }
+    }
