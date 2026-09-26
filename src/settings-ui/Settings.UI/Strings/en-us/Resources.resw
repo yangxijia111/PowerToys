@@ -6812,7 +6812,7 @@ Text uses the current drawing color.</value>
   <data name="Oobe_PresetPicker_AppliedStatus.Text" xml:space="preserve">
     <value>Done! Enabled {0} tool(s) for the {1} scenario. Open Settings any time to adjust.</value>
   </data>
-  <data name="Oobe_PresetPicker_RecommendedList.Header" xml:space="preserve">
+  <data name="Oobe_PresetPicker_RecommendedListText.Text" xml:space="preserve">
     <value>Tools that will be enabled</value>
   </data>
   <data name="Oobe_PresetPicker_ScenarioLabel.Text" xml:space="preserve">

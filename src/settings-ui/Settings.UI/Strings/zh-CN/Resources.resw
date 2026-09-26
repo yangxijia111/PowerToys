@@ -140,9 +140,6 @@
   <data name="AltWindowCycle.ModuleDescription" xml:space="preserve">
     <value>在同一个应用打开的多个窗口之间快速循环切换，例如在多个浏览器窗口间跳转。</value>
   </data>
-  <data name="CmdPal.ModuleDescription" xml:space="preserve">
-    <value>统一的快速启动面板：搜索应用、执行命令、计算、安装软件，还支持丰富的第三方扩展。（默认快捷键 Win+Alt+空格）</value>
-  </data>
   <data name="CmdNotFound.ModuleDescription" xml:space="preserve">
     <value>PowerShell 提示"命令不存在"时，自动分析并推荐可以安装的 WinGet 软件包，是开发者的贴心助手。</value>
   </data>
@@ -334,7 +331,7 @@
   <data name="Oobe_PresetPicker_AppliedStatus.Text" xml:space="preserve">
     <value>完成！已为「{1}」场景启用 {0} 个工具，可随时在设置中调整。</value>
   </data>
-  <data name="Oobe_PresetPicker_RecommendedList.Header" xml:space="preserve">
+  <data name="Oobe_PresetPicker_RecommendedListText.Text" xml:space="preserve">
     <value>将被启用的工具</value>
   </data>
   <data name="Oobe_PresetPicker_ScenarioLabel.Text" xml:space="preserve">
@@ -342,5 +339,239 @@
   </data>
   <data name="Oobe_PresetPicker_ScenarioCard_Help.Text" xml:space="preserve">
     <value>选择一个场景即可查看将被启用的工具列表。</value>
+  </data>
+  <data name="Shell_Welcome.Content" xml:space="preserve">
+    <value>开始使用</value>
+  </data>
+  <data name="DashboardTitle.Text" xml:space="preserve">
+    <value>主页</value>
+  </data>
+  <data name="Dashboard_Activation" xml:space="preserve">
+    <value>激活方式</value>
+  </data>
+  <data name="Dashboard_SortAlphabetical.Text" xml:space="preserve">
+    <value>按名称字母排序</value>
+  </data>
+  <data name="Dashboard_SortByStatus.Text" xml:space="preserve">
+    <value>按启用状态</value>
+  </data>
+  <data name="Dashboard_SortBy_ToolTip.Text" xml:space="preserve">
+    <value>排序工具</value>
+  </data>
+  <data name="LearnWhatsNew.Text" xml:space="preserve">
+    <value>了解新功能</value>
+  </data>
+  <data name="QuickAccessTitle.Title" xml:space="preserve">
+    <value>快速访问</value>
+  </data>
+  <data name="QuickAccessTxt.Text" xml:space="preserve">
+    <value>快速访问</value>
+  </data>
+  <data name="General_VersionAndUpdate.Header" xml:space="preserve">
+    <value>版本与更新</value>
+  </data>
+  <data name="GeneralPage_CheckForUpdates.Content" xml:space="preserve">
+    <value>检查更新</value>
+  </data>
+  <data name="General_CantCheck.Title" xml:space="preserve">
+    <value>网络错误，请稍后重试</value>
+  </data>
+  <data name="General_CheckingForUpdates.Text" xml:space="preserve">
+    <value>正在检查更新…</value>
+  </data>
+  <data name="General_Downloading.Text" xml:space="preserve">
+    <value>正在下载…</value>
+  </data>
+  <data name="General_DownloadAndInstall.Content" xml:space="preserve">
+    <value>下载并安装</value>
+  </data>
+  <data name="General_InstallNow.Content" xml:space="preserve">
+    <value>立即安装</value>
+  </data>
+  <data name="General_NewVersionAvailable.Title" xml:space="preserve">
+    <value>有可用更新：</value>
+  </data>
+  <data name="General_NewVersionReadyToInstall.Title" xml:space="preserve">
+    <value>更新已就绪，可以安装：</value>
+  </data>
+  <data name="General_LastCheckedDate_TodayAt" xml:space="preserve">
+    <value>今天 {0}</value>
+  </data>
+  <data name="General_LastCheckedDate_YesterdayAt" xml:space="preserve">
+    <value>昨天 {0}</value>
+  </data>
+  <data name="General_PreviewBadge.Text" xml:space="preserve">
+    <value>预览版</value>
+  </data>
+  <data name="ReleaseNotes.Content" xml:space="preserve">
+    <value>查看发行说明</value>
+  </data>
+  <data name="GeneralPage_RunAtStartUp.Header" xml:space="preserve">
+    <value>开机自启</value>
+  </data>
+  <data name="GeneralPage_RunAtStartUp.Description" xml:space="preserve">
+    <value>PowerToys 将随 Windows 自动启动</value>
+  </data>
+  <data name="GeneralPage_RestartAsAdmin_Button.Content" xml:space="preserve">
+    <value>以管理员身份重启 PowerToys</value>
+  </data>
+  <data name="GeneralPage_WarningsElevatedApps.Content" xml:space="preserve">
+    <value>与提权（管理员）窗口一同运行时，提示可能出现的功能受限</value>
+  </data>
+  <data name="GeneralPage_ToggleSwitch_AlwaysRunElevated_Link.Content" xml:space="preserve">
+    <value>了解管理员模式</value>
+  </data>
+  <data name="LanguageHeader.Header" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="LanguageHeader.Description" xml:space="preserve">
+    <value>默认跟随 Windows 显示语言</value>
+  </data>
+  <data name="Default_Language" xml:space="preserve">
+    <value>Windows 默认</value>
+  </data>
+  <data name="Chinese_Simplified_Language" xml:space="preserve">
+    <value>中文（简体）</value>
+  </data>
+  <data name="Chinese_Traditional_Language" xml:space="preserve">
+    <value>中文（繁体）</value>
+  </data>
+  <data name="English_Language" xml:space="preserve">
+    <value>英语</value>
+  </data>
+  <data name="Japanese_Language" xml:space="preserve">
+    <value>日语</value>
+  </data>
+  <data name="Korean_Language" xml:space="preserve">
+    <value>韩语</value>
+  </data>
+  <data name="LanguageRestartInfo.Title" xml:space="preserve">
+    <value>重启 PowerToys 后语言更改才会生效</value>
+  </data>
+  <data name="LanguageRestartInfoButton.Content" xml:space="preserve">
+    <value>重启</value>
+  </data>
+  <data name="GeneralPage_AutoDownloadAndInstallUpdates.Header" xml:space="preserve">
+    <value>自动下载并安装更新</value>
+  </data>
+  <data name="GeneralPage_AutoDownloadAndInstallUpdates.Description" xml:space="preserve">
+    <value>计费网络下除外</value>
+  </data>
+  <data name="GeneralPage_UpdateChannel.Header" xml:space="preserve">
+    <value>更新通道</value>
+  </data>
+  <data name="GeneralPage_UpdateChannelDescription.Text" xml:space="preserve">
+    <value>选择接收哪种类型的 PowerToys 版本</value>
+  </data>
+  <data name="GeneralPage_UpdateChannelLearnMore.Content" xml:space="preserve">
+    <value>了解更多</value>
+  </data>
+  <data name="GeneralPage_UpdateChannelStableStatus.Text" xml:space="preserve">
+    <value>稳定版</value>
+  </data>
+  <data name="GeneralPage_UpdateChannelInsiderStatus.Text" xml:space="preserve">
+    <value>体验版</value>
+  </data>
+  <data name="GeneralPage_UpdateChannelStableTitle.Text" xml:space="preserve">
+    <value>稳定版（推荐）</value>
+  </data>
+  <data name="GeneralPage_UpdateChannelStableDescription.Text" xml:space="preserve">
+    <value>接收经过充分测试的正式版本。</value>
+  </data>
+  <data name="GeneralPage_UpdateChannelInsiderTitle.Text" xml:space="preserve">
+    <value>体验版</value>
+  </data>
+  <data name="GeneralPage_UpdateChannelInsiderDescription.Text" xml:space="preserve">
+    <value>获取包含最新功能与修复的每日构建，可能不够稳定。</value>
+  </data>
+  <data name="GeneralPage_ShowNewUpdatesToast.Header" xml:space="preserve">
+    <value>有新更新时显示通知</value>
+  </data>
+  <data name="GeneralPage_ShowWhatsNewAfterUpdates.Content" xml:space="preserve">
+    <value>更新后显示发行说明</value>
+  </data>
+  <data name="General_DiagnosticsAndFeedback.Header" xml:space="preserve">
+    <value>诊断与反馈</value>
+  </data>
+  <data name="GeneralPage_EnableDataDiagnostics.Header" xml:space="preserve">
+    <value>诊断数据</value>
+  </data>
+  <data name="GeneralPage_EnableDataDiagnosticsText.Text" xml:space="preserve">
+    <value>帮助我们持续提升 PowerToys 的速度与稳定性</value>
+  </data>
+  <data name="GeneralPage_EnableViewDiagnosticData.Header" xml:space="preserve">
+    <value>在本机保存日志</value>
+  </data>
+  <data name="GeneralPage_ViewDiagnosticDataButton.Content" xml:space="preserve">
+    <value>查看诊断数据</value>
+  </data>
+  <data name="GeneralPage_ReportAbug.Text" xml:space="preserve">
+    <value>报告问题</value>
+  </data>
+  <data name="GeneralPage_RequestAFeature_URL.Text" xml:space="preserve">
+    <value>功能建议</value>
+  </data>
+  <data name="GeneralPage_Documentation.Text" xml:space="preserve">
+    <value>使用文档</value>
+  </data>
+  <data name="GeneralPage_PrivacyStatement_URL.Text" xml:space="preserve">
+    <value>隐私声明</value>
+  </data>
+  <data name="General_Repository.Text" xml:space="preserve">
+    <value>GitHub 仓库</value>
+  </data>
+  <data name="General_SettingsBackupAndRestoreTitle.Header" xml:space="preserve">
+    <value>备份与恢复</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore.Header" xml:space="preserve">
+    <value>备份并恢复您的设置</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore.Description" xml:space="preserve">
+    <value>如需要，PowerToys 将自动重启</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore_ButtonBackup.Content" xml:space="preserve">
+    <value>备份</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore_ButtonRestore.Content" xml:space="preserve">
+    <value>恢复</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore_ButtonSelectLocation.Text" xml:space="preserve">
+    <value>选择文件夹</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore_BackupComplete" xml:space="preserve">
+    <value>备份完成。</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore_BackupError" xml:space="preserve">
+    <value>出错了，请尝试其他备份位置。</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore_NoBackupFound" xml:space="preserve">
+    <value>未找到备份</value>
+  </data>
+  <data name="General_SettingsBackupAndRestore_NoBackupsFound" xml:space="preserve">
+    <value>没有可用于恢复的备份。</value>
+  </data>
+  <data name="GeneralPage_EnableQuickAccess.Header" xml:space="preserve">
+    <value>快速访问面板</value>
+  </data>
+  <data name="GeneralPage_EnableQuickAccess.Description" xml:space="preserve">
+    <value>快速访问常用操作与工具开关</value>
+  </data>
+  <data name="GeneralPage_QuickAccessShortcut.Header" xml:space="preserve">
+    <value>激活快捷键</value>
+  </data>
+  <data name="SysHotkeyConflictTooltipText" xml:space="preserve">
+    <value>与系统快捷键冲突</value>
+  </data>
+  <data name="InAppHotkeyConflictTooltipText" xml:space="preserve">
+    <value>与其他 PowerToys 工具的快捷键冲突</value>
+  </data>
+  <data name="ColorModeHeader.Header" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="Radio_Theme_Light.Content" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="Radio_Theme_Dark.Content" xml:space="preserve">
+    <value>深色</value>
   </data>
 </root>
