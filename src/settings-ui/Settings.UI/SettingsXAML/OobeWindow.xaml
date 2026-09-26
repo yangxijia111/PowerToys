@@ -54,6 +54,12 @@
                     x:Uid="Shell_Welcome"
                     Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/PowerToys.png}"
                     Tag="Overview" />
+                <!--  [fork-brand] 首启场景推荐  -->
+                <NavigationViewItem
+                    x:Uid="Shell_PresetPicker"
+                    AutomationProperties.AutomationId="PresetPickerOobeNavItem"
+                    Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/Workspaces.png}"
+                    Tag="PresetPicker" />
                 <NavigationViewItem
                     x:Uid="Shell_AdvancedPaste"
                     Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/AdvancedPaste.png}"

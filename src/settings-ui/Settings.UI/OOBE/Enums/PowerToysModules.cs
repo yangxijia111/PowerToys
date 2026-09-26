@@ -7,6 +7,7 @@ namespace Microsoft.PowerToys.Settings.UI.OOBE.Enums
     public enum PowerToysModules
     {
         Overview = 0,
+        PresetPicker,  // [fork-brand] 首启场景推荐（Quick setup）
         AdvancedPaste,
         AlwaysOnTop,
         Awake,

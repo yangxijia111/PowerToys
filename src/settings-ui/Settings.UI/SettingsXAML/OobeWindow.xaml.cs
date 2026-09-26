@@ -86,6 +86,7 @@ namespace Microsoft.PowerToys.Settings.UI
                 switch (selectedItem.Tag)
                 {
                     case "Overview": NavigationFrame.Navigate(typeof(OobeOverview)); break;
+                    case "PresetPicker": NavigationFrame.Navigate(typeof(OobePresetPicker)); break; // [fork-brand]
                     case "AdvancedPaste": NavigationFrame.Navigate(typeof(OobeAdvancedPaste)); break;
                     case "AlwaysOnTop": NavigationFrame.Navigate(typeof(OobeAlwaysOnTop)); break;
                     case "Awake": NavigationFrame.Navigate(typeof(OobeAwake)); break;

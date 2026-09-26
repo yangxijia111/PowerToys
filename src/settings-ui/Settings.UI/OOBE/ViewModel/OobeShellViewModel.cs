@@ -19,6 +19,7 @@ namespace Microsoft.PowerToys.Settings.UI.OOBE.ViewModel
             new (PowerToysModules Module, bool IsNew)[]
             {
             (PowerToysModules.Overview, false),
+            (PowerToysModules.PresetPicker, false), // [fork-brand]
             (PowerToysModules.AdvancedPaste, false),
             (PowerToysModules.AlwaysOnTop, false),
             (PowerToysModules.Awake, false),
