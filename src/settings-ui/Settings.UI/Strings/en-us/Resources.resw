@@ -5464,6 +5464,9 @@ The break timer font matches the text font.</value>
   <data name="Shell_TopLevelInputOutput.Content" xml:space="preserve">
     <value>Input &amp; Output</value>
   </data>
+  <data name="Shell_TopLevelScreenTools.Content" xml:space="preserve">
+    <value>Screen &amp; Display</value>
+  </data>
   <data name="Shell_TopLevelSystemTools.Content" xml:space="preserve">
     <value>System Tools</value>
   </data>
@@ -6715,5 +6718,62 @@ Text uses the current drawing color.</value>
   <data name="GrabAndMove_ExcludeAppsForModifier_TextBoxControl.PlaceholderText" xml:space="preserve">
     <value>Example: game.exe</value>
     <comment>{Locked="game.exe"}</comment>
+  </data>
+  <data name="Shell_Presets.Content" xml:space="preserve">
+    <value>Recommended Presets</value>
+  </data>
+  <data name="Presets.ModuleTitle" xml:space="preserve">
+    <value>Recommended Presets</value>
+  </data>
+  <data name="Presets.ModuleDescription" xml:space="preserve">
+    <value>Pick a scenario to enable a recommended set of tools with one click. You can adjust each tool later.</value>
+  </data>
+  <data name="Presets_IntroInfoBar.Title" xml:space="preserve">
+    <value>Set up PowerToys for your scenario</value>
+  </data>
+  <data name="Presets_IntroInfoBar.Message" xml:space="preserve">
+    <value>Choose how you mainly use your PC. Applying a preset only turns on the tools listed for that scenario; it never changes tool settings or disables tools you already enabled.</value>
+  </data>
+  <data name="Presets_ScenariosGroup.Header" xml:space="preserve">
+    <value>Scenarios</value>
+  </data>
+  <data name="Presets_ApplyButton.Content" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Presets_ModuleCountFormat" xml:space="preserve">
+    <value>{0} tools included</value>
+  </data>
+  <data name="Presets_AppliedStatus" xml:space="preserve">
+    <value>Applied: {0} ({1} tools changed).</value>
+  </data>
+  <data name="Preset_General_Name" xml:space="preserve">
+    <value>Everyday</value>
+  </data>
+  <data name="Preset_General_Description" xml:space="preserve">
+    <value>Balanced setup for general use: quick launcher, color picker, OCR and batch rename.</value>
+  </data>
+  <data name="Preset_Developer_Name" xml:space="preserve">
+    <value>Developer</value>
+  </data>
+  <data name="Preset_Developer_Description" xml:space="preserve">
+    <value>Window zones, AI paste, screen OCR, file unlock, environment variables and registry preview.</value>
+  </data>
+  <data name="Preset_Learning_Name" xml:space="preserve">
+    <value>Learning</value>
+  </data>
+  <data name="Preset_Learning_Description" xml:space="preserve">
+    <value>Shortcut guide, screen zoom and OCR to follow lessons and take notes faster.</value>
+  </data>
+  <data name="Preset_Office_Name" xml:space="preserve">
+    <value>Office</value>
+  </data>
+  <data name="Preset_Office_Description" xml:space="preserve">
+    <value>Image resize, batch rename and file unlock for documents and daily collaboration.</value>
+  </data>
+  <data name="Preset_Design_Name" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="Preset_Design_Description" xml:space="preserve">
+    <value>Color picking, screen ruler, zooming and window zones for design work.</value>
   </data>
 </root>

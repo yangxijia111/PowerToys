@@ -179,9 +179,17 @@
                             Visibility="{x:Bind UpdateViewModel.ShowUpdateBadge, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
                     </NavigationViewItem.InfoBadge>
                 </NavigationViewItem>
+
+                <!--  推荐配置：按场景一键启用工具组合（二开新增入口）  -->
+                <NavigationViewItem
+                    x:Name="PresetsNavigationItem"
+                    x:Uid="Shell_Presets"
+                    helpers:NavHelper.NavigateTo="views:PresetsPage"
+                    AutomationProperties.AutomationId="PresetsNavItem"
+                    Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/Workspaces.png}" />
                 <NavigationViewItemSeparator />
 
-                <!--  System Tools  -->
+                <!--  系统工具：电源与系统级配置  -->
                 <NavigationViewItem
                     x:Name="SystemToolsNavigationItem"
                     x:Uid="Shell_TopLevelSystemTools"
@@ -190,65 +198,23 @@
                     SelectsOnInvoked="False">
                     <NavigationViewItem.MenuItems>
                         <NavigationViewItem
-                            x:Name="AdvancedPasteNavigationItem"
-                            x:Uid="Shell_AdvancedPaste"
-                            helpers:NavHelper.NavigateTo="views:AdvancedPastePage"
-                            AutomationProperties.AutomationId="AdvancedPasteNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/AdvancedPaste.png}" />
-                        <NavigationViewItem
                             x:Name="AwakeNavigationItem"
                             x:Uid="Shell_Awake"
                             helpers:NavHelper.NavigateTo="views:AwakePage"
                             AutomationProperties.AutomationId="AwakeNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/Awake.png}" />
                         <NavigationViewItem
-                            x:Name="CmdPalNavigationItem"
-                            x:Uid="Shell_CmdPal"
-                            helpers:NavHelper.NavigateTo="views:CmdPalPage"
-                            AutomationProperties.AutomationId="CmdPalNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/CmdPal.png}" />
+                            x:Name="EnvironmentVariablesNavigationItem"
+                            x:Uid="Shell_EnvironmentVariables"
+                            helpers:NavHelper.NavigateTo="views:EnvironmentVariablesPage"
+                            AutomationProperties.AutomationId="EnvironmentVariablesNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/EnvironmentVariables.png}" />
                         <NavigationViewItem
-                            x:Name="ColorPickerNavigationItem"
-                            x:Uid="Shell_ColorPicker"
-                            helpers:NavHelper.NavigateTo="views:ColorPickerPage"
-                            AutomationProperties.AutomationId="ColorPickerNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ColorPicker.png}" />
-                        <NavigationViewItem
-                            x:Name="LightSwitchNavigationItem"
-                            x:Uid="Shell_LightSwitch"
-                            helpers:NavHelper.NavigateTo="views:LightSwitchPage"
-                            AutomationProperties.AutomationId="LightSwitchNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/LightSwitch.png}" />
-                        <NavigationViewItem
-                            x:Name="PowerLauncherNavigationItem"
-                            x:Uid="Shell_PowerLauncher"
-                            helpers:NavHelper.NavigateTo="views:PowerLauncherPage"
-                            AutomationProperties.AutomationId="PowerLauncherNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/PowerToysRun.png}" />
-                        <NavigationViewItem
-                            x:Name="MeasureToolNavigationItem"
-                            x:Uid="Shell_MeasureTool"
-                            helpers:NavHelper.NavigateTo="views:MeasureToolPage"
-                            AutomationProperties.AutomationId="ScreenRulerNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ScreenRuler.png}" />
-                        <NavigationViewItem
-                            x:Name="ShortcutGuideNavigationItem"
-                            x:Uid="Shell_ShortcutGuide"
-                            helpers:NavHelper.NavigateTo="views:ShortcutGuidePage"
-                            AutomationProperties.AutomationId="ShortcutGuideNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ShortcutGuide.png}" />
-                        <NavigationViewItem
-                            x:Name="TextExtractorNavigationItem"
-                            x:Uid="Shell_TextExtractor"
-                            helpers:NavHelper.NavigateTo="views:PowerOcrPage"
-                            AutomationProperties.AutomationId="TextExtractorNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/TextExtractor.png}" />
-                        <NavigationViewItem
-                            x:Name="ZoomItNavigationItem"
-                            x:Uid="Shell_ZoomIt"
-                            helpers:NavHelper.NavigateTo="views:ZoomItPage"
-                            AutomationProperties.AutomationId="ZoomItNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ZoomIt.png}" />
+                            x:Name="HostsNavigationItem"
+                            x:Uid="Shell_Hosts"
+                            helpers:NavHelper.NavigateTo="views:HostsPage"
+                            AutomationProperties.AutomationId="HostsNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/Hosts.png}" />
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 
@@ -315,6 +281,18 @@
                     SelectsOnInvoked="False">
                     <NavigationViewItem.MenuItems>
                         <NavigationViewItem
+                            x:Name="PowerLauncherNavigationItem"
+                            x:Uid="Shell_PowerLauncher"
+                            helpers:NavHelper.NavigateTo="views:PowerLauncherPage"
+                            AutomationProperties.AutomationId="PowerLauncherNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/PowerToysRun.png}" />
+                        <NavigationViewItem
+                            x:Name="CmdPalNavigationItem"
+                            x:Uid="Shell_CmdPal"
+                            helpers:NavHelper.NavigateTo="views:CmdPalPage"
+                            AutomationProperties.AutomationId="CmdPalNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/CmdPal.png}" />
+                        <NavigationViewItem
                             x:Name="KeyboardManagerNavigationItem"
                             x:Uid="Shell_KeyboardManager"
                             helpers:NavHelper.NavigateTo="views:KeyboardManagerPage"
@@ -333,17 +311,64 @@
                             AutomationProperties.AutomationId="MouseWithoutBordersNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/MouseWithoutBorders.png}" />
                         <NavigationViewItem
-                            x:Name="PowerDisplayNavigationItem"
-                            x:Uid="Shell_PowerDisplay"
-                            helpers:NavHelper.NavigateTo="views:PowerDisplayPage"
-                            AutomationProperties.AutomationId="PowerDisplayNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/PowerDisplay.png}" />
-                        <NavigationViewItem
                             x:Name="QuickAccentNavigationItem"
                             x:Uid="Shell_QuickAccent"
                             helpers:NavHelper.NavigateTo="views:PowerAccentPage"
                             AutomationProperties.AutomationId="QuickAccentNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/QuickAccent.png}" />
+                        <NavigationViewItem
+                            x:Name="ShortcutGuideNavigationItem"
+                            x:Uid="Shell_ShortcutGuide"
+                            helpers:NavHelper.NavigateTo="views:ShortcutGuidePage"
+                            AutomationProperties.AutomationId="ShortcutGuideNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ShortcutGuide.png}" />
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+
+                <!--  屏幕与显示：取色、测量、OCR、缩放、主题与显示器控制  -->
+                <NavigationViewItem
+                    x:Name="ScreenToolsNavigationItem"
+                    x:Uid="Shell_TopLevelScreenTools"
+                    AutomationProperties.AutomationId="ScreenToolsNavItem"
+                    Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/PowerDisplay.png}"
+                    SelectsOnInvoked="False">
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem
+                            x:Name="ColorPickerNavigationItem"
+                            x:Uid="Shell_ColorPicker"
+                            helpers:NavHelper.NavigateTo="views:ColorPickerPage"
+                            AutomationProperties.AutomationId="ColorPickerNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ColorPicker.png}" />
+                        <NavigationViewItem
+                            x:Name="MeasureToolNavigationItem"
+                            x:Uid="Shell_MeasureTool"
+                            helpers:NavHelper.NavigateTo="views:MeasureToolPage"
+                            AutomationProperties.AutomationId="ScreenRulerNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ScreenRuler.png}" />
+                        <NavigationViewItem
+                            x:Name="TextExtractorNavigationItem"
+                            x:Uid="Shell_TextExtractor"
+                            helpers:NavHelper.NavigateTo="views:PowerOcrPage"
+                            AutomationProperties.AutomationId="TextExtractorNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/TextExtractor.png}" />
+                        <NavigationViewItem
+                            x:Name="ZoomItNavigationItem"
+                            x:Uid="Shell_ZoomIt"
+                            helpers:NavHelper.NavigateTo="views:ZoomItPage"
+                            AutomationProperties.AutomationId="ZoomItNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/ZoomIt.png}" />
+                        <NavigationViewItem
+                            x:Name="LightSwitchNavigationItem"
+                            x:Uid="Shell_LightSwitch"
+                            helpers:NavHelper.NavigateTo="views:LightSwitchPage"
+                            AutomationProperties.AutomationId="LightSwitchNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/LightSwitch.png}" />
+                        <NavigationViewItem
+                            x:Name="PowerDisplayNavigationItem"
+                            x:Uid="Shell_PowerDisplay"
+                            helpers:NavHelper.NavigateTo="views:PowerDisplayPage"
+                            AutomationProperties.AutomationId="PowerDisplayNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/PowerDisplay.png}" />
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 
@@ -404,23 +429,17 @@
                     SelectsOnInvoked="False">
                     <NavigationViewItem.MenuItems>
                         <NavigationViewItem
+                            x:Name="AdvancedPasteNavigationItem"
+                            x:Uid="Shell_AdvancedPaste"
+                            helpers:NavHelper.NavigateTo="views:AdvancedPastePage"
+                            AutomationProperties.AutomationId="AdvancedPasteNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/AdvancedPaste.png}" />
+                        <NavigationViewItem
                             x:Name="CmdNotFoundNavigationItem"
                             x:Uid="Shell_CmdNotFound"
                             helpers:NavHelper.NavigateTo="views:CmdNotFoundPage"
                             AutomationProperties.AutomationId="CmdNotFoundNavItem"
                             Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/CommandNotFound.png}" />
-                        <NavigationViewItem
-                            x:Name="EnvironmentVariablesNavigationItem"
-                            x:Uid="Shell_EnvironmentVariables"
-                            helpers:NavHelper.NavigateTo="views:EnvironmentVariablesPage"
-                            AutomationProperties.AutomationId="EnvironmentVariablesNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/EnvironmentVariables.png}" />
-                        <NavigationViewItem
-                            x:Name="HostsNavigationItem"
-                            x:Uid="Shell_Hosts"
-                            helpers:NavHelper.NavigateTo="views:HostsPage"
-                            AutomationProperties.AutomationId="HostsNavItem"
-                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/Hosts.png}" />
                         <NavigationViewItem
                             x:Name="RegistryPreviewNavigationItem"
                             x:Uid="Shell_RegistryPreview"
