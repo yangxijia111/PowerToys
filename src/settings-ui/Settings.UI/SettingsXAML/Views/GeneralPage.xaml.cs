@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation
+﻿// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -28,6 +28,11 @@ namespace Microsoft.PowerToys.Settings.UI.Views
         public GeneralViewModel ViewModel { get; set; }
 
         public UpdateViewModel SharedUpdateViewModel => ShellPage.ShellHandler.UpdateViewModel;
+
+        // [fork-brand] 发行版署名（Branding.cs 为常量源，此处取资源本地化文案）
+        public string forkAboutLine => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkAboutLine.Text");
+
+        public string forkUpstreamLinkText => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkUpstreamLink.Content");
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneralPage"/> class.

@@ -16,7 +16,8 @@
          - https://robmensching.com/blog/posts/2003/10/4/windows-installer-components-introduction/
            -->
 
-  <Package Name="PowerToys (Preview)" Language="1033" Version="$(var.Version)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCodeGUID)" Scope="$(var.InstallScope)">
+  <!-- [fork-brand] 社区发行版名称；Manufacturer/UpgradeCode 与上游保持一致以复用其打包结构 -->
+  <Package Name="PowerToys Cuin (Community Edition)" Language="1033" Version="$(var.Version)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCodeGUID)" Scope="$(var.InstallScope)">
 
 
       
@@ -304,7 +305,8 @@
         </Directory>
       </StandardDirectory>
       <StandardDirectory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="PowerToys (Preview)" />
+        <!-- [fork-brand] -->
+        <Directory Id="ApplicationProgramsFolder" Name="PowerToys Cuin (Community Edition)" />
       </StandardDirectory>
       <StandardDirectory Id="DesktopFolder" />
     </Fragment>

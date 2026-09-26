@@ -2492,10 +2492,10 @@ From there, simply click on one of the supported files in the File Explorer and 
     <value>Give feedback</value>
   </data>
   <data name="OobeWindow_Title" xml:space="preserve">
-    <value>Welcome to PowerToys</value>
+    <value>Welcome to PowerToys Cuin</value>
   </data>
   <data name="OobeWindow_TitleTxt.Title" xml:space="preserve">
-    <value>Welcome to PowerToys</value>
+    <value>Welcome to PowerToys Cuin</value>
   </data>
   <data name="ScoobeWindow_Title" xml:space="preserve">
     <value>What's new in PowerToys</value>
@@ -2510,7 +2510,7 @@ From there, simply click on one of the supported files in the File Explorer and 
     <value>View on GitHub</value>
   </data>
   <data name="SettingsWindow_Title" xml:space="preserve">
-    <value>PowerToys Settings</value>
+    <value>PowerToys Cuin Settings</value>
     <comment>Title of the settings window when running as user</comment>
   </data>
   <data name="Awake.ModuleTitle" xml:space="preserve">
@@ -4652,7 +4652,7 @@ Activate by holding the key for the character you want to add an accent to, then
     <value>Activation shortcut</value>
   </data>
   <data name="SettingsWindow_AdminTitle" xml:space="preserve">
-    <value>Administrator: PowerToys Settings</value>
+    <value>Administrator: PowerToys Cuin Settings</value>
     <comment>Title of the settings window when running as administrator</comment>
   </data>
   <data name="DashboardTitle.Text" xml:space="preserve">
@@ -6775,5 +6775,50 @@ Text uses the current drawing color.</value>
   </data>
   <data name="Preset_Design_Description" xml:space="preserve">
     <value>Color picking, screen ruler, zooming and window zones for design work.</value>
+  </data>
+  <data name="General_ForkAboutLine.Text" xml:space="preserve">
+    <value>PowerToys Cuin is a community edition based on Microsoft PowerToys (MIT License). It is not an official Microsoft product.</value>
+  </data>
+  <data name="General_ForkUpstreamLink.Content" xml:space="preserve">
+    <value>View the upstream project</value>
+  </data>
+  <data name="Shell_PresetPicker.Content" xml:space="preserve">
+    <value>Quick setup</value>
+  </data>
+  <data name="Oobe_PresetPicker_Title.Text" xml:space="preserve">
+    <value>Set up PowerToys for your scenario</value>
+  </data>
+  <data name="Oobe_PresetPicker_Description.Text" xml:space="preserve">
+    <value>Pick how you mainly use your PC and we will enable a recommended set of tools for you. You can skip this, change it later in Settings, and every tool stays fully configurable.</value>
+  </data>
+  <data name="Oobe_PresetPicker_Step1_Header.Text" xml:space="preserve">
+    <value>Step 1 - Choose your scenario</value>
+  </data>
+  <data name="Oobe_PresetPicker_Step2_Header.Text" xml:space="preserve">
+    <value>Step 2 - Review the recommended tools</value>
+  </data>
+  <data name="Oobe_PresetPicker_Step3_Header.Text" xml:space="preserve">
+    <value>Step 3 - Apply</value>
+  </data>
+  <data name="Oobe_PresetPicker_ApplyButton.Content" xml:space="preserve">
+    <value>Enable recommended tools</value>
+  </data>
+  <data name="Oobe_PresetPicker_SkipButton.Content" xml:space="preserve">
+    <value>Skip for now</value>
+  </data>
+  <data name="Oobe_PresetPicker_SkipHint.Text" xml:space="preserve">
+    <value>You can always run this later from Settings &gt; Recommended Presets.</value>
+  </data>
+  <data name="Oobe_PresetPicker_AppliedStatus.Text" xml:space="preserve">
+    <value>Done! Enabled {0} tool(s) for the {1} scenario. Open Settings any time to adjust.</value>
+  </data>
+  <data name="Oobe_PresetPicker_RecommendedList.Header" xml:space="preserve">
+    <value>Tools that will be enabled</value>
+  </data>
+  <data name="Oobe_PresetPicker_ScenarioLabel.Text" xml:space="preserve">
+    <value>Scenario</value>
+  </data>
+  <data name="Oobe_PresetPicker_ScenarioCard_Help.Text" xml:space="preserve">
+    <value>Select a scenario to see its recommended tools.</value>
   </data>
 </root>

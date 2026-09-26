@@ -152,8 +152,9 @@ void handle_tray_command(HWND window, const WPARAM command_id, LPARAM lparam)
         if (!about_box_shown)
         {
             about_box_shown = true;
-            std::wstring about_msg = L"PowerToys\nVersion " + get_product_version() + L"\n\xa9 2019 Microsoft Corporation";
-            MessageBoxW(nullptr, about_msg.c_str(), L"About PowerToys", MB_OK);
+            /* [fork-brand] 与 ManagedCommon::Branding 同步：发行版名 + 上游署名 */
+            std::wstring about_msg = L"PowerToys Cuin (Community Edition)\nVersion " + get_product_version() + L"\nBased on Microsoft PowerToys (MIT)\n© 2019 Microsoft Corporation";
+            MessageBoxW(nullptr, about_msg.c_str(), L"About PowerToys Cuin", MB_OK); /* [fork-brand] */
             about_box_shown = false;
         }
         break;
@@ -501,7 +502,7 @@ void start_tray_icon(bool isProcessElevated, bool theme_adaptive)
             pt_version_tooltip_stream << GET_RESOURCE_STRING(IDS_TRAY_ICON_ADMIN_TOOLTIP) << L": ";
         }
 
-        pt_version_tooltip_stream << L"PowerToys " << get_product_version() << '\0';
+        pt_version_tooltip_stream << L"PowerToys Cuin " << get_product_version() /* [fork-brand] */ << '\0';
         std::wstring pt_version_tooltip = pt_version_tooltip_stream.str();
         wcscpy_s(tray_icon_data.szTip, sizeof(tray_icon_data.szTip) / sizeof(WCHAR), pt_version_tooltip.c_str());
         tray_icon_data.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;

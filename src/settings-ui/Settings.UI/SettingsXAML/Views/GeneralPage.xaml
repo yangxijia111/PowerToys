@@ -83,6 +83,19 @@
                             <tkcontrols:SettingsCard ContentAlignment="Left" IsEnabled="{x:Bind Mode=OneWay, Path=ViewModel.IsShowWhatsNewAfterUpdatesCardEnabled}">
                                 <CheckBox x:Uid="GeneralPage_ShowWhatsNewAfterUpdates" IsChecked="{Binding Mode=TwoWay, Path=ShowWhatsNewAfterUpdates}" />
                             </tkcontrols:SettingsCard>
+                            <!--  [fork-brand] 发行版署名说明（Branding.cs 集中管理，文案见资源）  -->
+                            <tkcontrols:SettingsCard ContentAlignment="Left" IsEnabled="False">
+                                <StackPanel Orientation="Vertical" Spacing="2">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="{x:Bind forkAboutLine, Mode=OneWay}"
+                                        TextWrapping="Wrap" />
+                                    <HyperlinkButton
+                                        Margin="-12,0,0,0"
+                                        Content="{x:Bind forkUpstreamLinkText, Mode=OneWay}"
+                                        NavigateUri="https://github.com/microsoft/PowerToys" />
+                                </StackPanel>
+                            </tkcontrols:SettingsCard>
                         </tkcontrols:SettingsExpander.Items>
                     </tkcontrols:SettingsExpander>
 
