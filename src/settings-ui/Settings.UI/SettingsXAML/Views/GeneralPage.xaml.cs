@@ -30,9 +30,9 @@ namespace Microsoft.PowerToys.Settings.UI.Views
         public UpdateViewModel SharedUpdateViewModel => ShellPage.ShellHandler.UpdateViewModel;
 
         // [fork-brand] 发行版署名（Branding.cs 为常量源，此处取资源本地化文案）
-        public string forkAboutLine => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkAboutLine.Text");
+        public string ForkAboutLine => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkAboutLine.Text");
 
-        public string forkUpstreamLinkText => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkUpstreamLink.Content");
+        public string ForkUpstreamLinkText => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkUpstreamLink.Content");
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneralPage"/> class.
