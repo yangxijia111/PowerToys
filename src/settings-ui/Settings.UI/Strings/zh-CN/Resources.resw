@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  本文件是本 Fork 的简体中文资源层（二次开发自有文件，非上游 loc farm 产物）。
+  覆盖策略：仅收录需要优化翻译或重新说明的 key；未收录的 key 自动回退到 en-us。
+  key 与 en-us/Resources.resw 一一对应，请勿在此新增上游不存在的展示 key
+  （新分组的 Shell_TopLevel* 除外，需与 en-us 同步新增）。
+-->
+<root>
+  <!-- ================= 导航与分组 ================= -->
+  <data name="Shell_Dashboard.Content" xml:space="preserve">
+    <value>仪表盘</value>
+  </data>
+  <data name="Shell_General.Content" xml:space="preserve">
+    <value>常规设置</value>
+  </data>
+  <data name="Shell_TopLevelSystemTools.Content" xml:space="preserve">
+    <value>系统工具</value>
+  </data>
+  <data name="Shell_TopLevelWindowsAndLayouts.Content" xml:space="preserve">
+    <value>窗口管理</value>
+  </data>
+  <data name="Shell_TopLevelInputOutput.Content" xml:space="preserve">
+    <value>输入与启动</value>
+  </data>
+  <data name="Shell_TopLevelFileManagement.Content" xml:space="preserve">
+    <value>文件管理</value>
+  </data>
+  <data name="Shell_TopLevelScreenTools.Content" xml:space="preserve">
+    <value>屏幕与显示</value>
+  </data>
+  <data name="Shell_TopLevelAdvanced.Content" xml:space="preserve">
+    <value>开发与高级</value>
+  </data>
+
+  <!-- ================= 工具标题 ================= -->
+  <data name="AdvancedPaste.ModuleTitle" xml:space="preserve">
+    <value>高级粘贴</value>
+  </data>
+  <data name="Awake.ModuleTitle" xml:space="preserve">
+    <value>保持唤醒（Awake）</value>
+  </data>
+  <data name="AlwaysOnTop.ModuleTitle" xml:space="preserve">
+    <value>窗口置顶</value>
+  </data>
+  <data name="AltWindowCycle.ModuleTitle" xml:space="preserve">
+    <value>窗口切换器</value>
+  </data>
+  <data name="CmdPal.ModuleTitle" xml:space="preserve">
+    <value>命令面板</value>
+  </data>
+  <data name="CmdNotFound.ModuleTitle" xml:space="preserve">
+    <value>命令未找到（Command Not Found）</value>
+  </data>
+  <data name="ColorPicker.ModuleTitle" xml:space="preserve">
+    <value>取色器</value>
+  </data>
+  <data name="CropAndLock.ModuleTitle" xml:space="preserve">
+    <value>裁剪锁定（Crop And Lock）</value>
+  </data>
+  <data name="EnvironmentVariables.ModuleTitle" xml:space="preserve">
+    <value>环境变量</value>
+  </data>
+  <data name="FancyZones.ModuleTitle" xml:space="preserve">
+    <value>窗口分区（FancyZones）</value>
+  </data>
+  <data name="FileExplorerPreview.ModuleTitle" xml:space="preserve">
+    <value>文件管理器预览插件</value>
+  </data>
+  <data name="FileLocksmith.ModuleTitle" xml:space="preserve">
+    <value>文件占用解锁（File Locksmith）</value>
+  </data>
+  <data name="GrabAndMove.ModuleTitle" xml:space="preserve">
+    <value>拖拽移动窗口</value>
+  </data>
+  <data name="Hosts.ModuleTitle" xml:space="preserve">
+    <value>Hosts 文件编辑器</value>
+  </data>
+  <data name="ImageResizer.ModuleTitle" xml:space="preserve">
+    <value>图片大小调整</value>
+  </data>
+  <data name="KeyboardManager.ModuleTitle" xml:space="preserve">
+    <value>键盘管理器</value>
+  </data>
+  <data name="LightSwitch.ModuleTitle" xml:space="preserve">
+    <value>主题切换（Light Switch）</value>
+  </data>
+  <data name="MeasureTool.ModuleTitle" xml:space="preserve">
+    <value>屏幕标尺</value>
+  </data>
+  <data name="MouseUtils.ModuleTitle" xml:space="preserve">
+    <value>鼠标工具集</value>
+  </data>
+  <data name="MouseWithoutBorders.ModuleTitle" xml:space="preserve">
+    <value>跨设备键鼠（Mouse Without Borders）</value>
+  </data>
+  <data name="NewPlus.ModuleTitle" xml:space="preserve">
+    <value>模板新建（New+）</value>
+  </data>
+  <data name="Peek.ModuleTitle" xml:space="preserve">
+    <value>速览（Peek）</value>
+  </data>
+  <data name="PowerDisplay.ModuleTitle" xml:space="preserve">
+    <value>显示器管理（Power Display）</value>
+  </data>
+  <data name="PowerLauncher.ModuleTitle" xml:space="preserve">
+    <value>PowerToys Run 启动器</value>
+  </data>
+  <data name="PowerRename.ModuleTitle" xml:space="preserve">
+    <value>批量重命名（PowerRename）</value>
+  </data>
+  <data name="QuickAccent.ModuleTitle" xml:space="preserve">
+    <value>快速重音字符（Quick Accent）</value>
+  </data>
+  <data name="RegistryPreview.ModuleTitle" xml:space="preserve">
+    <value>注册表预览</value>
+  </data>
+  <data name="ShortcutGuide.ModuleTitle" xml:space="preserve">
+    <value>快捷键指南</value>
+  </data>
+  <data name="TextExtractor.ModuleTitle" xml:space="preserve">
+    <value>文字提取（OCR）</value>
+  </data>
+  <data name="Workspaces.ModuleTitle" xml:space="preserve">
+    <value>工作区（Workspaces）</value>
+  </data>
+  <data name="ZoomIt.ModuleTitle" xml:space="preserve">
+    <value>屏幕缩放标注（ZoomIt）</value>
+  </data>
+
+  <!-- ================= 工具简介（面向首次使用者的中文说明） ================= -->
+  <data name="AdvancedPaste.ModuleDescription" xml:space="preserve">
+    <value>把剪贴板内容一键转换为纯文本、Markdown、JSON 等格式，还可接入在线或本地 AI 模型做高级处理。</value>
+  </data>
+  <data name="Awake.ModuleDescription" xml:space="preserve">
+    <value>让电脑临时保持唤醒、屏幕不熄灭，适合下载、演示、长时间编译等场景，无需修改系统电源计划。</value>
+  </data>
+  <data name="AlwaysOnTop.ModuleDescription" xml:space="preserve">
+    <value>按快捷键把任意窗口钉在最上层，对照资料、监视进度时非常实用。</value>
+  </data>
+  <data name="AltWindowCycle.ModuleDescription" xml:space="preserve">
+    <value>在同一个应用打开的多个窗口之间快速循环切换，例如在多个浏览器窗口间跳转。</value>
+  </data>
+  <data name="CmdPal.ModuleDescription" xml:space="preserve">
+    <value>统一的快速启动面板：搜索应用、执行命令、计算、安装软件，还支持丰富的第三方扩展。（默认快捷键 Win+Alt+空格）</value>
+  </data>
+  <data name="CmdNotFound.ModuleDescription" xml:space="preserve">
+    <value>PowerShell 提示"命令不存在"时，自动分析并推荐可以安装的 WinGet 软件包，是开发者的贴心助手。</value>
+  </data>
+  <data name="ColorPicker.ModuleDescription" xml:space="preserve">
+    <value>全屏幕任意位置取色，支持 HEX、RGB、HSL 等多种格式一键复制，设计排版必备。</value>
+  </data>
+  <data name="CropAndLock.ModuleDescription" xml:space="preserve">
+    <value>把窗口中的某块区域"抠"成一个独立小窗口常驻屏幕，适合盯盘、监控日志、看进度条。选中目标窗口后按快捷键开始。</value>
+  </data>
+  <data name="EnvironmentVariables.ModuleDescription" xml:space="preserve">
+    <value>集中查看和编辑用户与系统环境变量，再也不用在系统设置的多个窗口里来回跳转。</value>
+  </data>
+  <data name="FancyZones.ModuleDescription" xml:space="preserve">
+    <value>自定义窗口分区布局，拖动窗口时自动吸附到指定区域，多任务排版井井有条。</value>
+  </data>
+  <data name="FileExplorerPreview.ModuleDescription" xml:space="preserve">
+    <value>让文件资源管理器的预览窗格支持更多格式：SVG、Markdown、PDF 等，选中即预览。</value>
+  </data>
+  <data name="FileLocksmith.ModuleDescription" xml:space="preserve">
+    <value>"文件正在使用中"删不掉？右键查看究竟是哪个进程占用了文件，并直接结束它。</value>
+  </data>
+  <data name="GrabAndMove.ModuleDescription" xml:space="preserve">
+    <value>按住修饰键拖动即可操控窗口：左键拖动=移动窗口，右键拖动=调整大小，不必瞄准细小的标题栏。</value>
+  </data>
+  <data name="Hosts.ModuleDescription" xml:space="preserve">
+    <value>图形化编辑系统 hosts 文件，增删改域名解析条目更安全直观，改完即生效。</value>
+  </data>
+  <data name="ImageResizer.ModuleDescription" xml:space="preserve">
+    <value>右键图片即可批量调整尺寸和大小，发邮件、传图前快速压缩。</value>
+  </data>
+  <data name="KeyboardManager.ModuleDescription" xml:space="preserve">
+    <value>重新映射按键与快捷键：把不常用的键换成需要的功能，例如把 Caps Lock 改成 Esc，或让某个组合键一键启动应用。</value>
+  </data>
+  <data name="LightSwitch.ModuleDescription" xml:space="preserve">
+    <value>按时间计划、日落日出或快捷键，自动在浅色与深色模式之间切换。</value>
+  </data>
+  <data name="MeasureTool.ModuleDescription" xml:space="preserve">
+    <value>屏幕像素标尺：框选或拖动即可测量屏幕上任意元素的大小，支持贴边对齐参考线。</value>
+  </data>
+  <data name="MouseUtils.ModuleDescription" xml:space="preserve">
+    <value>一组鼠标增强工具：晃动鼠标高亮位置、演示时高亮点击、显示十字线等。</value>
+  </data>
+  <data name="MouseWithoutBorders.ModuleDescription" xml:space="preserve">
+    <value>一套键盘鼠标同时控制多台电脑，鼠标移到屏幕边缘即切换设备，还支持跨机复制粘贴与拖放文件。</value>
+  </data>
+  <data name="NewPlus.ModuleDescription" xml:space="preserve">
+    <value>把自己常用的文件/文件夹做成模板，加入右键"新建"菜单，一键按模板创建。</value>
+  </data>
+  <data name="Peek.ModuleDescription" xml:space="preserve">
+    <value>在文件管理器中选中文件按快捷键，即时预览图片、文本、PDF 等内容，无需打开完整应用。</value>
+  </data>
+  <data name="PowerDisplay.ModuleDescription" xml:space="preserve">
+    <value>统一管理多台显示器：调节亮度、对比度、色温等参数，支持按显示器分别设置。</value>
+  </data>
+  <data name="PowerLauncher.ModuleDescription" xml:space="preserve">
+    <value>键盘党的效率启动器（默认 Alt+空格）：搜应用、搜文件、算数、查时间、执行系统命令，一步直达。</value>
+  </data>
+  <data name="PowerRename.ModuleDescription" xml:space="preserve">
+    <value>强大的批量重命名：支持搜索替换、正则表达式、序号编号、大小写转换，实时预览结果。</value>
+  </data>
+  <data name="QuickAccent.ModuleDescription" xml:space="preserve">
+    <value>快速输入带重音符号的字符：按住字母键再按空格或方向键，弹出候选列表选择 à、é、ü 等字符。</value>
+  </data>
+  <data name="RegistryPreview.ModuleDescription" xml:space="preserve">
+    <value>打开 .reg 注册表文件前先可视化预览：树状展示将要写入的所有键值，导入更放心。</value>
+  </data>
+  <data name="ShortcutGuide.ModuleDescription" xml:space="preserve">
+    <value>长按 Windows 键，屏幕上直接浮现当前可用的全部快捷键速查表，边看边学。</value>
+  </data>
+  <data name="TextExtractor.ModuleDescription" xml:space="preserve">
+    <value>屏幕取词（OCR）：框选屏幕任意区域，把其中的文字直接复制成可编辑文本，图片里的字也能取。</value>
+  </data>
+  <data name="Workspaces.ModuleDescription" xml:space="preserve">
+    <value>一键启动一组应用，并自动摆放到你预设的窗口位置与大小，打开工作环境只需一次点击。</value>
+  </data>
+  <data name="ZoomIt.ModuleDescription" xml:space="preserve">
+    <value>屏幕缩放、放大镜、标注与录制工具，演示、教学、录屏讲解的好帮手。</value>
+  </data>
+
+  <!-- ================= 常规页 ================= -->
+  <data name="General.ModuleTitle" xml:space="preserve">
+    <value>常规设置</value>
+  </data>
+  <data name="General.ModuleDescription" xml:space="preserve">
+    <value>一组帮助您自定义 Windows、简化日常操作的系统工具集合。本版本为社区二次开发版，在官方 PowerToys 基础上优化中文体验与使用引导。</value>
+  </data>
+  <data name="Shell_Presets.Content" xml:space="preserve">
+    <value>推荐配置</value>
+  </data>
+  <data name="Presets.ModuleTitle" xml:space="preserve">
+    <value>推荐配置</value>
+  </data>
+  <data name="Presets.ModuleDescription" xml:space="preserve">
+    <value>按使用场景一键启用推荐工具组合，之后可随时逐个调整。</value>
+  </data>
+  <data name="Presets_IntroInfoBar.Title" xml:space="preserve">
+    <value>按场景快速设置 PowerToys</value>
+  </data>
+  <data name="Presets_IntroInfoBar.Message" xml:space="preserve">
+    <value>选择您主要的使用方式即可一键启用对应工具。应用推荐配置只会启用场景中列出的工具，不会修改任何工具的具体设置，也不会关闭您已启用的其他工具。</value>
+  </data>
+  <data name="Presets_ScenariosGroup.Header" xml:space="preserve">
+    <value>使用场景</value>
+  </data>
+  <data name="Presets_ApplyButton.Content" xml:space="preserve">
+    <value>应用此配置</value>
+  </data>
+  <data name="Presets_ModuleCountFormat" xml:space="preserve">
+    <value>包含 {0} 个工具</value>
+  </data>
+  <data name="Presets_AppliedStatus" xml:space="preserve">
+    <value>已应用「{0}」，共启用 {1} 个工具。</value>
+  </data>
+  <data name="Preset_General_Name" xml:space="preserve">
+    <value>通用</value>
+  </data>
+  <data name="Preset_General_Description" xml:space="preserve">
+    <value>均衡的日常组合：快速启动器、取色器、屏幕取词、批量重命名、窗口置顶与保持唤醒。</value>
+  </data>
+  <data name="Preset_Developer_Name" xml:space="preserve">
+    <value>开发</value>
+  </data>
+  <data name="Preset_Developer_Description" xml:space="preserve">
+    <value>窗口分区、AI 高级粘贴、文件占用解锁、环境变量、注册表预览、命令补全提示与保持唤醒。</value>
+  </data>
+  <data name="Preset_Learning_Name" xml:space="preserve">
+    <value>学习</value>
+  </data>
+  <data name="Preset_Learning_Description" xml:space="preserve">
+    <value>快捷键速查、屏幕缩放标注与屏幕取词，上网课、看教程、记笔记更高效。</value>
+  </data>
+  <data name="Preset_Office_Name" xml:space="preserve">
+    <value>办公</value>
+  </data>
+  <data name="Preset_Office_Description" xml:space="preserve">
+    <value>图片压缩、批量重命名、文件占用解锁等日常文档协作工具。</value>
+  </data>
+  <data name="Preset_Design_Name" xml:space="preserve">
+    <value>设计</value>
+  </data>
+  <data name="Preset_Design_Description" xml:space="preserve">
+    <value>取色器、屏幕标尺、缩放标注与窗口分区，设计工作流的完整组合。</value>
+  </data>
+</root>
