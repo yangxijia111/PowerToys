@@ -118,7 +118,10 @@ git merge upstream/main        # 或 rebase（历史干净但需逐冲突处理�
 
 （基线构建/测试过程中发现的问题在此追加，附日期与处理方式）
 
-- 2026-09-26：开发机为 VS 2022 BuildTools 17.14，缺少 ATL / SDK 22621 / WindowsAppSDK 支持组件，已按 `.vsconfig` 补装（非代码改动）。
+- 2026-09-26：开发机原仅 VS 2022 BuildTools 17.14，且缺少 ATL / SDK 22621 / WindowsAppSDK 组件；已补装。**注意：VS 2022（17.x）的 MSBuild SDK 解析器不支持 .NET 10 SDK**，对 main 分支（`net10.0-windows10.0.26100.0`）全量 Restore 时报 `NETSDK1045`（回落到 SDK 9.0.316）。这与官方文档"推荐 VS 2026"一致，属于环境问题而非代码问题。
+- 2026-09-26：解决方案：安装 **VS 2026 BuildTools（18.10，MSVC v145）** 到 `D:\VS2026BuildTools`，含 C++/.NET 桌面/UWP 工作负载、ATL、SDK 22621+26100、WindowsAppSDK 支持、vcpkg。`build-common.ps1` 的 `Ensure-VsDevEnvironment` 会通过 vswhere 自动选中该最新实例；VS 2022 实例保留不动。上游 `Cpp.Build.props` 已适配 VS18（自动切 v145 工具集），无需改代码。
+- 2026-09-26：Azure DevOps 私有 NuGet 源（`pkgs.dev.azure.com/shine-oss`）在国内网络下载大包（ARM64 runtime、WindowsAppSDK 等）易超时；解决方式为 restore 前设置 `NUGET_HTTP_CACHE_TIMEOUT=1800000`（30 分钟）重试（Restore 幂等，已下载包有本地缓存）。未修改仓库 `nuget.config`。
+- 2026-09-26：**基线构建结果（x64 Debug）**：`tools\build\build-essentials.ps1` Restore + Build 全部通过（0 error）；产物 `x64\Debug\PowerToys.exe`（runner）与 `x64\Debug\WinUI3Apps\PowerToys.Settings.exe` 均生成并可启动运行。**测试结果**：`Settings.UI.UnitTests` 全套 328/328 通过（含新增 Presets 6 项）。新增代码需遵守仓库 StyleCop 强制规则（单文件单类型 SA1402、文件名匹配首类型 SA1649、`ArgumentNullException.ThrowIfNull` CA1510、格式化需 IFormatProvider CA1305）。
 
 ## 10. 阶段路线图
 

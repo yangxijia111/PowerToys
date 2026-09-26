@@ -266,7 +266,7 @@
     <value>开发</value>
   </data>
   <data name="Preset_Developer_Description" xml:space="preserve">
-    <value>窗口分区、AI 高级粘贴、文件占用解锁、环境变量、注册表预览、命令补全提示与保持唤醒。</value>
+    <value>窗口分区、AI 高级粘贴、屏幕取词、文件占用解锁、环境变量与注册表预览。</value>
   </data>
   <data name="Preset_Learning_Name" xml:space="preserve">
     <value>学习</value>
