@@ -19,8 +19,10 @@ namespace Microsoft.PowerToys.Settings.UI.UnitTests.BackwardsCompatibility
     {
         public const string RootPathStubFiles = "..\\..\\..\\..\\..\\src\\settings-ui\\Settings.UI.UnitTests\\BackwardsCompatibility\\TestFiles\\{0}\\Microsoft\\PowerToys\\{1}\\{2}";
 
+        // [fork-identity] fork 设置根已从官方 Microsoft\PowerToys 隔离为 PowerToysCuin，
+        // 断言锚同步为 fork 路径（验证语义不变：升级/迁移时读取 fork 的 settings.json 且不改写原文件）。
         // Using Ordinal since this is used internally for a path
-        private static readonly Expression<Func<string, bool>> SettingsFilterExpression = s => s == null || s.Contains("Microsoft\\PowerToys\\settings.json", StringComparison.Ordinal);
+        private static readonly Expression<Func<string, bool>> SettingsFilterExpression = s => s == null || s.Contains(ManagedCommon.Branding.ForkAppDataFolderName + "\\settings.json", StringComparison.Ordinal);
 
         private static readonly CompositeFormat RootPathStubFilesCompositeFormat = System.Text.CompositeFormat.Parse(BackCompatTestProperties.RootPathStubFiles);
 
