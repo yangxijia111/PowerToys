@@ -53,11 +53,12 @@ public static class SettingsConfigHelper
         "ZoomIt",
     ];
 
-    /// <summary>Root of the per-user PowerToys settings: <c>%LocalAppData%\Microsoft\PowerToys</c>.</summary>
+    /// <summary>[fork-identity] Root of the per-user fork settings: <c>%LocalAppData%\PowerToysCuin</c>
+    /// (official uses <c>Microsoft\PowerToys</c>). This project does not reference ManagedCommon;
+    /// keep in sync with <c>ManagedCommon/Branding.cs</c> ForkAppDataFolderName.</summary>
     public static string PowerToysSettingsRoot => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "Microsoft",
-        "PowerToys");
+        "PowerToysCuin");
 
     private static string GlobalSettingsPath => Path.Combine(PowerToysSettingsRoot, "settings.json");
 

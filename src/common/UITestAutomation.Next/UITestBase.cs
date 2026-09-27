@@ -513,14 +513,16 @@ public class UITestBase : IDisposable
     {
         try
         {
+            // [fork-identity] fork 独立根（官方为 Microsoft\PowerToys）；本工程未引用 ManagedCommon，
+            // 与 ManagedCommon/Branding.cs 的 ForkAppDataFolderName 人工同步。
             var localLow = Path.Combine(
                 Environment.GetEnvironmentVariable("USERPROFILE") ?? string.Empty,
-                "AppData", "LocalLow", "Microsoft", "PowerToys");
+                "AppData", "LocalLow", "PowerToysCuin");
             CopyLogFiles(localLow);
 
             var localAppData = Path.Combine(
                 Environment.GetEnvironmentVariable("LOCALAPPDATA") ?? string.Empty,
-                "Microsoft", "PowerToys");
+                "PowerToysCuin");
             CopyLogFiles(localAppData);
         }
         catch

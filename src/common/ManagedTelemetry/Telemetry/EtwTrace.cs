@@ -26,7 +26,10 @@ namespace Microsoft.PowerToys.Telemetry
 
         private readonly bool telemetryEnabled = DataDiagnosticsSettings.GetEnabledValue(); // This is the global telemetry setting on whether to log events
         private readonly bool telemetryRecordingEnabled = DataDiagnosticsSettings.GetViewEnabledValue(); // This is the setting for recording telemetry events to disk for viewing
-        private string etwFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerToys\", "etw");
+        // [fork-identity] fork 独立根目录（官方为 Microsoft\PowerToys）。本程序集位于依赖链底层、
+        // 不能引用 ManagedCommon，故此处为字面量，与 ManagedCommon/Branding.cs 的
+        // ForkAppDataFolderName 人工同步（tools/check_fork_identity.py 校验）。
+        private string etwFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"PowerToysCuin", "etw");
         private bool disposedValue;
         private string sessionName;
         private string etwFilePath;

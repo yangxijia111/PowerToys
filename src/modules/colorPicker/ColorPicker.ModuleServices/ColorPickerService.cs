@@ -43,7 +43,7 @@ public sealed class ColorPickerService : ModuleServiceBase, IColorPickerService
             cancellationToken.ThrowIfCancellationRequested();
 
             var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var historyPath = Path.Combine(localAppData, "Microsoft", "PowerToys", "ColorPicker", "colorHistory.json");
+            var historyPath = Path.Combine(localAppData, Branding.ForkAppDataFolderName, "ColorPicker", "colorHistory.json"); // [fork-identity]
             if (!File.Exists(historyPath))
             {
                 return Task.FromResult(OperationResults.Ok<IReadOnlyList<SavedColor>>(Array.Empty<SavedColor>()));

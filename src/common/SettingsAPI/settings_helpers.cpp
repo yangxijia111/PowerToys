@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "settings_helpers.h"
 
+#include <common/interop/shared_constants.h>
+
 namespace PTSettingsHelper
 {
     constexpr inline const wchar_t* settings_filename = L"\\settings.json";
@@ -18,7 +20,9 @@ namespace PTSettingsHelper
         std::wstring result{ local_app_path };
         CoTaskMemFree(local_app_path);
 
-        result += L"\\Microsoft\\PowerToys";
+        // [fork-identity] fork 独立根：%LOCALAPPDATA%\PowerToysCuin（官方为 Microsoft\PowerToys）
+        result += L"\\";
+        result += CommonSharedConstants::APPDATA_PATH;
         std::filesystem::path save_path(result);
         if (!std::filesystem::exists(save_path))
         {
@@ -34,7 +38,9 @@ namespace PTSettingsHelper
         std::wstring result{ local_app_path };
         CoTaskMemFree(local_app_path);
 
-        result += L"\\Microsoft\\PowerToys";
+        // [fork-identity] LocalLow 侧同样使用 fork 独立根
+        result += L"\\";
+        result += CommonSharedConstants::APPDATA_PATH;
         std::filesystem::path save_path(result);
         if (!std::filesystem::exists(save_path))
         {

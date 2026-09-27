@@ -30,17 +30,17 @@ namespace Microsoft.PowerToys.Settings.UI.Library
 
         public bool SettingsFolderExists(string powertoy)
         {
-            return _directory.Exists(System.IO.Path.Combine(Helper.LocalApplicationDataFolder(), $"Microsoft\\PowerToys\\{powertoy}"));
+            return _directory.Exists(System.IO.Path.Combine(Helper.LocalApplicationDataFolder(), $"{ManagedCommon.Branding.ForkAppDataFolderName}\\{powertoy}"));
         }
 
         public void CreateSettingsFolder(string powertoy)
         {
-            _directory.CreateDirectory(System.IO.Path.Combine(Helper.LocalApplicationDataFolder(), $"Microsoft\\PowerToys\\{powertoy}"));
+            _directory.CreateDirectory(System.IO.Path.Combine(Helper.LocalApplicationDataFolder(), $"{ManagedCommon.Branding.ForkAppDataFolderName}\\{powertoy}"));
         }
 
         public void DeleteSettings(string powertoy = "")
         {
-            _directory.Delete(System.IO.Path.Combine(Helper.LocalApplicationDataFolder(), $"Microsoft\\PowerToys\\{powertoy}"));
+            _directory.Delete(System.IO.Path.Combine(Helper.LocalApplicationDataFolder(), $"{ManagedCommon.Branding.ForkAppDataFolderName}\\{powertoy}"));
         }
 
         /// <summary>
@@ -53,12 +53,12 @@ namespace Microsoft.PowerToys.Settings.UI.Library
             {
                 return _path.Combine(
                     Helper.LocalApplicationDataFolder(),
-                    $"Microsoft\\PowerToys\\{fileName}");
+                    $"{ManagedCommon.Branding.ForkAppDataFolderName}\\{fileName}");
             }
 
             return _path.Combine(
                 Helper.LocalApplicationDataFolder(),
-                $"Microsoft\\PowerToys\\{powertoy}\\{fileName}");
+                $"{ManagedCommon.Branding.ForkAppDataFolderName}\\{powertoy}\\{fileName}");
         }
     }
 }

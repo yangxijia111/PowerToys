@@ -10,7 +10,10 @@ namespace CommonSharedConstants
     // Fake key code to represent VK_WIN.
     inline const DWORD VK_WIN_BOTH = 0x104;
 
-    const wchar_t APPDATA_PATH[] = L"Microsoft\\PowerToys";
+    // [fork-identity] fork 独立设置/日志根目录名（官方为 Microsoft\PowerToys）。
+    // C++ 侧（settings_helpers.cpp）与托管侧（ManagedCommon/Branding.cs ForkAppDataFolderName）共用此语义，
+    // 修改时必须同步 docs/IDENTITY_MAP.md 与 tools/check_fork_identity.py。
+    const wchar_t APPDATA_PATH[] = L"PowerToysCuin";
 
     // Path to the event used by runner to terminate Settings app
     const wchar_t TERMINATE_SETTINGS_SHARED_EVENT[] = L"Local\\PowerToysRunnerTerminateSettingsEvent-c34cb661-2e69-4613-a1f8-4e39c25d7ef6";

@@ -28,5 +28,12 @@ namespace ManagedCommon
         /// About/关于页的一行说明（含署名）。
         /// </summary>
         public const string AboutLine = "PowerToys Cuin — a community fork based on Microsoft PowerToys (MIT).";
+
+        /// <summary>
+        /// [fork-identity] fork 独立的 AppData 子目录名（官方为 "Microsoft\PowerToys"）。
+        /// 与 C++ 侧唯一来源 CommonSharedConstants.APPDATA_PATH（src/common/interop/shared_constants.h）
+        /// 保持一致；修改时必须同步 docs/IDENTITY_MAP.md 与 tools/check_fork_identity.py。
+        /// </summary>
+        public const string ForkAppDataFolderName = "PowerToysCuin";
     }
 }
