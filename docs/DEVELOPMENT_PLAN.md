@@ -123,6 +123,25 @@ git merge upstream/main        # 或 rebase（历史干净但需逐冲突处理�
 - 2026-09-26：Azure DevOps 私有 NuGet 源（`pkgs.dev.azure.com/shine-oss`）在国内网络下载大包（ARM64 runtime、WindowsAppSDK 等）易超时；解决方式为 restore 前设置 `NUGET_HTTP_CACHE_TIMEOUT=1800000`（30 分钟）重试（Restore 幂等，已下载包有本地缓存）。未修改仓库 `nuget.config`。
 - 2026-09-26：**基线构建结果（x64 Debug）**：`tools\build\build-essentials.ps1` Restore + Build 全部通过（0 error）；产物 `x64\Debug\PowerToys.exe`（runner）与 `x64\Debug\WinUI3Apps\PowerToys.Settings.exe` 均生成并可启动运行。**测试结果**：`Settings.UI.UnitTests` 全套 328/328 通过（含新增 Presets 6 项）。新增代码需遵守仓库 StyleCop 强制规则（单文件单类型 SA1402、文件名匹配首类型 SA1649、`ArgumentNullException.ThrowIfNull` CA1510、格式化需 IFormatProvider CA1305）。
 
+### Phase 2 构建验证记录（2026-09-27）
+
+- **环境**：VS 2026 Community 18.10（`D:\Develop\VS_2026`），工作负载 C++ 桌面 + .NET 桌面；**关键组件** `Microsoft.VisualStudio.ComponentGroup.UWP.VC`（.vsconfig 原始 ID 在 Community 上可安装；`*BuildTools` 后缀变体与 `v143` 变体在 Community 上均 Non-installable）。.NET SDK 10.0.302/10.0.401。
+- **VS2026 兼容问题与修复**（全部为环境/上游缺陷，未削弱任何测试）：
+  1. `AutoHideCursorWorker.vcxproj` 缺 `deps/spdlog.props` 导入（上游缺陷，共享 OutDir 下 PCH 宏不一致 → C4651/C2220）→ 已修复并提交；
+  2. PowerRenameUI 等 WinUI C++ 项目首次构建需 Restore + UWP 组件（`/t:Restore /p:RestorePackagesConfig=true`）；
+  3. `.NET SDK 10.0.401` 需要重新拉取对应 runtime 包（`NUGET_HTTP_CACHE_TIMEOUT=1800000`）；
+  4. CsWinRT 需要 `TargetPlatformMinVersion=10.0.19041` 的 UAP Platform.xml 与 References——Windows Kits 目录下已用 junction `10.0.19041.0 → 10.0.26100.0` 补齐（仅本机环境）；
+  5. WiX CustomActions 链接需要 `wixtoolset.wcautil/dutil` 的 lib——packages.config 还原到 `installer\packages`，构建时将 wcautil.lib/dutil.lib 复制到 `vcpkg_installed\...\lib`（仅本机环境）；
+  6. WiX PreBuildEvent 的 `publish.cmd` 相对路径为上游本地构建 bug（CI 走 IsPipeline 分支）→ 本地手动执行 `publish.cmd x64` + `generateMonacoWxs.ps1`，构建时传 `/p:PreBuildEvent=` 跳过；
+  7. CmdPal msix 需 `CIBuild=true` 构建 CmdPal.UI 生成。
+- **结果**：
+  - Full Solution Release Build（PowerToys.slnx）✅ 0 error
+  - BugReportTool / StylesReportTool ✅
+  - WiX Installer（MSI）+ Bootstrapper ✅ → `PowerToysUserSetup-0.0.1-x64.exe/.msi`（320MB）
+  - **安装**（msiexec 静默）✅ → `%LOCALAPPDATA%\PowerToys`
+  - **Smoke Test**：runner + Settings + 模块进程（FancyZones/Awake/ColorPicker/QuickAccess/AlwaysOnTop）✅；OOBE 首启标志写入 ✅；settings.json 持久化 ✅；PowerRename Shell Extension 注册 ✅；FileLocksmith/ImageResizer CLI ✅
+  - **卸载**（msiexec /x 静默）✅（残留 `PowerToys\BuildTools` 空目录，与官方卸载行为一致）
+
 ## 10. 阶段路线图
 
 - **阶段一（当前）**：框架层——zh-CN 资源层 + 工具中文简介、分类梳理、Onboarding 场景推荐骨架、Presets 架构预留。功能行为零变更。
