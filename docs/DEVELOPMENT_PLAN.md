@@ -142,6 +142,18 @@ git merge upstream/main        # 或 rebase（历史干净但需逐冲突处理�
   - **Smoke Test**：runner + Settings + 模块进程（FancyZones/Awake/ColorPicker/QuickAccess/AlwaysOnTop）✅；OOBE 首启标志写入 ✅；settings.json 持久化 ✅；PowerRename Shell Extension 注册 ✅；FileLocksmith/ImageResizer CLI ✅
   - **卸载**（msiexec /x 静默）✅（残留 `PowerToys\BuildTools` 空目录，与官方卸载行为一致）
 
+### Phase 3 发行身份审计与隔离（2026-09-27）
+
+**审计**：对 `installer/`、`src/runner/`、`src/common/`、`src/modules/`、`src/settings-ui/`、`src/PackageIdentity/` 全量盘点发行身份（MSI/Bundle UpgradeCode、COM CLSID、sparse MSIX、协议、AUMID、mutex/事件/pipe、计划任务、AppData、更新信任链），结论与四类分级见 `IDENTITY_AUDIT.md`，逐项映射见 `IDENTITY_MAP.md`。
+
+**发行策略：互斥安装**。审计确认 sparse MSIX（4 个右键菜单包 + PackageIdentity）同 Name+Publisher 互抢且 fork 无法安全分叉微软签名信任链；17+ COM CLSID 共存需横跨 20+ 文件改动。故 fork 安装器主动检测官方（两个官方 UpgradeCode → Bundle bal:Condition + MSI OnlyDetect Upgrade 双层阻止），COM/协议/AUMID/计划任务等系统单点保留官方值，由互斥保证唯一持有者；runner mutex 保留同名作为违规并装时的最后安全带（同会话仅一个 runner 可活）。
+
+**已隔离**：MSI UpgradeCode ×2 + Bundle UpgradeCode（fork 专属新 GUID）、Manufacturer（`PowerToys Cuin Community`）、安装目录 `PowerToysCuin`、快捷方式名、AppData 根 `%LOCALAPPDATA%\PowerToysCuin`（C++/托管双端集中常量，不迁移官方数据）、更新端点指向 fork 仓库、更新引导器产品名锚、pipe 鉴权关闭微软签名项（fork 无微软签名，Release 版 Settings IPC 必需）、DSC 卸载项检测名、MsiUtils/CA 运行时身份常量（含修复旧组件 GUID 失配）。
+
+**验证资产**：`tools/check_fork_identity.py`（静态校验，29 项断言）+ `Settings.UI.UnitTests/ForkIdentityTests.cs`（4 项）。上游合并时按 `SYNC_GUIDE.md` §1.1 身份热点表核对，`[fork-identity]` 锚点 hunk 保留 fork 侧。
+
+**已知限制**（详见 AUDIT §4/§6）：fork 无代码签名证书 → 5 个 sparse MSIX 在最终用户机上注册失败（安全降级，Win11 右键菜单不可用，Win10 经典菜单不受影响）；官方安装器感知不到 fork，官方后装可覆盖运行面（文件层安全，目录已隔离）；fork 自更新信任链待引入签名证书后重设计（0.0.x guard 下当前不激活）。
+
 ## 10. 阶段路线图
 
 - **阶段一（当前）**：框架层——zh-CN 资源层 + 工具中文简介、分类梳理、Onboarding 场景推荐骨架、Presets 架构预留。功能行为零变更。
