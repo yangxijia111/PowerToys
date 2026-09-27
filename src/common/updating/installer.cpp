@@ -65,15 +65,15 @@ namespace updating
         // Identity anchors for the official PowerToys installer. These are compile-time constants
         // (never read from the attacker-writable UpdateState.json or from the network), so the
         // identity check also holds for fully offline updates. The .exe bootstrapper version
-        // resource reports ProductName "PowerToys (Preview) <arch>" and CompanyName
-        // "Microsoft Corporation"; the .msi UpgradeCodes are shared with MsiUtils.h.
+        // resource reports ProductName "PowerToys Cuin (Community Edition) <arch>" and CompanyName
+        // "PowerToys Cuin Community"; the .msi UpgradeCodes are shared with MsiUtils.h.
         constexpr const wchar_t* MICROSOFT_ORGANIZATION_NAME = L"Microsoft Corporation";
-        // NOTE: This must match the WiX bundle ProductName ("PowerToys (Preview) <arch>", see
-        // installer/PowerToysSetupVNext/PowerToys.wxs). It is intentionally a prefix so the trailing
-        // architecture varies. If the product is ever renamed (e.g. a stable/GA build that drops
-        // "(Preview)"), this constant MUST be updated in lockstep, otherwise a legitimate installer
-        // would be rejected here in the elevated update path.
-        constexpr const wchar_t* POWERTOYS_PRODUCT_NAME_PREFIX = L"PowerToys (Preview)";
+        // [fork-identity] Must match the WiX bundle ProductName ("PowerToys Cuin (Community Edition)
+        // <arch>", see installer/PowerToysSetupVNext/PowerToys.wxs). It is intentionally a prefix so
+        // the trailing architecture varies.
+        // 注意：verify_installer_trust 同时要求微软根链签名 —— fork 包在当前信任链下会被拒绝
+        // （安全失败），fork 自更新的信任链需在引入代码签名证书后重新设计（AUDIT §4-1）。
+        constexpr const wchar_t* POWERTOYS_PRODUCT_NAME_PREFIX = L"PowerToys Cuin (Community Edition)";
 
         // Reads the signer leaf certificate's Organization (O) from the ALREADY-VERIFIED
         // WinVerifyTrust state and returns true only when it is "Microsoft Corporation". Reading

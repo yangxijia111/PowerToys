@@ -585,14 +585,16 @@ void run_settings_window(bool show_oobe_window, bool show_scoobe_window, std::op
 
         // Authenticate the connecting client (Settings) before dispatching any privileged command.
         // The expected image directory is derived from the Runner's own module folder so it adapts to
-        // both installed and dev-build layouts; only Microsoft-signed PowerToys.Settings.exe at the
+        // both installed and dev-build layouts; only PowerToys.Settings.exe at the
         // Runner's own version is accepted (signature check is compiled out in Debug).
         interop_auth::CallerPolicy settings_caller_policy;
         settings_caller_policy.enabled = true;
         settings_caller_policy.expectedDirectory = get_module_folderpath() + L"\\WinUI3Apps";
         settings_caller_policy.allowedBasenames = { L"PowerToys.Settings.exe" };
         settings_caller_policy.expectedVersion = interop_auth::GetOwnModuleVersion();
-        settings_caller_policy.requireMicrosoftSignature = true;
+        // [fork-identity] fork 构建没有微软代码签名，保留目录+basename+版本三重校验即可；
+        // 签名项若开启，Release 版 Settings 的 IPC 会被 runner 拒绝。
+        settings_caller_policy.requireMicrosoftSignature = false;
         settings_caller_policy.logReject = [](const interop_auth::AuthResult& r) {
             Logger::warn(L"Rejected unauthenticated Settings pipe client: pid={} image='{}' reason={}",
                          r.pid,

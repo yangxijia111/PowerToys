@@ -189,7 +189,9 @@ namespace QuickAccessHost
             qa_caller_policy.expectedDirectory = get_module_folderpath() + L"\\WinUI3Apps";
             qa_caller_policy.allowedBasenames = { L"PowerToys.QuickAccess.exe" };
             qa_caller_policy.expectedVersion = interop_auth::GetOwnModuleVersion();
-            qa_caller_policy.requireMicrosoftSignature = true;
+            // [fork-identity] fork 构建没有微软代码签名，保留目录+basename+版本三重校验即可；
+            // 签名项若开启，Release 版 Settings/QuickAccess 的 IPC 会被 runner 拒绝。
+            qa_caller_policy.requireMicrosoftSignature = false;
             qa_caller_policy.logReject = [](const interop_auth::AuthResult& r) {
                 Logger::warn(L"Rejected unauthenticated Quick Access pipe client: pid={} image='{}' reason={}",
                              r.pid,

@@ -15,8 +15,11 @@ using namespace registry::install_scope;
 
 namespace // Strings in this namespace should not be localized
 {
-    const wchar_t LATEST_RELEASE_ENDPOINT[] = L"https://api.github.com/repos/microsoft/PowerToys/releases/latest";
-    const wchar_t ALL_RELEASES_ENDPOINT[] = L"https://api.github.com/repos/microsoft/PowerToys/releases?per_page=100";
+    // [fork-identity] 更新端点指向 fork 自己的仓库，防止自动更新拉取并执行官方安装包。
+    // 注意：verify_installer_trust 仍只信任微软签名（fork 无证书时 fork 包会被安全拒绝，
+    // 详见 docs/IDENTITY_AUDIT.md §4-1）。
+    const wchar_t LATEST_RELEASE_ENDPOINT[] = L"https://api.github.com/repos/yangxijia111/PowerToys/releases/latest";
+    const wchar_t ALL_RELEASES_ENDPOINT[] = L"https://api.github.com/repos/yangxijia111/PowerToys/releases?per_page=100";
 
     const wchar_t LOCAL_BUILD_ERROR[] = L"Local build cannot be updated";
     const wchar_t NETWORK_ERROR[] = L"Network error";
