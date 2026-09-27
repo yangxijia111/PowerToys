@@ -41,6 +41,8 @@
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <!-- [fork-brand] 主项目同名 TargetName 会生成同路径 PCH，slnx 并行构建时 C4651/C2220；PCH 文件错开 -->
+      <PrecompiledHeaderOutputFile>$(OutDir)PowerToys.AutoHideCursor.Worker.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -60,6 +62,8 @@
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <!-- [fork-brand] 同上：PCH 文件与主项目错开，避免并行构建互踩 -->
+      <PrecompiledHeaderOutputFile>$(OutDir)PowerToys.AutoHideCursor.Worker.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
