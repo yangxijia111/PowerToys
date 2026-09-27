@@ -41,8 +41,9 @@ TRACELOGGING_DEFINE_PROVIDER(
 const DWORD USERNAME_DOMAIN_LEN = DNLEN + UNLEN + 2; // Domain Name + '\' + User Name + '\0'
 const DWORD USERNAME_LEN = UNLEN + 1;                // User Name + '\0'
 
-static const wchar_t *POWERTOYS_EXE_COMPONENT = L"{A2C66D91-3485-4D00-B04D-91844E6B345B}";
-static const wchar_t *POWERTOYS_UPGRADE_CODE = L"{42B84BF7-5FBF-473B-9C8B-049DC16F7708}";
+// [fork-identity] 与 src/common/utils/MsiUtils.h 同步的 fork 专属 MSI 身份（docs/IDENTITY_MAP.md）
+static const wchar_t *POWERTOYS_EXE_COMPONENT = L"{30261594-41A6-4509-AD09-FBC4E692F441}";
+static const wchar_t *POWERTOYS_UPGRADE_CODE = L"{78975C14-0AA0-41A7-99C2-55F44200A919}";
 
 constexpr inline const wchar_t *DataDiagnosticsRegKey = L"Software\\Classes\\PowerToys";
 constexpr inline const wchar_t *DataDiagnosticsRegValueName = L"AllowDataDiagnostics";

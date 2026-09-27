@@ -98,7 +98,8 @@
 
     <DirectoryRef Id="ApplicationProgramsFolder">
       <Component Id="PowerToysStartMenuShortcut">
-        <Shortcut Id="ApplicationStartMenuShortcut" Name="PowerToys (Preview)" Description="PowerToys - Windows system utilities to maximize productivity" Icon="powertoys.exe" IconIndex="0" Target="[!PowerToys.exe]" WorkingDirectory="INSTALLFOLDER">
+        <!-- [fork-identity] 快捷方式名与描述使用社区发行版品牌，与官方快捷方式区分 -->
+        <Shortcut Id="ApplicationStartMenuShortcut" Name="PowerToys Cuin" Description="PowerToys Cuin (Community Edition) - Windows system utilities to maximize productivity, based on Microsoft PowerToys" Icon="powertoys.exe" IconIndex="0" Target="[!PowerToys.exe]" WorkingDirectory="INSTALLFOLDER">
           <ShortcutProperty Key="System.AppUserModel.ID" Value="Microsoft.PowerToysWin32" />
         </Shortcut>
         <RemoveFolder Id="CleanUpStartMenuShortCut" Directory="ApplicationProgramsFolder" On="uninstall" />
@@ -112,7 +113,8 @@
         
         <!-- DesktopShortcutId is implicitly installed in HKCU, so WIX won't allow changing this reg value to HKLM. -->
         <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Name="desktopshorcutinstalled" Type="integer" Value="1" KeyPath="yes" />
-        <Shortcut Id="DesktopShortcutId" Name="PowerToys (Preview)" Description="PowerToys - Windows system utilities to maximize productivity" Target="[!PowerToys.exe]" WorkingDirectory="INSTALLFOLDER" Icon="powertoys.exe" Directory="DesktopFolder" />
+        <!-- [fork-identity] -->
+        <Shortcut Id="DesktopShortcutId" Name="PowerToys Cuin" Description="PowerToys Cuin (Community Edition) - Windows system utilities to maximize productivity, based on Microsoft PowerToys" Target="[!PowerToys.exe]" WorkingDirectory="INSTALLFOLDER" Icon="powertoys.exe" Directory="DesktopFolder" />
       </Component>
     </StandardDirectory>
   </Fragment>

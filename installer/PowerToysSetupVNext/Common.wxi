@@ -42,7 +42,8 @@
         <?define RegistryScope="HKCU" ?>
         <?define InstallScope="perUser" ?>
         <?define InstallPrivileges="limited" ?>
-        <?define UpgradeCodeGUID="D8B559DB-4C98-487A-A33F-50A8EEE42726" ?>
+        <!-- [fork-identity] fork 专属 perUser MSI 升级链；官方值 D8B559DB-4C98-487A-A33F-50A8EEE42726 不得用于 fork 自身身份（映射见 docs/IDENTITY_MAP.md） -->
+        <?define UpgradeCodeGUID="DA33EB25-63A5-4E9A-8B04-D8AE81BB888D" ?>
    <?else?>
         <?define PerMachineYesNo="yes"?>
         <?define MSIPath="MachineSetup"?>
@@ -51,7 +52,8 @@
         <?define RegistryScope="HKLM" ?>
         <?define InstallScope="perMachine" ?>
         <?define InstallPrivileges="elevated" ?>
-        <?define UpgradeCodeGUID="42B84BF7-5FBF-473B-9C8B-049DC16F7708" ?>
+        <!-- [fork-identity] fork 专属 perMachine MSI 升级链；官方值 42B84BF7-5FBF-473B-9C8B-049DC16F7708 不得用于 fork 自身身份（映射见 docs/IDENTITY_MAP.md） -->
+        <?define UpgradeCodeGUID="78975C14-0AA0-41A7-99C2-55F44200A919" ?>
   <?endif?>
 
   <!--

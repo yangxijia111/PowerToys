@@ -11,9 +11,12 @@
 
 namespace // Strings in this namespace should not be localized
 {
-    const inline wchar_t POWER_TOYS_UPGRADE_CODE[] = L"{42B84BF7-5FBF-473B-9C8B-049DC16F7708}";
-    const inline wchar_t POWER_TOYS_UPGRADE_CODE_USER[] = L"{D8B559DB-4C98-487A-A33F-50A8EEE42726}";
-    const inline wchar_t POWERTOYS_EXE_COMPONENT[] = L"{A2C66D91-3485-4D00-B04D-91844E6B345B}";
+    // [fork-identity] fork 专属 MSI 身份（与 installer/PowerToysSetupVNext/Common.wxi 保持一致），
+    // 用于探测 fork 自身旧版安装路径与更新白名单；官方码见 docs/IDENTITY_MAP.md。
+    // 组件 GUID 对应本 fork MSI 的 powertoys_exe 组件（installer/PowerToysSetupVNext/Core.wxs）。
+    const inline wchar_t POWER_TOYS_UPGRADE_CODE[] = L"{78975C14-0AA0-41A7-99C2-55F44200A919}";
+    const inline wchar_t POWER_TOYS_UPGRADE_CODE_USER[] = L"{DA33EB25-63A5-4E9A-8B04-D8AE81BB888D}";
+    const inline wchar_t POWERTOYS_EXE_COMPONENT[] = L"{30261594-41A6-4509-AD09-FBC4E692F441}";
 }
 
 std::optional<std::wstring> GetMsiPackageInstalledPath(bool perUser)

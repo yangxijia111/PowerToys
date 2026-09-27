@@ -254,11 +254,11 @@ class {{module.Name}} {
                 if ($this.Debug -eq $true) {
                     $SettingsExePath = "{{debugSettingsPath}}"
                 } else {
-                    $installation = Get-ChildItem HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | ForEach-Object { Get-ItemProperty $_.PsPath } | Where-Object { $_.DisplayName -eq "PowerToys (Preview)" -and $_.DisplayVersion -eq "{{version}}" }
+                    $installation = Get-ChildItem HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | ForEach-Object { Get-ItemProperty $_.PsPath } | Where-Object { $_.DisplayName -eq "PowerToys Cuin (Community Edition)" -and $_.DisplayVersion -eq "{{version}}" }
         
                     if (-not $installation)
                     {
-                        $installation = Get-ChildItem HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | ForEach-Object { Get-ItemProperty $_.PsPath } | Where-Object { $_.DisplayName -eq "PowerToys (Preview)" -and $_.DisplayVersion -eq "{{version}}" }
+                        $installation = Get-ChildItem HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | ForEach-Object { Get-ItemProperty $_.PsPath } | Where-Object { $_.DisplayName -eq "PowerToys Cuin (Community Edition)" -and $_.DisplayVersion -eq "{{version}}" }
                     }
                 
                     if ($installation) {
@@ -276,11 +276,11 @@ class {{module.Name}} {
 #else
         outputResult += $$"""
             [string] GetPowerToysSettingsPath() {
-                $installation = Get-ChildItem HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | ForEach-Object { Get-ItemProperty $_.PsPath } | Where-Object { $_.DisplayName -eq "PowerToys (Preview)" -and $_.DisplayVersion -eq "{{version}}" }
+                $installation = Get-ChildItem HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | ForEach-Object { Get-ItemProperty $_.PsPath } | Where-Object { $_.DisplayName -eq "PowerToys Cuin (Community Edition)" -and $_.DisplayVersion -eq "{{version}}" }
 
                 if (-not $installation)
                 {
-                    $installation = Get-ChildItem HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | ForEach-Object { Get-ItemProperty $_.PsPath } | Where-Object { $_.DisplayName -eq "PowerToys (Preview)" -and $_.DisplayVersion -eq "{{version}}" }
+                    $installation = Get-ChildItem HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | ForEach-Object { Get-ItemProperty $_.PsPath } | Where-Object { $_.DisplayName -eq "PowerToys Cuin (Community Edition)" -and $_.DisplayVersion -eq "{{version}}" }
                 }
 
                 if ($installation) {

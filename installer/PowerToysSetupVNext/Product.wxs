@@ -16,17 +16,25 @@
          - https://robmensching.com/blog/posts/2003/10/4/windows-installer-components-introduction/
            -->
 
-  <!-- [fork-brand] 社区发行版名称；Manufacturer/UpgradeCode 与上游保持一致以复用其打包结构 -->
-  <Package Name="PowerToys Cuin (Community Edition)" Language="1033" Version="$(var.Version)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCodeGUID)" Scope="$(var.InstallScope)">
+  <!-- [fork-identity] 社区发行版名称与发行者；UpgradeCode 为 fork 专属（docs/IDENTITY_MAP.md）。
+       Manufacturer 不再用 Microsoft Corporation，避免 ARP 发布者被误认为官方。 -->
+  <Package Name="PowerToys Cuin (Community Edition)" Language="1033" Version="$(var.Version)" Manufacturer="PowerToys Cuin Community" UpgradeCode="$(var.UpgradeCodeGUID)" Scope="$(var.InstallScope)">
 
-
-      
 
     <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed." />
 
     <Upgrade Id="$(var.UpgradeCodeGUID)">
       <UpgradeVersion Minimum="0.0.0" Maximum="$(var.Version)" Property="PREVIOUSVERSIONSINSTALLED" IncludeMinimum="yes" IncludeMaximum="no" />
     </Upgrade>
+
+    <!-- [fork-identity] 官方 Microsoft PowerToys 已装则阻止（互斥安装，仅检测不移除；官方码不是 fork 身份） -->
+    <Upgrade Id="42B84BF7-5FBF-473B-9C8B-049DC16F7708">
+      <UpgradeVersion Minimum="0.0.0" Property="OFFICIALPOWERTOYSMACHINEDETECTED" IncludeMinimum="yes" />
+    </Upgrade>
+    <Upgrade Id="D8B559DB-4C98-487A-A33F-50A8EEE42726">
+      <UpgradeVersion Minimum="0.0.0" Property="OFFICIALPOWERTOYSUSERDETECTED" IncludeMinimum="yes" />
+    </Upgrade>
+    <Launch Condition="NOT (OFFICIALPOWERTOYSMACHINEDETECTED OR OFFICIALPOWERTOYSUSERDETECTED)" Message="Microsoft PowerToys (official) is already installed on this system. To avoid overwriting each other's registration, files and settings, please uninstall the official version first. Coexistence is not supported by PowerToys Cuin (Community Edition)." />
 
     <MediaTemplate EmbedCab="yes" />
 
@@ -99,7 +107,7 @@
     <Property Id="INSTALLSTARTMENUSHORTCUT" Value="1" />
     <Property Id="WixShellExecTarget" Value="[#PowerToys_ActionRunner.exe]" />
 
-    <SetProperty Action="SetDEFAULTBOOTSTRAPPERINSTALLFOLDER" Id="DEFAULTBOOTSTRAPPERINSTALLFOLDER" Value="[$(var.DefaultInstallDir)]PowerToys" Before="SetBOOTSTRAPPERINSTALLFOLDER" Sequence="execute"></SetProperty>
+    <SetProperty Action="SetDEFAULTBOOTSTRAPPERINSTALLFOLDER" Id="DEFAULTBOOTSTRAPPERINSTALLFOLDER" Value="[$(var.DefaultInstallDir)]PowerToysCuin" Before="SetBOOTSTRAPPERINSTALLFOLDER" Sequence="execute"></SetProperty>
 
     <!-- In case we didn't receive a value from the bootstrapper. -->
     <SetProperty Action="SetBOOTSTRAPPERINSTALLFOLDER" Id="BOOTSTRAPPERINSTALLFOLDER" Value="[DEFAULTBOOTSTRAPPERINSTALLFOLDER]" Before="DetectPrevInstallPath" Sequence="execute" Condition="BOOTSTRAPPERINSTALLFOLDER = &quot;&quot;" />
@@ -289,7 +297,8 @@
   <!-- Installation directory structure -->
   <Fragment>
       <StandardDirectory Id="$(var.DefaultInstallDir)">
-        <Directory Id="INSTALLFOLDER" Name="PowerToys">
+        <!-- [fork-identity] 安装目录名与官方（PowerToys）隔离 -->
+        <Directory Id="INSTALLFOLDER" Name="PowerToysCuin">
           <Directory Id="BaseApplicationsAssetsFolder" Name="Assets">
           </Directory>
           <Directory Id="DSCModulesReferenceFolder" Name="DSCModules" />
