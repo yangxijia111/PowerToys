@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Globals">
@@ -8,6 +8,8 @@
     <RootNamespace>AutoHideCursorWorker</RootNamespace>
     <ProjectName>AutoHideCursorWorker</ProjectName>
   </PropertyGroup>
+  <!-- [fork-brand] VS2026 下两项目共享 OutDir 导致 PCH 互踩；Worker 与主项目须使用同一组 SPDLOG 宏（上游遗漏） -->
+  <Import Project="$(RepoRoot)deps\spdlog.props" />
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
