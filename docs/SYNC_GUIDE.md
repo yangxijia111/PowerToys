@@ -13,14 +13,40 @@
 | Presets 页面/VM | `src/settings-ui/Settings.UI/SettingsXAML/Views/PresetsPage.xaml(.cs)`、`ViewModels/Presets/*` | **纯新增** | 极低 |
 | OOBE 场景页 | `SettingsXAML/OOBE/Views/OobePresetPicker.xaml(.cs)` | **纯新增** | 极低 |
 | 覆盖检查脚本 | `tools/check_zh_cn_coverage.py` | **纯新增** | 无 |
+| **发行身份层（Phase 3）** | 见下方 §1.1 身份热点表 | 修改（带 `[fork-identity]` 锚点） | **高**（身份项被上游改动时必冲突） |
 | 设置导航分组 | `SettingsXAML/Views/ShellPage.xaml` | 重组 + 新增 2 项 | **高**（上游每加模块都改） |
 | 页面路由 | `SettingsXAML/App.xaml.cs` | +1 case | 中 |
 | 品牌标题/About | `Strings/en-us/Resources.resw`（4 个标题 key + 少量新增） | 修改+追加 | 中 |
 | GeneralPage 署名 | `SettingsXAML/Views/GeneralPage.xaml(.cs)` | +1 卡片/2 属性 | 中 |
 | OOBE 注册 | `OobeWindow.xaml(.cs)`、`OOBE/Enums/PowerToysModules.cs`、`OOBE/ViewModel/OobeShellViewModel.cs` | +1 项 | 中 |
-| 安装器名称 | `installer/PowerToysSetupVNext/Product.wxs` | 2 处字符串 | 低 |
+| 安装器名称 | `installer/PowerToysSetupVNext/Product.wxs`、`Core.wxs` | 字符串 + 身份项 | 低（字符串）/ 见 §1.1 |
 | 托盘品牌串 | `src/runner/tray_icon.cpp`（搜索 `[fork-brand]`） | 3 处字符串 | 低 |
 | 图标资产 | `Assets/Settings/icon.ico`、`logo*.png`、`runner/svgs/icon.ico` | 二进制替换 | 低 |
+
+### 1.1 发行身份热点表（Phase 3 新增，合并时逐一核对）
+
+上游改动下列文件时最容易与 fork 身份隔离冲突。**处理原则：凡 `[fork-identity]` 锚点 hunk，保留 fork 侧取值；
+上游若升级了"官方检测"逻辑（官方 UpgradeCode 42B84BF7 / D8B559DB 只允许出现在检测锚位置），
+吸收其新逻辑但保持锚点语义。合并后必跑 `python tools/check_fork_identity.py`。**
+
+| 文件 | fork 侧身份内容 | 冲突风险 |
+|---|---|---|
+| `installer/PowerToysSetupVNext/Common.wxi` | 两个 fork UpgradeCodeGUID（78975C14 / DA33EB25） | 中 |
+| `installer/PowerToysSetupVNext/PowerToys.wxs` | Bundle 身份（0A739D71）+ 官方检测 ProductSearch/Condition 重写 | **高**（上游改动检测逻辑必冲突） |
+| `installer/PowerToysSetupVNext/Product.wxs` | Manufacturer、官方 OnlyDetect Upgrade + Launch、安装目录 PowerToysCuin | 中 |
+| `installer/PowerToysSetupVNext/Core.wxs` | 快捷方式名/描述 | 低 |
+| `src/common/utils/MsiUtils.h` | fork MSI 身份常量（与 CA 同步） | 低 |
+| `installer/PowerToysSetupCustomActionsVNext/CustomAction.cpp` | fork MSI 身份常量（与 MsiUtils.h 同步） | 低 |
+| `src/common/interop/shared_constants.h:13` | `APPDATA_PATH = PowerToysCuin` | 低（但影响全仓 C++ 重编） |
+| `src/common/SettingsAPI/settings_helpers.cpp` | 设置根收敛引用 APPDATA_PATH | 低 |
+| `src/settings-ui/Settings.UI.Library/SettingPath.cs` | 路径拼接引用 Branding 常量 | 低 |
+| `src/common/updating/updating.cpp:18-19` | 更新端点指向 fork 仓库 | 中（上游改更新逻辑时） |
+| `src/common/updating/installer.cpp` | 产品名锚 `POWERTOYS_PRODUCT_NAME_PREFIX` | 低 |
+| `src/runner/settings_window.cpp`、`quick_access_host.cpp` | `requireMicrosoftSignature = false` | 中（上游演进鉴权策略时） |
+| `src/dsc/.../DSCGeneration.cs` | 卸载项检测名 | 低 |
+| `src/common/ManagedTelemetry/Telemetry/EtwTrace.cs`、`UITestAutomation.Next/*` | 字面量 `PowerToysCuin`（工程不引用 ManagedCommon，人工同步） | 低 |
+| `src/modules/colorPicker/ColorPicker.ModuleServices/ColorPickerService.cs` | ColorPicker 历史路径 | 低 |
+| `src/settings-ui/Settings.UI.UnitTests/ForkIdentityTests.cs`、`tools/check_fork_identity.py` | **纯新增**校验资产 | 无 |
 
 > 原则：自定义尽量"新增文件"；修改上游文件时改动行数最少化，并打 `[fork-brand]` 注释锚点。
 
@@ -42,8 +68,9 @@ git merge upstream/main
 
 # 4) 验证（全部通过才能继续）
 python tools/check_zh_cn_coverage.py --fail-on-orphan   # 中文层孤儿检查
+python tools/check_fork_identity.py                     # [fork-identity] 发行身份校验
 powershell tools/build/build-essentials.ps1             # 快速构建（x64 Debug）
-dotnet 跑 Settings.UI.UnitTests                          # 或 msbuild /t:Test
+dotnet 跑 Settings.UI.UnitTests                          # 或 msbuild /t:Test（含 ForkIdentityTests）
 
 # 5) 全量验证（发布前）
 powershell tools/build/build.ps1 -Platform x64 -Configuration Release
