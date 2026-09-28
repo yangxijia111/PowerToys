@@ -15,6 +15,13 @@ import re
 import sys
 from pathlib import Path
 
+# Windows CI 控制台可能默认 cp1252，输出含中文的断言信息前强制 UTF-8（不可编码时降级而非崩溃）
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 REPO = Path(__file__).resolve().parent.parent
 
 FORK_UPGRADE_CODE_MACHINE = "78975C14-0AA0-41A7-99C2-55F44200A919"

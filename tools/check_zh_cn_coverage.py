@@ -23,6 +23,13 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
+# Windows CI 控制台可能默认 cp1252，输出含中文的断言信息前强制 UTF-8（不可编码时降级而非崩溃）
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 REPO_ROOT_HINT = "请在仓库根目录运行"
 DEFAULT_EN = "src/settings-ui/Settings.UI/Strings/en-us/Resources.resw"
 DEFAULT_ZH = "src/settings-ui/Settings.UI/Strings/zh-CN/Resources.resw"
