@@ -21,6 +21,7 @@
 #include <common/updating/updating.h>
 #include <common/updating/updateState.h>
 #include <common/utils/appMutex.h>
+#include <common/utils/MsiUtils.h>
 #include <common/utils/elevation.h>
 #include <common/utils/os-detect.h>
 #include <common/utils/processApi.h>
@@ -525,6 +526,19 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR l
     {
         open_menu_from_another_instance(settings_window);
         return 0;
+    }
+
+    // [fork-identity] 官方 Microsoft PowerToys 并存检测：仅在发现并存时给出明确提示，
+    // 不自动修改/卸载官方版本。检测锚与文案见 docs/IDENTITY_AUDIT.md §0 与 CODE_SIGNING.md。
+    if (IsOfficialPowerToysInstalled())
+    {
+        Logger::warn(L"Official Microsoft PowerToys is installed alongside this build; coexistence is not supported.");
+        notifications::show_toast(
+            L"Official Microsoft PowerToys is also installed on this system. "
+            L"Running both versions is not supported: shell extensions, notifications and settings may overwrite each other. "
+            L"Please keep only one version installed.",
+            L"PowerToys Cuin",
+            notifications::toast_params{});
     }
 
     bool openOobe = false;

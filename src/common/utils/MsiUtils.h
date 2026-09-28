@@ -17,9 +17,34 @@ namespace // Strings in this namespace should not be localized
     const inline wchar_t POWER_TOYS_UPGRADE_CODE[] = L"{78975C14-0AA0-41A7-99C2-55F44200A919}";
     const inline wchar_t POWER_TOYS_UPGRADE_CODE_USER[] = L"{DA33EB25-63A5-4E9A-8B04-D8AE81BB888D}";
     const inline wchar_t POWERTOYS_EXE_COMPONENT[] = L"{30261594-41A6-4509-AD09-FBC4E692F441}";
+
+    // [fork-identity] 官方 Microsoft PowerToys 的升级链锚点，仅用于"并存检测提示"，
+    // 绝不用于修改、覆盖或卸载官方产品。与 docs/IDENTITY_MAP.md §1 的检测锚一致。
+    const inline wchar_t OFFICIAL_POWER_TOYS_UPGRADE_CODE[] = L"{42B84BF7-5FBF-473B-9C8B-049DC16F7708}";
+    const inline wchar_t OFFICIAL_POWER_TOYS_UPGRADE_CODE_USER[] = L"{D8B559DB-4C98-487A-A33F-50A8EEE42726}";
 }
 
-std::optional<std::wstring> GetMsiPackageInstalledPath(bool perUser)
+// 按 UpgradeCode 枚举并校验产品注册状态（存在即返回 true）。
+inline bool is_msi_upgrade_code_present(const wchar_t* upgrade_code)
+{
+    constexpr size_t guid_length = 39;
+    wchar_t product_ID[guid_length];
+    if (ERROR_SUCCESS != MsiEnumRelatedProductsW(upgrade_code, 0, 0, product_ID))
+    {
+        return false;
+    }
+    return INSTALLSTATE_DEFAULT == MsiQueryProductStateW(product_ID);
+}
+
+// [fork-identity] 官方 PowerToys 是否已在本机安装（任一 scope）。供 runner 启动时给出
+// "不支持同时安装" 提示；检测结果不触发任何自动化动作。
+inline bool IsOfficialPowerToysInstalled()
+{
+    return is_msi_upgrade_code_present(OFFICIAL_POWER_TOYS_UPGRADE_CODE) ||
+           is_msi_upgrade_code_present(OFFICIAL_POWER_TOYS_UPGRADE_CODE_USER);
+}
+
+inline std::optional<std::wstring> GetMsiPackageInstalledPath(bool perUser)
 {
     constexpr size_t guid_length = 39;
     wchar_t product_ID[guid_length];
@@ -66,7 +91,7 @@ std::optional<std::wstring> GetMsiPackageInstalledPath(bool perUser)
     return path;
 }
 
-std::wstring GetMsiPackagePath()
+inline std::wstring GetMsiPackagePath()
 {
     std::wstring package_path;
     wchar_t GUID_product_string[39];
