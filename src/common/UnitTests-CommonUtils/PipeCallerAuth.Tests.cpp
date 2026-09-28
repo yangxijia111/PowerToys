@@ -181,6 +181,64 @@ namespace UnitTestsCommonUtils
             Assert::AreEqual(L"bad-directory", res.reasonCode);
         }
 
+        // [fork-identity] Preview 构建关闭微软签名校验后，版本防降级仍必须 fail-closed：
+        // 期望版本 = 自身版本 + 1 时，即使路径/basename 全部合法也要拒绝。
+        TEST_METHOD(EnabledPolicy_VersionMismatch_Rejects)
+        {
+            ConnectedPipe cp;
+            Assert::IsTrue(MakeConnectedPipe(cp), L"failed to set up connected pipe");
+
+            const std::wstring exe = CurrentExePath();
+            interop_auth::CallerPolicy policy;
+            policy.enabled = true;
+            policy.expectedDirectory = DirOf(exe);
+            policy.allowedBasenames = { BaseOf(exe) };
+            const unsigned long long own = interop_auth::GetOwnModuleVersion();
+            Assert::IsTrue(own != 0, L"test host must expose a nonzero file version");
+            policy.expectedVersion = own + 1; // any downgrade/upgrade mismatch
+            policy.requireMicrosoftSignature = false;
+
+            bool logged = false;
+            policy.logReject = [&](const interop_auth::AuthResult&) { logged = true; };
+
+            interop_auth::VerificationCache cache;
+            const auto res = interop_auth::AuthenticateClient(cp.server, policy, cache);
+            Assert::IsFalse(res.accepted, L"version-mismatched caller must be rejected even without signature check");
+            Assert::IsTrue(logged, L"rejection must invoke the log callback");
+        }
+
+        // [fork-identity] fork 的 Preview 安全边界组合：无签名校验 + 目录+basename+版本三重校验。
+        // 与 runner 实际策略一致时放行，且签名关闭不能弱化其他校验（与上面 reject 用例互补）。
+        TEST_METHOD(ForkPreviewPolicy_CombinationStillEnforced)
+        {
+            const std::wstring exe = CurrentExePath();
+
+            interop_auth::CallerPolicy acceptPolicy;
+            acceptPolicy.enabled = true;
+            acceptPolicy.expectedDirectory = DirOf(exe);
+            acceptPolicy.allowedBasenames = { BaseOf(exe) };
+            acceptPolicy.expectedVersion = interop_auth::GetOwnModuleVersion();
+            acceptPolicy.requireMicrosoftSignature = false;
+
+            {
+                ConnectedPipe cp;
+                Assert::IsTrue(MakeConnectedPipe(cp), L"failed to set up connected pipe");
+                interop_auth::VerificationCache cache;
+                const auto res = interop_auth::AuthenticateClient(cp.server, acceptPolicy, cache);
+                Assert::IsTrue(res.accepted, L"exact fork policy should accept the legitimate client");
+            }
+
+            {
+                ConnectedPipe cp;
+                Assert::IsTrue(MakeConnectedPipe(cp), L"failed to set up connected pipe");
+                interop_auth::CallerPolicy wrongDirPolicy = acceptPolicy;
+                wrongDirPolicy.expectedDirectory = L"C:\\Windows\\System32";
+                interop_auth::VerificationCache cache;
+                const auto res = interop_auth::AuthenticateClient(cp.server, wrongDirPolicy, cache);
+                Assert::IsFalse(res.accepted, L"signature-off policy must still reject wrong directory");
+            }
+        }
+
         // Each pipe server owns its own cache, so the same client process is evaluated independently
         // per policy — an accept verdict in one server's cache never bleeds into another server that
         // has a different (stricter) policy.
