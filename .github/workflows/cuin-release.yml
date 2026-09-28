@@ -56,16 +56,45 @@ jobs:
         shell: cmd
         run: msbuild src\modules\cmdpal\Microsoft.CmdPal.UI\Microsoft.CmdPal.UI.csproj /p:Configuration=Release /p:Platform=x64 /p:CIBuild=true /m /v:q /nologo
 
+      # CustomActions 工程链接 wcautil.lib/dutil.lib，vcxproj 硬编码从
+      # $(NUGET_PACKAGES)\wixtoolset.wcautil\<ver>\build\native\v14\x64 取库（全局包
+      # 布局）。WixToolset.WcaUtil 只存在于 CA 的 packages.config（旧式还原布局不同），
+      # 也不在 Wix SDK 的 PackageReference 依赖链里，全新环境不会出现。用 shim csproj
+      # 把 CA packages.config 声明的原生包按全局布局还原进默认全局包目录。
+      - name: Restore WiX native libs for installer CA (wcautil/dutil)
+        shell: pwsh
+        run: |
+          $pkg = [xml](Get-Content installer\PowerToysSetupCustomActionsVNext\packages.config)
+          $refs = ($pkg.packages.package | ForEach-Object {
+            '<PackageReference Include="{0}" Version="{1}" />' -f $_.id, $_.version
+          }) -join "`n"
+          $shimDir = Join-Path $env:RUNNER_TEMP 'wix-ca-restore'
+          New-Item -ItemType Directory -Force -Path $shimDir | Out-Null
+          @"
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <TargetFramework>netstandard2.0</TargetFramework>
+              <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+            </PropertyGroup>
+            <ItemGroup>
+          $refs
+            </ItemGroup>
+          </Project>
+          "@ | Set-Content (Join-Path $shimDir 'wix-ca-restore.csproj')
+          dotnet restore (Join-Path $shimDir 'wix-ca-restore.csproj')
+
       # 上游 steps-build-installer-vnext.yml：先构建 CustomActions / SilentFilesInUseBA，
       # 前者的构建事件完成 .wxs → .bk 备份与 generateAllFileComponents 文件清单生成。
       #
       # 随后的 MSI 构建不沿用上游的 IsPipeline=1 环境变量方案：Resources.wxs 的 21 语言
       # 本地化资源块以 env.IsPipeline 门控，上游配套从其本地化流水线下载各语言卫星资源，
-      # fork 无法获取这些产物。因此这里用 -p:PreBuildEvent= 清空 prebuild（publish.cmd
+      # fork 无法获取这些产物。因此这里用 /p:PreBuildEvent= 清空 prebuild（publish.cmd
       # 已在前面单独执行；MonacoSRC.wxs 使用仓内版本，Phase 3/4 实测可用），并用
       # RunBuildEvents=false 清空 PostBuildEvent（防止 .wxs 被回退成未生成状态）。
       - name: Build installer support DLLs + prep wxs
         shell: cmd
+        env:
+          NUGET_PACKAGES: C:\Users\runneradmin\.nuget\packages
         run: msbuild installer\PowerToysSetup.slnx -restore -graph /t:"PowerToysSetupCustomActionsVNext;SilentFilesInUseBAFunction" /p:RunBuildEvents=true /p:RestorePackagesConfig=true /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
       - name: Build perMachine MSI
