@@ -89,7 +89,7 @@ jobs:
       # 随后的 MSI 构建不沿用上游的 IsPipeline=1 环境变量方案：Resources.wxs 的 21 语言
       # 本地化资源块以 env.IsPipeline 门控，上游配套从其本地化流水线下载各语言卫星资源，
       # fork 无法获取这些产物。因此这里用 /p:PreBuildEvent= 清空 prebuild（publish.cmd
-      # 已在前面单独执行；MonacoSRC.wxs 使用仓内版本，Phase 3/4 实测可用），并用
+      # 已在前面单独执行；MonacoSRC.wxs 由下方步骤显式生成），并用
       # RunBuildEvents=false 清空 PostBuildEvent（防止 .wxs 被回退成未生成状态）。
       - name: Build installer support DLLs + prep wxs
         shell: cmd
@@ -97,13 +97,28 @@ jobs:
           NUGET_PACKAGES: C:\Users\runneradmin\.nuget\packages
         run: msbuild installer\PowerToysSetup.slnx -restore -graph /t:"PowerToysSetupCustomActionsVNext;SilentFilesInUseBAFunction" /p:RunBuildEvents=true /p:RestorePackagesConfig=true /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
+      # MonacoSRC.wxs 是 gitignore 的生成文件（MSI prebuild 里 generateMonacoWxs.ps1
+      # 的产物，prebuild 已被清空），全新检出不存在。用仓库自带脚本显式生成，
+      # heat 工具路径取自全局包目录（WixToolset.Heat 经 MSI 工程 PackageReference 还原）。
+      - name: Generate MonacoSRC.wxs (heat harvest)
+        shell: pwsh
+        env:
+          NUGET_PACKAGES: C:\Users\runneradmin\.nuget\packages
+        run: |
+          powershell -NoProfile -ExecutionPolicy Unrestricted -File installer\PowerToysSetupVNext\generateMonacoWxs.ps1 -monacoWxsFile "installer\PowerToysSetupVNext\MonacoSRC.wxs" -Platform "x64" -nugetHeatPath "$env:NUGET_PACKAGES\wixtoolset.heat\5.0.2"
+
+      # MSI 构建附加说明：
+      # - EnableDefaultEmbeddedResourceItems=false：wixproj 默认 glob **/*.wxl 会把
+      #   Bootstrapper obj 目录中扩展生成的 RtfTheme.wxl（en-us）误当作本地化资源，
+      #   导致 MSI 产物落到 en-us\ 子目录且 Bootstrapper 按根路径引用 MSI 时失败；
+      #   工程内并无真实 wxl，关闭该默认项即可恢复根目录的 neutral 输出。
       - name: Build perMachine MSI
         shell: cmd
-        run: msbuild installer\PowerToysSetup.slnx -restore /t:PowerToysInstallerVNext /p:RunBuildEvents=false /p:PreBuildEvent= /p:PerUser=false /p:BuildProjectReferences=false /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+        run: msbuild installer\PowerToysSetup.slnx -restore /t:PowerToysInstallerVNext /p:RunBuildEvents=false /p:PreBuildEvent= /p:PerUser=false /p:BuildProjectReferences=false /p:CIBuild=true /p:EnableDefaultEmbeddedResourceItems=false /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
       - name: Build perUser MSI
         shell: cmd
-        run: msbuild installer\PowerToysSetup.slnx /t:PowerToysInstallerVNext /p:RunBuildEvents=false /p:PreBuildEvent= /p:PerUser=true /p:BuildProjectReferences=false /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+        run: msbuild installer\PowerToysSetup.slnx /t:PowerToysInstallerVNext /p:RunBuildEvents=false /p:PreBuildEvent= /p:PerUser=true /p:BuildProjectReferences=false /p:CIBuild=true /p:EnableDefaultEmbeddedResourceItems=false /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
       # fork 只发布 perUser Bootstrapper 作为默认 EXE（perMachine 用户可直接安装 MSI）
       - name: Build Bootstrapper (perUser)
