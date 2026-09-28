@@ -32,6 +32,18 @@
 
 项目处于**早期开发阶段**(详见 [Roadmap](#roadmap路线图)),当前仅建议从源码构建体验,暂不提供安装包下载。
 
+### Preview Notice(预览版须知)
+
+- 本项目处于 **Binary Preview** 阶段,首个候选版本为 `v0.1.0-preview.1`;公开发布前,安装包不会在此提供下载(候选包仅存在于 CI 构建产物中)。
+- 这是**非 Microsoft 官方产品**;需要官方版本请前往 [microsoft/PowerToys](https://github.com/microsoft/PowerToys)。
+- **不支持与官方 PowerToys 同时安装**:安装本版本前请先退出并卸载官方 PowerToys;若二者并存,Shell 扩展、通知与设置可能互相覆盖,Fork 启动时也会给出明确提示。
+- 当前安装包**未经代码签名**(Unsigned Preview limitation):
+  - 自动更新已禁用,更新需从 GitHub Releases 手动下载;
+  - Windows SmartScreen 可能提示"未知发布者";
+  - Win11 新式右键菜单模块(PowerRename、图像调整大小、File Locksmith、New+)因需要签名可能不可用;
+  - 经典右键菜单与其余全部模块不受影响(已在真机验证)。
+- 卸载本应用**不会删除**用户配置(`%LOCALAPPDATA%\PowerToysCuin`),与官方行为一致。
+
 ### 与上游的关系
 
 - 本项目 Fork 自 [microsoft/PowerToys](https://github.com/microsoft/PowerToys),核心功能由 Microsoft 及上游社区开发。
@@ -160,6 +172,18 @@ git merge upstream/main
 - **Better information hierarchy**: reorganized Settings navigation so utilities are easier to find.
 
 The project is in an **early stage** (see the [Roadmap](#roadmap-1)). For now it is source-build only; no installer downloads are provided yet.
+
+### Preview Notice
+
+- This project is in the **Binary Preview** stage; the first candidate is `v0.1.0-preview.1`. Installer downloads are **not** provided here until the public release (candidates exist only as CI build artifacts).
+- This is **not an official Microsoft product**; for the official build go to [microsoft/PowerToys](https://github.com/microsoft/PowerToys).
+- **Co-installation with official PowerToys is not supported**: exit and uninstall the official version before installing this one. If both are installed, shell extensions, notifications and settings may overwrite each other — the fork also detects this at startup and warns explicitly.
+- The installer is **unsigned** (Unsigned Preview limitation):
+  - automatic updates are disabled; update manually from GitHub Releases;
+  - Windows SmartScreen may warn about an unknown publisher;
+  - Win11 context-menu modules (PowerRename, Image Resizer, File Locksmith, New+) may be unavailable because they require signing;
+  - classic context menus and all other modules are not affected (verified on real hardware).
+- Uninstalling the app does **not** delete user configuration (`%LOCALAPPDATA%\PowerToysCuin`), matching upstream behavior.
 
 ### Relationship with the upstream
 
