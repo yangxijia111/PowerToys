@@ -36,7 +36,7 @@
 
 - 本项目处于 **Binary Preview** 阶段,首个候选版本为 `v0.1.0-preview.1`;公开发布前,安装包不会在此提供下载(候选包仅存在于 CI 构建产物中)。
 - 这是**非 Microsoft 官方产品**;需要官方版本请前往 [microsoft/PowerToys](https://github.com/microsoft/PowerToys)。
-- **不支持与官方 PowerToys 同时安装**:安装本版本前请先退出并卸载官方 PowerToys;若二者并存,Shell 扩展、通知与设置可能互相覆盖,Fork 启动时也会给出明确提示。
+- **不支持与官方 PowerToys 同时安装**:安装本版本前请先退出并卸载官方 PowerToys——检测到官方版本时,Fork 安装器会直接阻止安装(错误 1603 并给出说明);若官方版本在 Fork 之后安装,二者 Shell 扩展、通知与设置可能互相覆盖,Fork 启动时也会给出明确提示。
 - 当前安装包**未经代码签名**(Unsigned Preview limitation):
   - 自动更新已禁用,更新需从 GitHub Releases 手动下载;
   - Windows SmartScreen 可能提示"未知发布者";
@@ -59,7 +59,7 @@
 | 设置导航重组 | 将 31 个工具从 5 个分组重新组织为 6 个分组:系统工具 / 窗口管理 / 输入与启动 / 屏幕与显示 / 文件管理 / 开发与高级。工具的名称、图标、快捷方式均不变。 |
 | 场景预设(Presets) | 内置 5 个场景:通用 / 开发 / 学习 / 办公 / 设计。一键批量启用该场景的推荐工具;只启用、不关闭已有功能;可重复应用。 |
 | OOBE 快速设置向导 | 首次启动时新增“快速设置”页:选择场景 → 确认推荐工具 → 一键应用,可随时跳过。 |
-| 品牌化 | 设置窗口标题、托盘“关于”、安装器产品名品牌化为 PowerToys Cuin (Community Edition);应用图标在上游底图上叠加青色 C 角标;常规设置页新增版本署名卡片(链接上游项目)。内部命名空间、GUID、COM ID 均未改动,保证与上游代码同步的能力。 |
+| 品牌化 | 设置窗口标题、托盘“关于”、安装器产品名品牌化为 PowerToys Cuin (Community Edition);应用图标在上游底图上叠加青色 C 角标;常规设置页新增版本署名卡片(链接上游项目)。核心代码命名空间与 PowerToys 模块的 COM CLSID 仍保持上游原值,以便同步上游修复;而安装器(UpgradeCode / Bundle 身份)、应用数据目录(`%LOCALAPPDATA%\PowerToysCuin`)、更新检查端点等**发行身份已为 Fork 隔离**;当前不支持与官方 PowerToys 同时安装(安装器会阻止,见 [docs/IDENTITY_AUDIT.md](docs/IDENTITY_AUDIT.md))。 |
 
 品牌与自定义代码通过 `[fork-brand]` 注释锚点标记,便于与上游同步(见 [同步上游](#同步上游))。
 
@@ -141,9 +141,10 @@ git merge upstream/main
 - [x] 设置导航分组重组
 - [x] 场景预设(Presets)与 OOBE 快速设置向导
 - [x] 品牌化(名称 / 图标 / 安装器产品名)
+- [x] 发行身份与官方隔离(安装器 UpgradeCode / Bundle / AppData / 更新端点;官方版本在场时阻止安装)
 - [ ] 更多设置页 zh-CN 覆盖(高频优先,持续进行)
 - [ ] 首个自有扩展模块(CustomModule)
-- [ ] 安装器整合自有语言包;与官方版本共存/迁移说明
+- [ ] 安装器整合自有语言包;从官方版本迁移到 Fork 的说明
 - [ ] 公开 Preview 构建
 
 ### Contributing
@@ -177,7 +178,7 @@ The project is in an **early stage** (see the [Roadmap](#roadmap-1)). For now it
 
 - This project is in the **Binary Preview** stage; the first candidate is `v0.1.0-preview.1`. Installer downloads are **not** provided here until the public release (candidates exist only as CI build artifacts).
 - This is **not an official Microsoft product**; for the official build go to [microsoft/PowerToys](https://github.com/microsoft/PowerToys).
-- **Co-installation with official PowerToys is not supported**: exit and uninstall the official version before installing this one. If both are installed, shell extensions, notifications and settings may overwrite each other — the fork also detects this at startup and warns explicitly.
+- **Co-installation with official PowerToys is not supported**: exit and uninstall the official version before installing this one — when an official version is detected, the fork installer blocks installation outright (error 1603 with an explanation). If the official version is installed *after* the fork, shell extensions, notifications and settings may overwrite each other — the fork also detects this at startup and warns explicitly.
 - The installer is **unsigned** (Unsigned Preview limitation):
   - automatic updates are disabled; update manually from GitHub Releases;
   - Windows SmartScreen may warn about an unknown publisher;
@@ -200,7 +201,7 @@ The project is in an **early stage** (see the [Roadmap](#roadmap-1)). For now it
 | Settings navigation regrouping | Reorganizes the 31 utilities from 5 groups into 6: system tools / window management / input & launcher / screen & display / file management / developer & advanced. Names, icons, and shortcuts stay unchanged. |
 | Scenario presets | 5 built-in presets: General / Developer / Learning / Office / Design. One click enables the recommended utilities for a scenario; it only enables, never disables, existing features and can be re-applied. |
 | OOBE quick setup | A new "Quick setup" page on first run: pick a scenario → confirm the recommended utilities → apply in one click. Skippable at any time. |
-| Branding | Settings window titles, tray About, and the installer product name are branded as PowerToys Cuin (Community Edition); the app icon adds a cyan "C" badge on top of the upstream icon; the general settings page gains an attribution card linking to the upstream project. Namespaces, GUIDs, and COM IDs are untouched to keep upstream syncs manageable. |
+| Branding | Settings window titles, tray About, and the installer product name are branded as PowerToys Cuin (Community Edition); the app icon adds a cyan "C" badge on top of the upstream icon; the general settings page gains an attribution card linking to the upstream project. Core code namespaces and the PowerToys module COM CLSIDs keep their upstream values so upstream fixes sync cleanly, while **distribution identities are fork-isolated**: installer UpgradeCode / Bundle identity, app data folder (`%LOCALAPPDATA%\PowerToysCuin`), and the update-check endpoint. Coexistence with the official Microsoft PowerToys is not supported (the installer blocks it; see [docs/IDENTITY_AUDIT.md](docs/IDENTITY_AUDIT.md)). |
 
 Branding and custom code are marked with `[fork-brand]` comment anchors for upstream syncing (see [Syncing with upstream](#syncing-with-upstream)).
 
@@ -281,9 +282,10 @@ git merge upstream/main
 - [x] Settings navigation regrouping
 - [x] Scenario presets and OOBE quick setup
 - [x] Branding (name / icon / installer product name)
+- [x] Distribution identity isolated from the official build (installer UpgradeCode / Bundle / AppData / update endpoint; installation is blocked when an official version is present)
 - [ ] More zh-CN coverage in Settings (high-frequency first, ongoing)
 - [ ] First custom module (CustomModule)
-- [ ] Installer with the fork language pack; coexistence/migration notes with the official build
+- [ ] Installer with the fork language pack; migration notes from the official build to the fork
 - [ ] Public Preview builds
 
 ### Contributing
