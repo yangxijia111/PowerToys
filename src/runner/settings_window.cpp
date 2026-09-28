@@ -30,6 +30,13 @@
 #include "settings_window.h"
 #include "bug_report.h"
 
+// [fork-identity] fork 统一签名配置入口：Binary Preview 无微软代码签名，pipe 客户端鉴权关闭签名项，
+// 保留 目录+basename+版本 三重校验（审计见 docs/IDENTITY_AUDIT.md、威胁模型见 docs/CODE_SIGNING.md）。
+// fork 引入代码签名后：在仓库根 ForkSigning.props 启用签名，并定义 FORK_PIPE_REQUIRE_MICROSOFT_SIGNATURE=1 恢复。
+#ifndef FORK_PIPE_REQUIRE_MICROSOFT_SIGNATURE
+    #define FORK_PIPE_REQUIRE_MICROSOFT_SIGNATURE 0
+#endif
+
 #define BUFSIZE 1024
 
 TwoWayPipeMessageIPC* current_settings_ipc = NULL;
@@ -594,7 +601,7 @@ void run_settings_window(bool show_oobe_window, bool show_scoobe_window, std::op
         settings_caller_policy.expectedVersion = interop_auth::GetOwnModuleVersion();
         // [fork-identity] fork 构建没有微软代码签名，保留目录+basename+版本三重校验即可；
         // 签名项若开启，Release 版 Settings 的 IPC 会被 runner 拒绝。
-        settings_caller_policy.requireMicrosoftSignature = false;
+        settings_caller_policy.requireMicrosoftSignature = FORK_PIPE_REQUIRE_MICROSOFT_SIGNATURE != 0;
         settings_caller_policy.logReject = [](const interop_auth::AuthResult& r) {
             Logger::warn(L"Rejected unauthenticated Settings pipe client: pid={} image='{}' reason={}",
                          r.pid,

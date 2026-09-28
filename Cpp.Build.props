@@ -70,7 +70,8 @@
       <!-- TODO: _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS for VS 2026 (MSVC 14.51+). The STL turned
            <experimental/coroutine> into a hard error (STL1011), and C++/WinRT's base.h still falls back to it when
            __cpp_lib_coroutine isn't defined at include time. Remove once C++/WinRT no longer references the experimental header. -->
-      <PreprocessorDefinitions>_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!-- [fork-identity] fork 签名配置入口值（ForkSigning.props）传入 C++ 宏，恢复 pipe 签名校验用 -->
+      <PreprocessorDefinitions>FORK_PIPE_REQUIRE_MICROSOFT_SIGNATURE=$(ForkPipeRequireMicrosoftSignature);_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <!-- CLR + CFG are not compatible >:{ -->
       <ControlFlowGuard Condition="'$(CLRSupport)' == ''">Guard</ControlFlowGuard>
       <DebugInformationFormat Condition="'%(ControlFlowGuard)' == 'Guard'">ProgramDatabase</DebugInformationFormat>

@@ -3,6 +3,8 @@
     <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
   </PropertyGroup>
   <Import Project="$(RepoRoot)src\Version.props" />
+  <!-- [fork-identity] fork 签名统一配置（见 docs/CODE_SIGNING.md）；文件不存在时不导入 -->
+  <Import Project="$(RepoRoot)ForkSigning.props" Condition="Exists('$(RepoRoot)ForkSigning.props')" />
   <Import Project="$(RepoRoot)src\PhiSilicaLaf.props" />
   <PropertyGroup>
     <Copyright>Copyright (C) Microsoft Corporation. All rights reserved.</Copyright>
