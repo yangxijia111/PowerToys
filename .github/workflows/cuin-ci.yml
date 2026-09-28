@@ -24,6 +24,8 @@ jobs:
         run: python tools/check_fork_identity.py
       - name: zh-CN coverage check
         run: python tools/check_zh_cn_coverage.py --fail-on-orphan
+      - name: Release asset naming check
+        run: python tools/check_release_assets.py
 
   build-and-test:
     name: Build core & unit tests (x64 Release)
@@ -39,6 +41,14 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      # 上游构建方式（.pipelines/v2/templates/job-build-project.yml）：packages.config
+      # 形式的 C++ 原生包（CppWinRT / ImplementationLibrary 等）由 MSBuild restore 配合
+      # RestorePackagesConfig=true 还原到仓库根 packages\ 目录；单纯 /restore 只处理
+      # PackageReference，会漏掉这些包。这里先在解决方案级做一次完整 restore，再构建
+      # 单个工程。
+      - name: Restore solution (incl. packages.config)
+        run: msbuild PowerToys.slnx /t:Restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
       - name: Build runner (C++ toolchain sanity)
         run: msbuild src\runner\runner.vcxproj /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
@@ -52,3 +62,23 @@ jobs:
           $vstest = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
           if (-not $vstest) { throw "vstest.console.exe not found" }
           & $vstest $dll /logger:"console;verbosity=normal"
+
+      - name: Build & run C++ common unit tests
+        shell: pwsh
+        run: |
+          # 单独构建该 vcxproj 时 $(SolutionDir) 为空，OutDir 相对工程目录
+          msbuild src\common\UnitTests-CommonUtils\UnitTests-CommonUtils.vcxproj /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+          $dll = "src\common\UnitTests-CommonUtils\x64\Release\tests\UnitTestsCommonUtils\Common.Utils.UnitTests.dll"
+          if (-not (Test-Path $dll)) { throw "Common.Utils.UnitTests.dll not found" }
+          $vstest = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+          # 提权依赖的 3 个 pipe 安全测试在 GitHub 托管 runner（非提权会话）上无法按
+          # 测试设计运行（上游 CI 在提权 agent 上执行全部测试）。这里将它们排除并
+          # 显式标记为“未执行（环境限制）”——它们既不算通过也不算失败。
+          $elevated = @(
+            'RejectedClientRapidCloseNeverReleasesPipeName',
+            'ReplacementListenerIsReservedBeforeRejectedHandlerStarts',
+            'NormalSameUserCannotModifyProtectedDaclOrCreateAnotherServerInstance'
+          )
+          $filter = ($elevated | ForEach-Object { "FullyQualifiedName!~$_" }) -join '&'
+          & $vstest $dll "/TestCaseFilter:$filter" /logger:"console;verbosity=normal"
+          Write-Output "::warning::C++ pipe 安全测试 3 项未执行（需提权环境，GitHub 托管 runner 不满足测试设计）：$($elevated -join ', ')。上游 CI 在提权 agent 上执行；结果记录见 docs/RELEASE_CHECKLIST.md。"
