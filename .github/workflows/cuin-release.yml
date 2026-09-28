@@ -48,6 +48,21 @@ jobs:
         shell: cmd
         run: msbuild PowerToys.slnx /restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
+      # 上游 job-build-project.yml 在主构建外还构建两个工具解决方案并生成 DSC
+      # manifests——安装器 Tools.wxs / DscResources.wxs 的 payload 依赖它们
+      # （x64\Release\Tools\、x64\Release\StylesReportTool\、x64\Release\DSCModules\）。
+      - name: Generate DSC manifests
+        shell: pwsh
+        run: .\.pipelines\generateDscManifests.ps1 -BuildPlatform 'x64' -BuildConfiguration 'Release' -RepoRoot "$env:GITHUB_WORKSPACE"
+
+      - name: Build BugReportTool
+        shell: cmd
+        run: msbuild tools\BugReportTool\BugReportTool.sln -restore -graph /p:RestorePackagesConfig=true /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
+      - name: Build StylesReportTool
+        shell: cmd
+        run: msbuild tools\StylesReportTool\StylesReportTool.sln -restore -graph /p:RestorePackagesConfig=true /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
       - name: Publish installer payload (preview handlers)
         shell: cmd
         run: cd installer\PowerToysSetupVNext && publish.cmd x64
