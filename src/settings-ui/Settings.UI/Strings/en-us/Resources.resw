@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -6781,6 +6781,9 @@ Text uses the current drawing color.</value>
   </data>
   <data name="General_ForkUpstreamLink.Content" xml:space="preserve">
     <value>View the upstream project</value>
+  </data>
+  <data name="General_ForkPreviewNotice.Text" xml:space="preserve">
+    <value>Unsigned preview build: automatic updates are disabled (update manually from GitHub Releases), and the Win11 context-menu modules (PowerRename, Image Resizer, File Locksmith, New+) may be unavailable because they require code signing. Classic context menus and all other modules are not affected.</value>
   </data>
   <data name="Shell_PresetPicker.Content" xml:space="preserve">
     <value>Quick setup</value>

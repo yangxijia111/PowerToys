@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation
+// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -31,6 +31,9 @@ namespace Microsoft.PowerToys.Settings.UI.Views
 
         // [fork-brand] 发行版署名（Branding.cs 为常量源，此处取资源本地化文案）
         public string ForkAboutLine => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkAboutLine.Text");
+
+        // [fork-identity] Unsigned Preview limitation 提示（docs/CODE_SIGNING.md）
+        public string ForkPreviewNotice => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkPreviewNotice.Text");
 
         public string ForkUpstreamLinkText => Helpers.ResourceLoaderInstance.ResourceLoader.GetString("General_ForkUpstreamLink.Content");
 

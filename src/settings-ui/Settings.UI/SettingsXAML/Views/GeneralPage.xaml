@@ -94,6 +94,11 @@
                                         Margin="-12,0,0,0"
                                         Content="{x:Bind ForkUpstreamLinkText, Mode=OneWay}"
                                         NavigateUri="https://github.com/microsoft/PowerToys" />
+                                    <!-- [fork-identity] Unsigned Preview limitation（文案 en-us/zh-CN resw 同步） -->
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        TextWrapping="Wrap"
+                                        Text="{x:Bind ForkPreviewNotice, Mode=OneWay}" />
                                 </StackPanel>
                             </tkcontrols:SettingsCard>
                         </tkcontrols:SettingsExpander.Items>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   本文件是本 Fork 的简体中文资源层（二次开发自有文件，非上游 loc farm 产物）。
   覆盖策略：仅收录需要优化翻译或重新说明的 key；未收录的 key 自动回退到 en-us。
@@ -297,6 +297,9 @@
   </data>
   <data name="General_ForkAboutLine.Text" xml:space="preserve">
     <value>PowerToys Cuin 是基于 Microsoft PowerToys（MIT 许可证）的社区发行版，并非微软官方产品。</value>
+  </data>
+  <data name="General_ForkPreviewNotice.Text" xml:space="preserve">
+    <value>未签名的预览版本：自动更新已禁用（请从 GitHub Releases 手动更新）；Win11 新式右键菜单模块（PowerRename、图像调整大小、File Locksmith、New+）因需要代码签名可能不可用。经典右键菜单与其余模块不受影响。</value>
   </data>
   <data name="General_ForkUpstreamLink.Content" xml:space="preserve">
     <value>查看上游项目</value>
