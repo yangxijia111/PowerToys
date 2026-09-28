@@ -102,7 +102,10 @@ def main() -> int:
     msi_utils = read("src/common/utils/MsiUtils.h")
     custom_action = read("installer/PowerToysSetupCustomActionsVNext/CustomAction.cpp")
     check("MsiUtils.h UpgradeCode 为 fork 值", FORK_UPGRADE_CODE_MACHINE in msi_utils and FORK_UPGRADE_CODE_USER in msi_utils)
-    check("MsiUtils.h 不含官方码", OFFICIAL_UPGRADE_CODE_MACHINE not in msi_utils and OFFICIAL_UPGRADE_CODE_USER not in msi_utils)
+    # Phase 4：官方码允许以 OFFICIAL_ 检测锚常量形式出现（并存检测），不得作为 fork 自身身份
+    check("MsiUtils.h 官方码仅以检测锚常量出现",
+          f"OFFICIAL_POWER_TOYS_UPGRADE_CODE[] = L\"{{{OFFICIAL_UPGRADE_CODE_MACHINE}}}\"" in msi_utils
+          and f"OFFICIAL_POWER_TOYS_UPGRADE_CODE_USER[] = L\"{{{OFFICIAL_UPGRADE_CODE_USER}}}\"" in msi_utils)
     check(
         "CustomAction.cpp 与 MsiUtils.h 身份常量一致",
         FORK_UPGRADE_CODE_MACHINE in custom_action and OFFICIAL_UPGRADE_CODE_MACHINE not in custom_action,
@@ -134,11 +137,44 @@ def main() -> int:
     # --- pipe 鉴权（fork 无微软签名，签名项必须关闭；目录/版本校验保留） ---
     for rel in ("src/runner/settings_window.cpp", "src/runner/quick_access_host.cpp"):
         text = read(rel)
-        check(f"{rel} requireMicrosoftSignature = false", "requireMicrosoftSignature = false" in text)
+        check(f"{rel} pipe 签名校验走统一宏", "requireMicrosoftSignature = FORK_PIPE_REQUIRE_MICROSOFT_SIGNATURE != 0" in text)
 
     # --- DSC 检测名 ---
     dsc = read("src/dsc/PowerToys.Settings.DSC.Schema.Generator/DSCGeneration.cs")
     check("DSCGeneration.cs 卸载项检测名为 fork 品牌", 'DisplayName -eq "%s"' % FORK_PRODUCT_NAME in dsc and '"PowerToys (Preview)"' not in dsc)
+
+    # --- Phase 4：版本体系（单一来源 src/Version.props） ---
+    version_props = read("src/Version.props")
+    check("Version.props 版本为 0.1.0", "<Version>0.1.0</Version>" in version_props)
+    check("Version.props 渠道为 preview", "<VersionChannel>preview</VersionChannel>" in version_props)
+    check("Version.props preview 序号为 1", "<VersionPreview>1</VersionPreview>" in version_props)
+    check("版本生成链含 preview 后缀宏", "VERSION_PREVIEW_SUFFIX" in read("src/common/version/version.vcxproj"))
+    check("显示版本拼接 preview 后缀", "VERSION_PREVIEW_SUFFIX" in read("src/common/version/version.h"))
+
+    # 发行资产命名
+    check("MSI 产物名为 PowerToysCuin-<ver>", 'MSIName="PowerToysCuin-$(var.VersionFile)-$(var.PowerToysPlatform).msi"' in common_wxi)
+    for proj in ("installer/PowerToysSetupVNext/PowerToysInstallerVNext.wixproj",
+                 "installer/PowerToysSetupVNext/PowerToysBootstrapperVNext.wixproj"):
+        text = read(proj)
+        check(f"{Path(proj).name} OutputName 为 PowerToysCuin", "PowerToysCuin-$(VersionFile)-$(Platform)" in text)
+
+    # 不安全自更新禁用（检查/下载执行分离）
+    update_utils = read("src/runner/UpdateUtils.cpp")
+    check("自动更新安装已禁用（FORK_AUTO_UPDATE_INSTALL_ENABLED=false）",
+          "FORK_AUTO_UPDATE_INSTALL_ENABLED = false" in update_utils)
+    check("更新入口重定向到 fork Releases 页", "FORK_RELEASES_PAGE_URL" in update_utils and "yangxijia111/PowerToys/releases" in update_utils)
+
+    # 官方后装运行时检测（仅提示，不动官方）
+    msi_utils_text = msi_utils
+    check("官方并存检测锚存在（仅检测用）",
+          "OFFICIAL_POWER_TOYS_UPGRADE_CODE" in msi_utils_text and "IsOfficialPowerToysInstalled" in msi_utils_text)
+    check("runner 启动时给出并存提示", "IsOfficialPowerToysInstalled" in read("src/runner/main.cpp"))
+
+    # IPC 签名降级与统一配置入口
+    check("pipe 签名校验走统一宏", "FORK_PIPE_REQUIRE_MICROSOFT_SIGNATURE" in read("src/runner/settings_window.cpp")
+          and "FORK_PIPE_REQUIRE_MICROSOFT_SIGNATURE" in read("src/runner/quick_access_host.cpp"))
+    check("签名配置入口存在且默认关闭", (REPO / "ForkSigning.props").exists()
+          and "ForkCodeSignEnabled" in (REPO / "ForkSigning.props").read_text(encoding="utf-8"))
 
     # --- fork 三个身份 GUID 不得在身份声明/检测锚之外复用为组件 GUID ---
     # PowerToys.wxs 是唯一合法引用处：Bundle 身份 define + fork 两个 MSI 码的 ProductSearch 检测锚。
