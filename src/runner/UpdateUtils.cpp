@@ -111,8 +111,31 @@ void ShowOpenSettingsForUpdate(const new_version_download_info& info)
                                 L"powertoys://open_overview/");
 }
 
+// [fork-identity] Binary Preview 阶段禁用自动更新安装：fork 尚无自己的代码签名与更新信任链，
+// verify_installer_trust 只信任微软签名（fork 包会被安全拒绝）。因此：
+//  - 后台 PeriodicUpdateWorker 整体短路（不检查、不下载、不执行）；
+//  - 所有"立即更新/检查更新"入口（toast 按钮、Settings 按钮）改为打开 fork 的 GitHub Releases 页，
+//    由用户手动下载并自行校验 SHA256（见 docs/RELEASE_CHECKLIST.md）。
+// 拥有 fork 签名信任链后，将本常量改为 true 即恢复上游更新流水线（docs/CODE_SIGNING.md）。
+constexpr bool FORK_AUTO_UPDATE_INSTALL_ENABLED = false;
+const wchar_t FORK_RELEASES_PAGE_URL[] = L"https://github.com/yangxijia111/PowerToys/releases";
+
+void OpenForkReleasesPage()
+{
+    ShellExecuteW(nullptr, L"open", FORK_RELEASES_PAGE_URL, nullptr, nullptr, SW_SHOWNORMAL);
+}
+
 SHELLEXECUTEINFOW LaunchPowerToysUpdate(const wchar_t* cmdline)
 {
+    if constexpr (!FORK_AUTO_UPDATE_INSTALL_ENABLED)
+    {
+        // Binary Preview：不下载、不执行任何更新包，改为引导用户到 Releases 页手动更新。
+        Logger::info(L"Auto update install is disabled in Binary Preview; opening releases page instead.");
+        OpenForkReleasesPage();
+        SHELLEXECUTEINFOW sei{ sizeof(sei) };
+        return sei;
+    }
+
     std::wstring powertoysUpdaterPath;
     powertoysUpdaterPath = get_module_folderpath();
 
@@ -245,6 +268,11 @@ void ProcessNewVersionInfo(const github_version_info& version_info,
 
 void PeriodicUpdateWorker()
 {
+    if constexpr (!FORK_AUTO_UPDATE_INSTALL_ENABLED)
+    {
+        // [fork-identity] Binary Preview：后台自动更新 worker 不启动。
+        return;
+    }
     for (;;)
     {
         auto state = UpdateState::read();
@@ -309,6 +337,12 @@ void PeriodicUpdateWorker()
 void CheckForUpdatesCallback()
 {
     Logger::trace(L"Check for updates callback invoked");
+    if constexpr (!FORK_AUTO_UPDATE_INSTALL_ENABLED)
+    {
+        // [fork-identity] Binary Preview：手动检查更新直接打开 Releases 页（版本检查与下载/执行分离）。
+        OpenForkReleasesPage();
+        return;
+    }
     auto state = UpdateState::read();
     try
     {
