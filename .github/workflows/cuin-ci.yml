@@ -1,0 +1,54 @@
+# [fork-identity] fork 自有 CI：push / PR 时的快速验证。
+# 重型构建（Release 全量 + 安装器）见 release workflow（cuin-release.yml，手动/打 tag 触发）。
+name: Cuin CI
+
+on:
+  push:
+    branches: [cuin-dev, main]
+  pull_request:
+    branches: [cuin-dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-checks:
+    name: Static checks (identity & zh-CN)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Fork identity check
+        run: python tools/check_fork_identity.py
+      - name: zh-CN coverage check
+        run: python tools/check_zh_cn_coverage.py --fail-on-orphan
+
+  build-and-test:
+    name: Build core & unit tests (x64 Release)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build runner (C++ toolchain sanity)
+        run: msbuild src\runner\runner.vcxproj /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
+      - name: Build Settings unit tests
+        run: msbuild src\settings-ui\Settings.UI.UnitTests\Settings.UI.UnitTests.csproj /restore /p:Configuration=Release /p:Platform=x64 /m /v:q /nologo
+
+      - name: Run Settings unit tests
+        shell: pwsh
+        run: |
+          $dll = "Release\x64\tests\SettingsTests\net10.0-windows10.0.26100.0\Settings.UI.UnitTests.dll"
+          $vstest = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+          if (-not $vstest) { throw "vstest.console.exe not found" }
+          & $vstest $dll /logger:"console;verbosity=normal"

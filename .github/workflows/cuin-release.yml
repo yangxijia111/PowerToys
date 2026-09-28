@@ -1,0 +1,81 @@
+# [fork-identity] fork Release 构建流水线。
+# 触发：手动 (workflow_dispatch) 或 push v* tag。**只上传构建 artifact，不创建 GitHub Release、
+# 不发布资产**——公开发布必须经项目负责人明确确认（docs/RELEASE_CHECKLIST.md §8）。
+name: Cuin Release Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  build-release:
+    name: Release x64 + Installer
+    runs-on: windows-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup Python (checks)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Static checks
+        run: |
+          python tools/check_fork_identity.py
+          python tools/check_zh_cn_coverage.py --fail-on-orphan
+
+      - name: Restore & full Release build (PowerToys.slnx)
+        run: msbuild PowerToys.slnx /restore /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
+      - name: Build installer (MSI perUser + Bootstrapper)
+        shell: pwsh
+        run: |
+          # publish payload（上游本地构建分支）
+          cmd /c "cd installer\PowerToysSetupVNext && publish.cmd x64"
+          # 组件清单生成（CA 项目事件的等价步骤，保持 .bk 供 PostBuild 还原）
+          $wxs = @('AdvancedPaste','Awake','BaseApplications','CmdPal','ColorPicker','Core','DscResources','EnvironmentVariables','FileExplorerPreview','FileLocksmith','Hosts','ImageResizer','KeyboardManager','LightSwitch','NewPlus','Peek','PowerDisplay','PowerRename','RegistryPreview','Resources','Run','Settings','ShortcutGuide','Tools','WinAppSDK','WinUI3Applications','Workspaces','MonacoSRC')
+          foreach ($w in $wxs) { Copy-Item "installer\PowerToysSetupVNext\$w.wxs" "installer\PowerToysSetupVNext\$w.wxs.bk" -Force }
+          powershell -NoProfile -ExecutionPolicy Unrestricted -File installer\PowerToysSetupVNext\generateAllFileComponents.ps1 -platform x64
+          # CmdPal msix 需要 CIBuild 构建产出
+          msbuild src\modules\cmdpal\Microsoft.CmdPal.UI\Microsoft.CmdPal.UI.csproj /p:Configuration=Release /p:Platform=x64 /p:CIBuild=true /m /v:q /nologo
+          # perUser MSI + Bootstrapper
+          msbuild installer\PowerToysSetup.slnx /t:PowerToysInstallerVNext /p:Configuration=Release /p:Platform=x64 /p:PerUser=true /p:PreBuildEvent= /restore /m /v:m /nologo
+          msbuild installer\PowerToysSetup.slnx /t:PowerToysBootstrapperVNext /p:Configuration=Release /p:Platform=x64 /p:PerUser=true /p:PreBuildEvent= /restore /m /v:m /nologo
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $dll = "Release\x64\tests\SettingsTests\net10.0-windows10.0.26100.0\Settings.UI.UnitTests.dll"
+          $vstest = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+          & $vstest $dll /logger:"console;verbosity=normal"
+
+      - name: Collect artifacts + SHA256
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path artifacts | Out-Null
+          $files = Get-ChildItem "installer\PowerToysSetupVNext\x64\Release" -Recurse -Include "PowerToysCuin-*.exe","PowerToysCuin-*.msi"
+          if (-not $files) { throw "no installer artifacts found" }
+          $files | Copy-Item -Destination artifacts
+          $hashes = $files | ForEach-Object { (Get-FileHash $_.FullName -Algorithm SHA256).Hash + "  " + $_.Name }
+          $hashes | Set-Content artifacts\SHA256SUMS.txt
+          Get-Content artifacts\SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cuin-release-candidate
+          path: artifacts/*
+          if-no-files-found: error
