@@ -1,6 +1,11 @@
 # [fork-identity] fork Release 构建流水线。
 # 触发：手动 (workflow_dispatch) 或 push v* tag。**只上传构建 artifact，不创建 GitHub Release、
 # 不发布资产**——公开发布必须经项目负责人明确确认（docs/RELEASE_CHECKLIST.md §8）。
+#
+# 构建 / restore 方式对齐上游 .pipelines/v2/templates：
+# - packages.config 形式的 C++ 原生包由 MSBuild restore + RestorePackagesConfig=true 还原；
+# - 安装器按上游 steps-build-installer-vnext.yml 顺序构建：支持 DLL（构建事件完成 .wxs
+#   备份与文件清单生成）→ perMachine MSI → perUser MSI → Bootstrapper。
 name: Cuin Release Build
 
 on:
@@ -37,41 +42,106 @@ jobs:
         run: |
           python tools/check_fork_identity.py
           python tools/check_zh_cn_coverage.py --fail-on-orphan
+          python tools/check_release_assets.py
 
       - name: Restore & full Release build (PowerToys.slnx)
-        run: msbuild PowerToys.slnx /restore /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+        shell: cmd
+        run: msbuild PowerToys.slnx /restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
-      - name: Build installer (MSI perUser + Bootstrapper)
-        shell: pwsh
-        run: |
-          # publish payload（上游本地构建分支）
-          cmd /c "cd installer\PowerToysSetupVNext && publish.cmd x64"
-          # 组件清单生成（CA 项目事件的等价步骤，保持 .bk 供 PostBuild 还原）
-          $wxs = @('AdvancedPaste','Awake','BaseApplications','CmdPal','ColorPicker','Core','DscResources','EnvironmentVariables','FileExplorerPreview','FileLocksmith','Hosts','ImageResizer','KeyboardManager','LightSwitch','NewPlus','Peek','PowerDisplay','PowerRename','RegistryPreview','Resources','Run','Settings','ShortcutGuide','Tools','WinAppSDK','WinUI3Applications','Workspaces','MonacoSRC')
-          foreach ($w in $wxs) { Copy-Item "installer\PowerToysSetupVNext\$w.wxs" "installer\PowerToysSetupVNext\$w.wxs.bk" -Force }
-          powershell -NoProfile -ExecutionPolicy Unrestricted -File installer\PowerToysSetupVNext\generateAllFileComponents.ps1 -platform x64
-          # CmdPal msix 需要 CIBuild 构建产出
-          msbuild src\modules\cmdpal\Microsoft.CmdPal.UI\Microsoft.CmdPal.UI.csproj /p:Configuration=Release /p:Platform=x64 /p:CIBuild=true /m /v:q /nologo
-          # perUser MSI + Bootstrapper
-          msbuild installer\PowerToysSetup.slnx /t:PowerToysInstallerVNext /p:Configuration=Release /p:Platform=x64 /p:PerUser=true /p:PreBuildEvent= /restore /m /v:m /nologo
-          msbuild installer\PowerToysSetup.slnx /t:PowerToysBootstrapperVNext /p:Configuration=Release /p:Platform=x64 /p:PerUser=true /p:PreBuildEvent= /restore /m /v:m /nologo
+      - name: Publish installer payload (preview handlers)
+        shell: cmd
+        run: cd installer\PowerToysSetupVNext && publish.cmd x64
+
+      - name: Build CmdPal msix (CIBuild)
+        shell: cmd
+        run: msbuild src\modules\cmdpal\Microsoft.CmdPal.UI\Microsoft.CmdPal.UI.csproj /p:Configuration=Release /p:Platform=x64 /p:CIBuild=true /m /v:q /nologo
+
+      # 上游 steps-build-installer-vnext.yml：先构建 CustomActions / SilentFilesInUseBA，
+      # 前者的构建事件完成 .wxs → .bk 备份与 generateAllFileComponents 文件清单生成。
+      #
+      # 随后的 MSI 构建不沿用上游的 IsPipeline=1 环境变量方案：Resources.wxs 的 21 语言
+      # 本地化资源块以 env.IsPipeline 门控，上游配套从其本地化流水线下载各语言卫星资源，
+      # fork 无法获取这些产物。因此这里用 -p:PreBuildEvent= 清空 prebuild（publish.cmd
+      # 已在前面单独执行；MonacoSRC.wxs 使用仓内版本，Phase 3/4 实测可用），并用
+      # RunBuildEvents=false 清空 PostBuildEvent（防止 .wxs 被回退成未生成状态）。
+      - name: Build installer support DLLs + prep wxs
+        shell: cmd
+        run: msbuild installer\PowerToysSetup.slnx -restore -graph /t:"PowerToysSetupCustomActionsVNext;SilentFilesInUseBAFunction" /p:RunBuildEvents=true /p:RestorePackagesConfig=true /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
+      - name: Build perMachine MSI
+        shell: cmd
+        run: msbuild installer\PowerToysSetup.slnx -restore /t:PowerToysInstallerVNext /p:RunBuildEvents=false /p:PreBuildEvent= /p:PerUser=false /p:BuildProjectReferences=false /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
+      - name: Build perUser MSI
+        shell: cmd
+        run: msbuild installer\PowerToysSetup.slnx /t:PowerToysInstallerVNext /p:RunBuildEvents=false /p:PreBuildEvent= /p:PerUser=true /p:BuildProjectReferences=false /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
+      # fork 只发布 perUser Bootstrapper 作为默认 EXE（perMachine 用户可直接安装 MSI）
+      - name: Build Bootstrapper (perUser)
+        shell: cmd
+        run: msbuild installer\PowerToysSetup.slnx -restore /t:PowerToysBootstrapperVNext /p:PerUser=true /p:BuildProjectReferences=false /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
       - name: Run unit tests
         shell: pwsh
         run: |
           $dll = "Release\x64\tests\SettingsTests\net10.0-windows10.0.26100.0\Settings.UI.UnitTests.dll"
           $vstest = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+          if (-not $vstest) { throw "vstest.console.exe not found" }
           & $vstest $dll /logger:"console;verbosity=normal"
 
+      - name: Run C++ common unit tests
+        shell: pwsh
+        run: |
+          $dll = "x64\Release\tests\UnitTestsCommonUtils\Common.Utils.UnitTests.dll"
+          if (-not (Test-Path $dll)) { throw "Common.Utils.UnitTests.dll not found" }
+          $vstest = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+          # 3 个 pipe 安全测试需要提权会话（上游 CI 在提权 agent 上执行全部测试；
+          # GitHub 托管 runner 无法提供）。排除并显式标记“未执行（环境限制）”，
+          # 不计为通过也不计为失败。记录见 docs/RELEASE_CHECKLIST.md。
+          $elevated = @(
+            'RejectedClientRapidCloseNeverReleasesPipeName',
+            'ReplacementListenerIsReservedBeforeRejectedHandlerStarts',
+            'NormalSameUserCannotModifyProtectedDaclOrCreateAnotherServerInstance'
+          )
+          $filter = ($elevated | ForEach-Object { "FullyQualifiedName!~$_" }) -join '&'
+          & $vstest $dll "/TestCaseFilter:$filter" /logger:"console;verbosity=normal"
+          Write-Output "::warning::C++ pipe 安全测试 3 项未执行（需提权环境）：$($elevated -join ', ')"
+
+      # 资产收集：期望文件名清单与 Version.props / 安装器工程的同步由
+      # tools/check_release_assets.py（本 workflow 的 Static checks 步骤）强制保证；
+      # 缺任一资产 / 出现在多个位置 / 目标重名一律立即失败；SHA256SUMS 使用最终发布文件名。
       - name: Collect artifacts + SHA256
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Path artifacts | Out-Null
-          $files = Get-ChildItem "installer\PowerToysSetupVNext\x64\Release" -Recurse -Include "PowerToysCuin-*.exe","PowerToysCuin-*.msi"
-          if (-not $files) { throw "no installer artifacts found" }
-          $files | Copy-Item -Destination artifacts
-          $hashes = $files | ForEach-Object { (Get-FileHash $_.FullName -Algorithm SHA256).Hash + "  " + $_.Name }
+          $ErrorActionPreference = 'Stop'
+          # 改版本号时必须同步更新此清单（check_release_assets.py 会在构建前拦截遗漏）
+          $expected = @(
+            "PowerToysCuin-0.1.0-preview.1-x64.exe",
+            "PowerToysCuin-0.1.0-preview.1-x64-perUser.msi",
+            "PowerToysCuin-0.1.0-preview.1-x64-perMachine.msi"
+          )
+          $roots = @(
+            "installer\PowerToysSetupVNext\x64\Release\UserSetup",
+            "installer\PowerToysSetupVNext\x64\Release\MachineSetup"
+          )
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          foreach ($name in $expected) {
+            $found = @($roots | ForEach-Object { Join-Path $_ $name } | Where-Object { Test-Path $_ })
+            if ($found.Count -eq 0) { throw "缺少预期发行资产：$name（产物清单见 installer\PowerToysSetupVNext\x64\Release）" }
+            if ($found.Count -gt 1) { throw "资产 $name 出现在多个位置：$($found -join ', ')" }
+            $dest = Join-Path 'artifacts' $name
+            if (Test-Path $dest) { throw "目标已存在，拒绝覆盖：$dest" }
+            Copy-Item $found[0] $dest
+          }
+          $payload = Get-ChildItem artifacts -File | Where-Object Name -ne 'SHA256SUMS.txt' | Sort-Object Name
+          $hashes = foreach ($f in $payload) { "{0}  {1}" -f (Get-FileHash $f.FullName -Algorithm SHA256).Hash, $f.Name }
           $hashes | Set-Content artifacts\SHA256SUMS.txt
+          # artifact 目录必须恰好包含 4 个文件
+          $finalNames = (Get-ChildItem artifacts -File).Name | Sort-Object
+          $wanted = ($expected + @('SHA256SUMS.txt')) | Sort-Object
+          $diff = Compare-Object $finalNames $wanted
+          if ($diff) { throw "artifact 目录与预期资产清单不一致：`n$($diff | Out-String)" }
+          Get-ChildItem artifacts -File | Sort-Object Name | Format-Table Name, Length -AutoSize
           Get-Content artifacts\SHA256SUMS.txt
 
       - uses: actions/upload-artifact@v4

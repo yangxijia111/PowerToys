@@ -151,12 +151,17 @@ def main() -> int:
     check("版本生成链含 preview 后缀宏", "VERSION_PREVIEW_SUFFIX" in read("src/common/version/version.vcxproj"))
     check("显示版本拼接 preview 后缀", "VERSION_PREVIEW_SUFFIX" in read("src/common/version/version.h"))
 
-    # 发行资产命名
-    check("MSI 产物名为 PowerToysCuin-<ver>", 'MSIName="PowerToysCuin-$(var.VersionFile)-$(var.PowerToysPlatform).msi"' in common_wxi)
-    for proj in ("installer/PowerToysSetupVNext/PowerToysInstallerVNext.wixproj",
-                 "installer/PowerToysSetupVNext/PowerToysBootstrapperVNext.wixproj"):
-        text = read(proj)
-        check(f"{Path(proj).name} OutputName 为 PowerToysCuin", "PowerToysCuin-$(VersionFile)-$(Platform)" in text)
+    # 发行资产命名（perUser/perMachine 必须不同名；完整防回归检查见 tools/check_release_assets.py）
+    check("perUser MSI 产物名带 -perUser 后缀",
+          'MSIName="PowerToysCuin-$(var.VersionFile)-$(var.PowerToysPlatform)-perUser.msi"' in common_wxi)
+    check("perMachine MSI 产物名带 -perMachine 后缀",
+          'MSIName="PowerToysCuin-$(var.VersionFile)-$(var.PowerToysPlatform)-perMachine.msi"' in common_wxi)
+    installer_wixproj = read("installer/PowerToysSetupVNext/PowerToysInstallerVNext.wixproj")
+    check("MSI 工程两个 scope 的 OutputName 区分 -perUser/-perMachine 后缀",
+          "PowerToysCuin-$(VersionFile)-$(Platform)-perUser" in installer_wixproj
+          and "PowerToysCuin-$(VersionFile)-$(Platform)-perMachine" in installer_wixproj)
+    check("Bootstrapper OutputName 为 PowerToysCuin",
+          "PowerToysCuin-$(VersionFile)-$(Platform)" in read("installer/PowerToysSetupVNext/PowerToysBootstrapperVNext.wixproj"))
 
     # 不安全自更新禁用（检查/下载执行分离）
     update_utils = read("src/runner/UpdateUtils.cpp")

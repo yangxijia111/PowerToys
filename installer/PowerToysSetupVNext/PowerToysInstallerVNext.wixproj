@@ -93,8 +93,9 @@ call powershell.exe -NonInteractive -executionpolicy Unrestricted -File $(MSBuil
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>{b6e94700-df38-41f6-a3fd-18b69674ab1e}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName Condition=" '$(PerUser)' != 'true' ">PowerToysCuin-$(VersionFile)-$(Platform)</OutputName>
-    <OutputName Condition=" '$(PerUser)' == 'true' ">PowerToysCuin-$(VersionFile)-$(Platform)</OutputName>
+    <!-- [fork-identity] perUser/perMachine 产物必须不同名，防止发布资产互相覆盖 -->
+    <OutputName Condition=" '$(PerUser)' != 'true' ">PowerToysCuin-$(VersionFile)-$(Platform)-perMachine</OutputName>
+    <OutputName Condition=" '$(PerUser)' == 'true' ">PowerToysCuin-$(VersionFile)-$(Platform)-perUser</OutputName>
     <OutputType>Package</OutputType>
     <SuppressAclReset>True</SuppressAclReset>
     <NuGetPackageImportStamp>

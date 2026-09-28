@@ -37,7 +37,8 @@
   <?if $(var.PerUser) = "true"?>
         <?define PerMachineYesNo="no"?>
         <?define MSIPath="UserSetup"?>
-        <?define MSIName="PowerToysCuin-$(var.VersionFile)-$(var.PowerToysPlatform).msi"?>
+        <!-- [fork-identity] 与 perMachine 产物不同名（Bundle 按此名引用 MSI） -->
+        <?define MSIName="PowerToysCuin-$(var.VersionFile)-$(var.PowerToysPlatform)-perUser.msi"?>
         <?define DefaultInstallDir="LocalAppDataFolder" ?>
         <?define RegistryScope="HKCU" ?>
         <?define InstallScope="perUser" ?>
@@ -47,7 +48,8 @@
    <?else?>
         <?define PerMachineYesNo="yes"?>
         <?define MSIPath="MachineSetup"?>
-        <?define MSIName="PowerToysCuin-$(var.VersionFile)-$(var.PowerToysPlatform).msi"?>
+        <!-- [fork-identity] 与 perUser 产物不同名（Bundle 按此名引用 MSI） -->
+        <?define MSIName="PowerToysCuin-$(var.VersionFile)-$(var.PowerToysPlatform)-perMachine.msi"?>
         <?define DefaultInstallDir="ProgramFiles64Folder" ?>
         <?define RegistryScope="HKLM" ?>
         <?define InstallScope="perMachine" ?>
