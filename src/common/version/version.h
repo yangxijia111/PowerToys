@@ -41,6 +41,9 @@ inline std::wstring get_product_version(bool includeV = true)
         version += std::to_wstring(VERSION_BUILD);
     }
 
+    // [fork-identity] 显示版本带 preview 后缀（如 v0.1.0-preview.1）；get_std_product_version 保持纯数字供比较。
+    version += VERSION_PREVIEW_SUFFIX;
+
     return version;
 }
 

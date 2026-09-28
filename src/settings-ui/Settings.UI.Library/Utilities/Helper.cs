@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation
+// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -148,11 +148,13 @@ namespace Microsoft.PowerToys.Settings.UI.Library.Utilities
             {
                 // Split up the version strings into int[]
                 // Example: v10.0.2 -> {10, 0, 2};
+                // [fork-identity] 支持 fork 预览版本后缀（v0.1.0-preview.1）：比较只取 '-' 前的数字段，
+                // 否则迁移逻辑会因 FormatException 被跳过，导致升级检测失效。
                 ArgumentNullException.ThrowIfNull(version1);
                 ArgumentNullException.ThrowIfNull(version2);
 
-                var v1 = version1.Substring(1).Split('.').Select(int.Parse).ToArray();
-                var v2 = version2.Substring(1).Split('.').Select(int.Parse).ToArray();
+                var v1 = version1.Substring(1).Split('-')[0].Split('.').Select(int.Parse).ToArray();
+                var v2 = version2.Substring(1).Split('-')[0].Split('.').Select(int.Parse).ToArray();
 
                 if (v1.Length != 3 || v2.Length != 3)
                 {

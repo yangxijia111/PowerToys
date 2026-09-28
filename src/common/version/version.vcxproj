@@ -24,6 +24,7 @@
       <HeaderLines Include="#define VERSION_REVISION $(Version.Split('.')[2])" />
       <HeaderLines Include="#define VERSION_BUILD $(VersionBuild)" />
       <HeaderLines Include="#define VERSION_CHANNEL L&quot;$(VersionChannel)&quot;" />
+      <HeaderLines Include="#define VERSION_PREVIEW_SUFFIX L&quot;-preview.$(VersionPreview)&quot;" />
       <HeaderLines Include="#define VERSION_SOURCE_COMMIT L&quot;$(VersionSourceCommit)&quot;" />
     </ItemGroup>
     <WriteLinesToFile File="Generated Files\version_gen.h" Lines="@(HeaderLines)" Overwrite="true" Encoding="Unicode" WriteOnlyWhenDifferent="true" />
