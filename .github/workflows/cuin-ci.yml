@@ -26,6 +26,10 @@ jobs:
         run: python tools/check_zh_cn_coverage.py --fail-on-orphan
       - name: Release asset naming check
         run: python tools/check_release_assets.py
+      - name: Sparse MSIX registration guard check
+        run: python tools/check_sparse_registration.py
+      - name: Preview upgrade chain check
+        run: python tools/check_upgrade_chain.py
 
   build-and-test:
     name: Build core & unit tests (x64 Release)
