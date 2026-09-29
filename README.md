@@ -30,11 +30,17 @@
 - **降低上手门槛**:内置场景化推荐配置(Presets)与首次启动的快速设置向导。
 - **信息层级优化**:重新组织设置页导航分组,让工具更容易被找到。
 
-项目处于**早期开发阶段**(详见 [Roadmap](#roadmap路线图)),当前仅建议从源码构建体验,暂不提供安装包下载。
+项目处于 **Binary Preview** 阶段,首个预览版 `v0.1.0-preview.1` 已发布(详见 [Roadmap](#roadmap路线图))。
+
+### 下载(Downloads)
+
+- **普通用户推荐**:[`PowerToysCuin-0.1.0-preview.1-x64.exe`](https://github.com/yangxijia111/PowerToys/releases/download/v0.1.0-preview.1/PowerToysCuin-0.1.0-preview.1-x64.exe)(Bootstrapper,引导安装)
+- 高级用户可从 [GitHub Release v0.1.0-preview.1](https://github.com/yangxijia111/PowerToys/releases/tag/v0.1.0-preview.1) 获取 perUser / perMachine MSI 与 `SHA256SUMS.txt` 校验清单。
+- 下载前请先阅读下方 Preview Notice;哈希校验方式见 Release 页面说明。
 
 ### Preview Notice(预览版须知)
 
-- 本项目处于 **Binary Preview** 阶段,首个候选版本为 `v0.1.0-preview.1`;公开发布前,安装包不会在此提供下载(候选包仅存在于 CI 构建产物中)。
+- 本项目处于 **Binary Preview** 阶段,当前发布版本为 `v0.1.0-preview.1`(Pre-release,测试用途)。
 - 这是**非 Microsoft 官方产品**;需要官方版本请前往 [microsoft/PowerToys](https://github.com/microsoft/PowerToys)。
 - **不支持与官方 PowerToys 同时安装**:安装本版本前请先退出并卸载官方 PowerToys——检测到官方版本时,Fork 安装器会直接阻止安装(错误 1603 并给出说明);若官方版本在 Fork 之后安装,二者 Shell 扩展、通知与设置可能互相覆盖,Fork 启动时也会给出明确提示。
 - 当前安装包**未经代码签名**(Unsigned Preview limitation):
@@ -145,7 +151,7 @@ git merge upstream/main
 - [ ] 更多设置页 zh-CN 覆盖(高频优先,持续进行)
 - [ ] 首个自有扩展模块(CustomModule)
 - [ ] 安装器整合自有语言包;从官方版本迁移到 Fork 的说明
-- [ ] 公开 Preview 构建
+- [x] 公开 Preview 构建(v0.1.0-preview.1,2026-09-29 发布)
 
 ### Contributing
 
@@ -172,11 +178,17 @@ git merge upstream/main
 - **Lower the barrier to entry**: built-in scenario presets and a first-run quick-setup wizard.
 - **Better information hierarchy**: reorganized Settings navigation so utilities are easier to find.
 
-The project is in an **early stage** (see the [Roadmap](#roadmap-1)). For now it is source-build only; no installer downloads are provided yet.
+The project is in the **Binary Preview** stage; the first preview release `v0.1.0-preview.1` is out (see the [Roadmap](#roadmap-1)).
+
+### Downloads
+
+- **Recommended for most users**: [`PowerToysCuin-0.1.0-preview.1-x64.exe`](https://github.com/yangxijia111/PowerToys/releases/download/v0.1.0-preview.1/PowerToysCuin-0.1.0-preview.1-x64.exe) (bootstrapper).
+- Advanced users can grab the perUser / perMachine MSIs and the `SHA256SUMS.txt` checksum list from [GitHub Release v0.1.0-preview.1](https://github.com/yangxijia111/PowerToys/releases/tag/v0.1.0-preview.1).
+- Please read the Preview Notice below before downloading; see the release page for checksum verification instructions.
 
 ### Preview Notice
 
-- This project is in the **Binary Preview** stage; the first candidate is `v0.1.0-preview.1`. Installer downloads are **not** provided here until the public release (candidates exist only as CI build artifacts).
+- This project is in the **Binary Preview** stage; the current release is `v0.1.0-preview.1` (pre-release, for testing).
 - This is **not an official Microsoft product**; for the official build go to [microsoft/PowerToys](https://github.com/microsoft/PowerToys).
 - **Co-installation with official PowerToys is not supported**: exit and uninstall the official version before installing this one — when an official version is detected, the fork installer blocks installation outright (error 1603 with an explanation). If the official version is installed *after* the fork, shell extensions, notifications and settings may overwrite each other — the fork also detects this at startup and warns explicitly.
 - The installer is **unsigned** (Unsigned Preview limitation):
@@ -286,7 +298,7 @@ git merge upstream/main
 - [ ] More zh-CN coverage in Settings (high-frequency first, ongoing)
 - [ ] First custom module (CustomModule)
 - [ ] Installer with the fork language pack; migration notes from the official build to the fork
-- [ ] Public Preview builds
+- [x] Public Preview builds (v0.1.0-preview.1, released 2026-09-29)
 
 ### Contributing
 
