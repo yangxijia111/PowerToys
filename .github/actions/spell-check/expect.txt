@@ -2252,3 +2252,31 @@ Zoomin
 zoomit
 ZOOMITX
 Zorder
+
+# PowerToys Cuin fork additions (2026-09). Keep this section for fork-specific vocabulary.
+# Brand and identity
+Cuin
+cuin
+PowerToysCuin
+yangxijia
+# Legitimate technical terms used in fork CI/docs
+Crowdin
+NETSDK
+netstandard
+runneradmin
+TOCTOU
+WTL
+Wca
+installable
+admins
+# Upstream string kept verbatim in fork-modified Resources.resw
+Wzhudev
+# Fork MSI properties and Win32/MSI API identifiers used in installer code
+OFFICIALPOWERTOYSMACHINEDETECTED
+OFFICIALPOWERTOYSUSERDETECTED
+MSIDBOPEN
+SGNR
+STATEACTION
+WHOLECHAIN
+WVT
+pcwsz

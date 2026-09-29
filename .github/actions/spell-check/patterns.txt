@@ -321,3 +321,6 @@ ms-windows-store://\S+
 
 # Old school moniker for macOS from RNNoise
 MacOS
+
+# Fork: GitHub short commit hashes referenced in docs (9-hex-char form)
+\b[0-9a-f]{9}\b
