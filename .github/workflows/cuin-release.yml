@@ -43,6 +43,8 @@ jobs:
           python tools/check_fork_identity.py
           python tools/check_zh_cn_coverage.py --fail-on-orphan
           python tools/check_release_assets.py
+          python tools/check_sparse_registration.py
+          python tools/check_upgrade_chain.py
 
       - name: Restore & full Release build (PowerToys.slnx)
         shell: cmd
@@ -122,6 +124,30 @@ jobs:
         run: |
           powershell -NoProfile -ExecutionPolicy Unrestricted -File installer\PowerToysSetupVNext\generateMonacoWxs.ps1 -monacoWxsFile "installer\PowerToysSetupVNext\MonacoSRC.wxs" -Platform "x64" -nugetHeatPath "$env:NUGET_PACKAGES\wixtoolset.heat\5.0.2"
 
+      # ===== 可选代码签名（Signed Release 模式，docs/CODE_SIGNING.md §5）=====
+      # 未配置签名 secrets（示例名 FORK_CODE_SIGN_PFX_BASE64 / FORK_CODE_SIGN_PFX_PASSWORD）时
+      # 以下步骤全部跳过，构建保持 Unsigned Preview 行为，不失败也不伪装已签名。
+      # Payload 阶段必须在 MSI 构建前执行：签名结果会被 heat/WiX 打进安装包。
+      - name: Sign payload layout (optional)
+        shell: pwsh
+        env:
+          FORK_CODE_SIGN_PFX_BASE64: ${{ secrets.FORK_CODE_SIGN_PFX_BASE64 }}
+          FORK_CODE_SIGN_PFX_PASSWORD: ${{ secrets.FORK_CODE_SIGN_PFX_PASSWORD }}
+        if: env.FORK_CODE_SIGN_PFX_BASE64 != ''
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $pfx = Join-Path $env:RUNNER_TEMP 'fork-sign.pfx'
+          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:FORK_CODE_SIGN_PFX_BASE64))
+          try {
+            # 主 payload 布局（x64\Release，安装后落盘的全部 EXE/DLL/MSIX）+ 安装器 CA DLL
+            & tools\fork_sign_assets.ps1 -Stage Payload -Root 'x64\Release' -PfxPath $pfx -PfxPassword $env:FORK_CODE_SIGN_PFX_PASSWORD
+            & tools\fork_sign_assets.ps1 -Stage Payload -Root 'installer\PowerToysSetupCustomActionsVNext\x64\Release' -PfxPath $pfx -PfxPassword $env:FORK_CODE_SIGN_PFX_PASSWORD
+          }
+          finally {
+            Remove-Item $pfx -Force -ErrorAction SilentlyContinue
+          }
+
+
       # MSI 构建附加说明：
       # - EnableDefaultEmbeddedResourceItems=false：wixproj 默认 glob **/*.wxl 会把
       #   Bootstrapper obj 目录中扩展生成的 RtfTheme.wxl（en-us）误当作本地化资源，
@@ -139,6 +165,30 @@ jobs:
       - name: Build Bootstrapper (perUser)
         shell: cmd
         run: msbuild installer\PowerToysSetup.slnx -restore /t:PowerToysBootstrapperVNext /p:PerUser=true /p:BuildProjectReferences=false /p:CIBuild=true /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
+      # 三件套签名（Signed Release 模式）：必须发生在 Collect artifacts + SHA256 之前，
+      # 保证 SHA256SUMS 反映签名后的最终文件。未配置 secrets 时跳过（Unsigned Preview）。
+      - name: Sign installers + verify (optional)
+        shell: pwsh
+        env:
+          FORK_CODE_SIGN_PFX_BASE64: ${{ secrets.FORK_CODE_SIGN_PFX_BASE64 }}
+          FORK_CODE_SIGN_PFX_PASSWORD: ${{ secrets.FORK_CODE_SIGN_PFX_PASSWORD }}
+        if: env.FORK_CODE_SIGN_PFX_BASE64 != ''
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $pfx = Join-Path $env:RUNNER_TEMP 'fork-sign.pfx'
+          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:FORK_CODE_SIGN_PFX_BASE64))
+          try {
+            & tools\fork_sign_assets.ps1 -Stage Installers -Root 'installer\PowerToysSetupVNext\x64\Release\UserSetup' -PfxPath $pfx -PfxPassword $env:FORK_CODE_SIGN_PFX_PASSWORD
+            & tools\fork_sign_assets.ps1 -Stage Installers -Root 'installer\PowerToysSetupVNext\x64\Release\MachineSetup' -PfxPath $pfx -PfxPassword $env:FORK_CODE_SIGN_PFX_PASSWORD
+          }
+          finally {
+            Remove-Item $pfx -Force -ErrorAction SilentlyContinue
+          }
+          # 签名模式 gate：三件套必须全部具有有效签名，否则失败（不伪装）
+          & tools\fork_sign_assets.ps1 -Stage Installers -Root 'installer\PowerToysSetupVNext\x64\Release\UserSetup' -Verify
+          & tools\fork_sign_assets.ps1 -Stage Installers -Root 'installer\PowerToysSetupVNext\x64\Release\MachineSetup' -Verify
+
 
       - name: Run unit tests
         shell: pwsh

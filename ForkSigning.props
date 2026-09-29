@@ -1,21 +1,32 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- [fork-identity] fork 代码签名统一配置入口（Binary Preview 阶段未启用）。
-       启用方式：ForkCodeSignEnabled 设为 true 并填入证书指纹；签名资产清单与信任链切换点
-       见 docs/CODE_SIGNING.md §3/§4。禁止把证书/私钥/密码提交进仓库。 -->
+  <!-- [fork-identity] fork 代码签名统一配置入口。
+       两种模式（docs/CODE_SIGNING.md §5）：
+       - Unsigned Preview（默认）：ForkCodeSignEnabled=false，一切保持现状，构建不受影响；
+       - Signed Release：构建侧只做参数校验与宏传播，实际签名由 tools/fork_sign_assets.ps1
+         在打包期执行（payload 布局 → MSI/Bootstrapper），CI 侧由 secrets 注入凭证（仅示例名：
+         FORK_CODE_SIGN_PFX_BASE64 / FORK_CODE_SIGN_PFX_PASSWORD）。
+       启用签名：ForkCodeSignEnabled=true 并填入证书指纹（本机存储模式）或 PFX 路径；
+       构建侧若发现"声称启用签名但没有任何凭证"会直接 Error（fail-loud），
+       防止出现"以为已签名实际未签"的伪装态。
+       签名资产清单与信任链切换点见 docs/CODE_SIGNING.md §3/§4。
+       禁止把证书/私钥/密码提交进仓库。 -->
   <PropertyGroup>
     <ForkCodeSignEnabled Condition="'$(ForkCodeSignEnabled)'==''">false</ForkCodeSignEnabled>
     <ForkSignCertThumbprint Condition="'$(ForkSignCertThumbprint)'==''"></ForkSignCertThumbprint>
+    <ForkSignPfxPath Condition="'$(ForkSignPfxPath)'==''"></ForkSignPfxPath>
     <ForkSignTimestampUrl Condition="'$(ForkSignTimestampUrl)'==''">http://timestamp.digicert.com</ForkSignTimestampUrl>
     <!-- 定义为 1 时恢复 pipe 客户端微软签名校验（settings_window.cpp / quick_access_host.cpp） -->
     <ForkPipeRequireMicrosoftSignature Condition="'$(ForkPipeRequireMicrosoftSignature)'==''">0</ForkPipeRequireMicrosoftSignature>
   </PropertyGroup>
 
-  <Target Name="ForkSignReleaseBinaries"
-          AfterTargets="Build"
-          Condition="'$(ForkCodeSignEnabled)'=='true' and '$(Configuration)'=='Release'">
-    <!-- 签名就绪时在此枚举输出目录资产调用 signtool（清单见 docs/CODE_SIGNING.md §3）：
-         signtool sign /fd SHA256 /tr $(ForkSignTimestampUrl) /td SHA256 /sha1 $(ForkSignCertThumbprint) <files...>
-    -->
-    <Warning Text="ForkSigning: ForkCodeSignEnabled=true but no signing steps are implemented yet (docs/CODE_SIGNING.md §4)." />
+  <!-- fail-loud 配置校验：签名模式声明开启但缺凭证 → 构建立即失败（而不是静默产出 unsigned 冒充 signed）。
+       未声明开启（默认）时不做任何事，保证 Unsigned Preview 构建零影响。 -->
+  <Target Name="ForkSignValidateConfig"
+          BeforeTargets="Build"
+          Condition="'$(ForkCodeSignEnabled)'=='true'">
+    <Error Condition="'$(ForkSignCertThumbprint)'=='' and '$(ForkSignPfxPath)'==''"
+           Text="ForkSigning: ForkCodeSignEnabled=true 但未提供 ForkSignCertThumbprint 或 ForkSignPfxPath。拒绝以签名模式构建（fail-loud）。凭证注入方式见 docs/CODE_SIGNING.md §5。" />
+    <Message Importance="high"
+             Text="ForkSigning: 签名模式已启用（构建期不签名；实际签名在打包期由 tools/fork_sign_assets.ps1 执行）。" />
   </Target>
 </Project>
