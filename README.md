@@ -153,6 +153,20 @@ git merge upstream/main
 - [ ] 安装器整合自有语言包;从官方版本迁移到 Fork 的说明
 - [x] 公开 Preview 构建(v0.1.0-preview.1,2026-09-29 发布)
 
+### 问题反馈(Bug Report)
+
+欢迎通过 [Issue](https://github.com/yangxijia111/PowerToys/issues/new/choose) 反馈问题。为加快定位,提交时建议附带(模板已内置这些字段):
+
+- PowerToys Cuin 版本(设置 > 关于)
+- Windows 版本(`winver`)
+- perUser / perMachine 安装范围
+- 安装方式(Bootstrapper EXE / perUser MSI / perMachine MSI)
+- 本机是否曾安装官方 PowerToys
+- 是否涉及 Win11 新式右键菜单(未签名 Preview 阶段该菜单不可用,属已知限制)
+- 复现步骤;必要时附上托盘图标右键 > "Report bug" 生成的诊断 ZIP
+
+**隐私提醒**:日志可能包含文件路径与用户名,上传前请检查并按需涂改;请勿上传密码、Token、私钥或敏感个人文件。本项目不收集任何远程遥测。
+
 ### Contributing
 
 本项目处于早期阶段,欢迎通过 Issue 反馈问题与建议。由于 Fork 的自定义区域以新增文件为主,提交 PR 前建议先开 Issue 讨论。贡献内容默认按本仓库的 MIT 许可证提供。涉及上游功能本身的贡献,请前往 [microsoft/PowerToys](https://github.com/microsoft/PowerToys)。
@@ -299,6 +313,20 @@ git merge upstream/main
 - [ ] First custom module (CustomModule)
 - [ ] Installer with the fork language pack; migration notes from the official build to the fork
 - [x] Public Preview builds (v0.1.0-preview.1, released 2026-09-29)
+
+### Bug Reports
+
+Feedback is welcome via [issues](https://github.com/yangxijia111/PowerToys/issues/new/choose). To speed up triage, please include (the bug template already asks for these):
+
+- PowerToys Cuin version (Settings > About)
+- Windows version (`winver`)
+- perUser / perMachine install scope
+- Installation method (Bootstrapper EXE / perUser MSI / perMachine MSI)
+- Whether the official Microsoft PowerToys was ever installed on the machine
+- Whether the issue involves the Win11 modern context menu (unavailable in the unsigned preview — known limitation)
+- Steps to reproduce; optionally the diagnostic ZIP from tray icon right-click > "Report bug"
+
+**Privacy note**: logs may contain file paths and your Windows username — review and redact before uploading; do NOT upload passwords, tokens, private keys, or sensitive personal files. This project collects no remote telemetry.
 
 ### Contributing
 

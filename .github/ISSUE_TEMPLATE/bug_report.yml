@@ -1,49 +1,88 @@
-name: "🕷️ Bug report"
-description: Report errors or unexpected behavior
+name: "🕷️ Bug report / 问题反馈"
+description: Report errors or unexpected behavior in PowerToys Cuin (报告错误或异常行为)
 labels:
 - Issue-Bug
 - Needs-Triage
 body:
 - type: markdown
   attributes:
-    value: Please make sure to [search for existing issues](https://github.com/microsoft/PowerToys/issues) before filing a new one!
-- type: markdown
-  attributes:
     value: |
-      We are aware of the following high-volume issues and are actively working on them. Please check if your issue is one of these before filing a new bug report:
-      * **PowerToys Run crash related to "Desktop composition is disabled"**: This may appear as `COMException: 0x80263001`. For more details, see issue [#31226](https://github.com/microsoft/PowerToys/issues/31226).
-      * **PowerToys Run crash with `COMException (0xD0000701)`**: For more details, see issue [#30769](https://github.com/microsoft/PowerToys/issues/30769).
-      * **PowerToys Run crash with a "Cyclic reference" error**: This `System.InvalidOperationException` is detailed in issue [#36451](https://github.com/microsoft/PowerToys/issues/36451).
+      Thanks for helping improve **PowerToys Cuin**! Before filing, please [search existing issues in this repository](https://github.com/yangxijia111/PowerToys/issues) — the upstream [microsoft/PowerToys](https://github.com/microsoft/PowerToys/issues) tracker may also be relevant for core-module bugs.
+      感谢帮助改进 **PowerToys Cuin**！提交前请先[在本仓库搜索已有 Issue](https://github.com/yangxijia111/PowerToys/issues)；核心模块问题也可参考上游 [microsoft/PowerToys](https://github.com/microsoft/PowerToys/issues)。
+
+      **Known limitations of the current preview（当前预览版已知限制，非 Bug）**：安装包未签名（SmartScreen 可能提示"未知发布者"）；Win11 新式右键菜单（PowerRename / Image Resizer / File Locksmith / New+）不可用（经典右键菜单正常）；自动更新已禁用需手动下载；不支持与官方 PowerToys 共存。
 - id: version
   type: input
   attributes:
-    label: Microsoft PowerToys version and release channel
-    placeholder: 0.100.2 - Stable or 0.101.2211.0 - Preview (Insider)
-    description: Find the version and update channel in PowerToys Settings > General.
+    label: PowerToys Cuin version（Cuin 版本）
+    placeholder: 0.1.0-preview.1
+    description: Shown in Settings > General > About (or the tray icon "About" dialog). 设置 > 通用 > 关于（或托盘"关于"）中查看。
+  validations:
+    required: true
+
+- id: windows_version
+  type: input
+  attributes:
+    label: Windows version（Windows 版本）
+    placeholder: "Windows 11 23H2 Build 22631.4460 / Windows 10 22H2 Build 19045.5011"
+    description: Run `winver` to find it. 可运行 `winver` 查看。
+  validations:
+    required: true
+
+- id: install_scope
+  type: dropdown
+  attributes:
+    label: Installation scope（安装范围）
+    options:
+      - perUser（默认 Bootstrapper EXE 安装）
+      - perMachine（MSI 安装）
+      - Not sure（不确定）
   validations:
     required: true
 
 - id: installed
   type: dropdown
   attributes:
-    label: Installation method
-    description: How / where was PowerToys installed from?
-    multiple: true
+    label: Installation method（安装方式）
+    description: How did you install PowerToys Cuin? 你是如何安装的？
     options:
-      - GitHub
-      - PowerToys auto-update
-      - Microsoft Store
-      - WinGet
-      - Chocolatey
-      - Scoop
-      - Dev build in Visual Studio
-      - Other (please specify in "Steps to Reproduce")
+      - Bootstrapper EXE（PowerToysCuin-*.exe，默认）
+      - perUser MSI
+      - perMachine MSI
+      - Dev build in Visual Studio（本地构建）
+      - Other（请在复现步骤中说明）
   validations:
     required: true
+
+- id: official_coexist
+  type: dropdown
+  attributes:
+    label: Was the official Microsoft PowerToys ever installed on this machine?（本机是否曾安装官方 PowerToys）
+    description: Leftover official registrations can affect shell extensions and settings. 官方残留注册可能影响 Shell 扩展与设置。
+    options:
+      - "No（从未安装）"
+      - "Yes - fully uninstalled before Cuin（安装过，装 Cuin 前已完全卸载）"
+      - "Yes - still installed alongside（仍在，与 Cuin 同时安装——注意：不受支持的共存场景）"
+      - Not sure（不确定）
+  validations:
+    required: true
+
+- id: win11_menu
+  type: dropdown
+  attributes:
+    label: Are you using the Win11 modern (sparse MSIX) context menu?（是否在用 Win11 新式右键菜单场景）
+    description: Unsigned preview cannot register the modern menu; classic menu works. 未签名预览版无法注册新式菜单；经典菜单可用。
+    options:
+      - "Yes - issue involves the modern right-click menu（问题与新式右键菜单相关）"
+      - "No - classic menu（使用经典菜单）"
+      - "Not applicable（不涉及右键菜单）"
+  validations:
+    required: false
+
 - type: dropdown
   attributes:
-    label: Area(s) with issue?
-    description: What things had an issue? Check all that apply.
+    label: Area(s) with issue?（问题涉及哪些工具）
+    description: Check all that apply. 可多选。
     multiple: true
     options:
       - General
@@ -56,9 +95,9 @@ body:
       - Crop and Lock
       - Environment Variables
       - FancyZones
-      - FancyZones Editor 
+      - FancyZones Editor
       - Grab And Move
-      - File Locksmith 
+      - File Locksmith
       - "File Explorer: Preview Pane"
       - "File Explorer: Thumbnail preview"
       - Hosts File Editor
@@ -89,53 +128,49 @@ body:
 
 - type: textarea
   attributes:
-    label: Steps to reproduce
-    description: We highly suggest including screenshots and a bug report log (System tray > Report bug).
-    placeholder: Having detailed steps helps us reproduce the bug. 
+    label: Steps to reproduce（复现步骤）
+    placeholder: |
+      Detailed steps help us reproduce the bug. 详细步骤有助于复现问题。
   validations:
     required: true
 
 - type: textarea
   attributes:
-    label: ✔️ Expected Behavior
-    placeholder: What were you expecting?
+    label: "✔️ Expected Behavior（预期行为）"
   validations:
     required: false
 
 - type: textarea
   attributes:
-    label: ❌ Actual Behavior
-    placeholder: What happened instead?
+    label: "❌ Actual Behavior（实际行为）"
   validations:
     required: false
+
 - type: upload
-  id: bugreportfile 
+  id: bugreportfile
   attributes:
-    label: Upload Bug Report ZIP-file
-    description: Right-clicking the PowerToys tray icon in the taskbar and selecting “Report bug” generates a ZIP file containing diagnostic information about your setup and PowerToys logs, helping us better understand and troubleshoot the issue.
+    label: Upload Bug Report ZIP-file（可选：上传诊断包）
+    description: |
+      Right-click the PowerToys tray icon > "Report bug" generates a ZIP with diagnostic info and logs. 右键托盘图标 > "Report bug" 可生成含诊断信息与日志的 ZIP。
+
+      **Privacy check before uploading（上传前隐私自查）**：logs may contain file paths and your Windows username — review and redact as needed; do NOT upload passwords, tokens, private keys, or sensitive personal files. 日志可能包含文件路径与用户名，请先检查并按需涂改；**禁止**上传密码、Token、私钥或敏感个人文件。
   validations:
     required: false
+
 - id: additionalInfo
   type: textarea
   attributes:
-    label: Additional Information
+    label: Additional Information（其他信息）
     placeholder: |
-      OS version
-      .Net version
-      System Language
-      User or System Installation
-      Running as admin
+      System language / 系统语言
+      Running as admin / 是否以管理员运行
+      Whether PowerToys starts on boot / 是否开机自启
   validations:
     required: false
-    
+
 - type: textarea
   attributes:
-    label: Other Software
-    description: If you're reporting a bug about our interaction with other software, what software? What versions?
-    placeholder: |
-      vim 8.2 (inside WSL)
-      OpenSSH_for_Windows_8.1p1
-      My Cool Application v0.3 (include a code snippet if it would help!)
+    label: Other Software（相关其他软件）
+    description: If the bug involves interaction with other software, what software and versions? 若与其他软件交互相关，请注明软件与版本。
   validations:
     required: false
-  
