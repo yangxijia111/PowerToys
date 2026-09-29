@@ -2257,7 +2257,6 @@ Zorder
 # Brand and identity
 Cuin
 cuin
-PowerToysCuin
 yangxijia
 # Legitimate technical terms used in fork CI/docs
 Crowdin
