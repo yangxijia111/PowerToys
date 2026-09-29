@@ -75,10 +75,11 @@
 - [x] README Preview Notice 与实际行为一致（中英同步，Phase 5 已修订 Branding/共存表述）
 
 ## 9. 发布动作（需明确确认后才可执行）
-- [ ] 创建 tag `v0.1.0-preview.1`
-- [ ] GitHub Release（Draft → 审阅 → Publish）+ 上传 EXE / perUser MSI / perMachine MSI / SHA256SUMS.txt
-- [ ] README 下载节切换为 Preview 下载说明
-- [ ] 发布后： Issues 模板/公告、置顶 Known Issues（Win11 菜单限制、无签名、不与官方共存）
+- [x] 创建 tag `v0.1.0-preview.1`（指向 `0fe746ea4`，2026-09-29）
+- [x] GitHub Release（Draft → 审阅 → Publish）+ 上传 EXE / perUser MSI / perMachine MSI / SHA256SUMS.txt（Pre-release，2026-09-29 02:03 UTC）
+- [x] README 下载节切换为 Preview 下载说明
+- [x] 发布后： Issues 模板/公告、置顶 Known Issues（Win11 菜单限制、无签名、不与官方共存）——bug 模板已于 Phase 6 重写为 fork 版本（含隐私提醒），README 增加 Bug Report 节
+- 冻结原则：preview.1 的 tag 与资产不再移动/替换/重传；后续修复进入 preview.2（docs/POST_RELEASE_PLAN.md）
 
 ## 10. Release workflow 排障记录（2026-09-28，workflow_dispatch 实跑迭代）
 1. run 36398905908：Static checks 挂在 Python cp1252 控制台打印中文 → 三脚本强制 UTF-8 输出。
