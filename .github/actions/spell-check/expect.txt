@@ -2280,3 +2280,10 @@ WHOLECHAIN
 WVT
 pcwsz
 winver
+# Legacy upstream warnings surfaced when fork touched these files (only_check_changed_files)
+Authenticode
+Dacl
+Dotnet
+ETW
+Hardlinks
+INSTALLDIR
