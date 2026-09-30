@@ -35,8 +35,11 @@ inline std::wstring get_product_version(bool includeV = true)
     version += std::to_wstring(VERSION_MINOR);
     version += L".";
     version += std::to_wstring(VERSION_REVISION);
-    if constexpr (VERSION_BUILD != 0)
+    if constexpr (VERSION_BUILD != 0 && VERSION_PREVIEW_SUFFIX[0] == L'\0')
     {
+        // [fork-identity] 仅非 preview 渠道拼接第四段（内部 build）；preview 渠道的
+        // VERSION_BUILD 是 preview 序号，已体现在 -preview.N 后缀，不重复拼接
+        // （否则显示为 v0.1.0.2-preview.2）。
         version += L".";
         version += std::to_wstring(VERSION_BUILD);
     }

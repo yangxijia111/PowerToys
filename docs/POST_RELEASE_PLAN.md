@@ -146,7 +146,38 @@ condition "...0.0.0.0..."`——`bal:Condition` 的两处语法错误（fork Pha
 升级至 0.1.0.2 成功。**此项缺陷即满足 §7 preview.2 准入条件 2（installer 必修问题）**；
 正式发布前需走完整 RELEASE_CHECKLIST。
 
-### 6.4 RELEASE_CHECKLIST §4 场景复验（2026-09-30，preview.2 候选）
+### 6.4 文件版本不递增 → Burn 升级保留旧二进制（2026-09-30 发布 Gate 发现，已修复）
+
+preview.2 发布 Gate 的 Burn EXE 覆盖升级复测发现比 §6.1 更隐蔽的缺陷：**升级 exit 0、ARP 正确显示
+0.1.0.2、旧 ProductCode 正确移除——但安装目录的二进制仍是 preview.1 的**（runner 日志
+`product_version=v0.1.0-preview.1`）。MSI verbose 日志铁证：
+
+```
+File: C:\...\PowerToysCuin\PowerToys.exe;  Won't Overwrite;  Won't patch;
+      Existing file is of an equal version
+```
+
+根因链：preview.1 与 preview.2 的**文件版本资源同为 0.1.0.0**（`Version=0.1.0` 三段 → C++
+`VERSION_BUILD=0`、C# FileVersion=0.1.0）；MSI 文件替换按"现存版本 < 新版本"判定。msiexec 直装路径
+之所以能覆盖，是因为 MSI 内 Property 定义的 `REINSTALLMODE=amus` 在该会话驱动了 file costing
+（日志出现 `Overwrite; REINSTALLMODE specifies all files to be overwritten`）；而 **Burn 引导路径下
+该 Property 不驱动 file costing**（InstallMode 不同，equal version → Won't Overwrite）——真实用户
+默认走的正是 EXE 路径。
+
+修复（preview.2，与官方"每版文件版本递增"路线一致）：
+
+- `src/Version.props` 新增 `FileVersion = Version.VersionPreview`（0.1.0.2），经 Directory.Build.props
+  覆盖全部 C# 程序集；
+- `src/common/version/version.vcxproj` 的 `VersionBuild` 在 preview 渠道下取 `$(VersionPreview)`
+  （C++ `VERSION_BUILD` → RC FILEVERSION 0.1.0.2）；
+- `check_upgrade_chain.py` 第 10 项断言（两处定义必须引用 `$(VersionPreview)`）防回归；
+- 显示版本不受影响（About/OOBE/runner 日志仍为 `v0.1.0-preview.2`，preview 后缀由
+  `VERSION_PREVIEW_SUFFIX` 运行时拼接）。
+
+验证标准：升级日志出现 `Overwrite; file is a newer version`（版本比较生效，不再依赖 REINSTALLMODE），
+且升级后 runner `product_version=v0.1.0-preview.2`。
+
+### 6.5 RELEASE_CHECKLIST §4 场景复验（2026-09-30，preview.2 候选）
 
 自动化可达场景全部通过：
 
@@ -175,7 +206,7 @@ perMachine 全链路（需提权）、重启自启动。
 
 > **当前结论（2026-09-30 更新）：条件 2 已满足**——preview.1 已发布 Bootstrapper EXE
 > 一启动即失败（Burn 条件语法错误，见 §6.3，默认下载入口不可用），叠加升级链同版本拒绝
-> （§6.1）。两个必修缺陷在 cuin-dev 已修复并真机验证（§6.2/§6.3/§6.4）。
+> （§6.1）。三个必修缺陷在 cuin-dev 已修复并真机验证（§6.2/§6.3/§6.4）。
 > **preview.2 具备发布理由；是否发布（tag / release）由项目负责人确认后按 RELEASE_CHECKLIST 执行。**
 >
 > 历史结论（2026-09-29）：条件均不满足 → STABILIZATION COMPLETE — KEEP v0.1.0-preview.1。

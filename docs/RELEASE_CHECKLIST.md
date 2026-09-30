@@ -43,28 +43,28 @@
 - [ ] Bundle 属性验证：Version=`0.1.0.2`
 
 ## 4. 发布前真机 Gate（本地候选构建执行；Tag Build EXE 在 §7 复验）
-- [ ] **EXE clean install**：无已装版本 → EXE 静默安装 exit 0 → runner/Settings/模块进程启动
-- [ ] **OOBE**：全新用户状态首启出现向导 → 选择 Preset → 推荐工具正确显示 → Apply 成功 → 第二次启动不重复 OOBE
-- [ ] **zh-CN UI**：中文界面真实渲染（General / Dashboard / Presets 页抽查，非仅 PRI 资源验证）
-- [ ] **经典右键菜单实际点击**：PowerRename / Image Resizer / File Locksmith 可用
-- [ ] **EXE 覆盖升级**：preview.1 已装 → preview.2 EXE `-install -quiet` exit 0 → Burn 日志无 `Failed to parse condition`、六个 bal:Condition 正常解析、`DetectedForkPowerToysUserVersion=0.1.0`、`TargetPowerToysVersion=0.1.0.2`
-- [ ] **MSI 覆盖升级**：preview.1 → preview.2 MSI exit 0，RemoveExistingProducts 执行，用户数据保留
-- [ ] **Repair**（同版本维护模式重装）exit 0
-- [ ] **Uninstall**：ARP/安装目录移除、用户配置保留、无异常残留
-- [ ] **官方冲突**：官方在场 → preview.2 EXE 阻止安装（文案正确），官方版本不被破坏
-- [ ] **perMachine**：管理员环境 clean install / 启动 / Settings / uninstall / ARP 与目录清理 / 用户配置行为（若环境无法提权，如实记录为未执行）
-- [ ] **restart / persistence**：完整重启或等价登录流程后 runner/托盘/设置持久化符合预期（若无法重启，机制级验证并如实记录）
-- [ ] Settings 修改持久化到 `%LOCALAPPDATA%\PowerToysCuin`
-- [ ] Runner 日志无 `Rejected unauthenticated Settings pipe client`
-- [ ] Runner 日志确认后台 PeriodicUpdateWorker 未启动
-- [ ] 「检查更新」/「立即更新」= 打开 GitHub Releases 页（不下载不执行安装包）
+- [x] **EXE clean install**：无已装版本 → EXE 静默安装 exit 0 → runner/Settings/模块进程启动（2026-09-30 本地候选实测，gate_exe_cleaninstall.log）
+- [x] **OOBE**：全新用户状态首启出现向导（窗口"欢迎使用 PowerToys Cuin"，openOobe=true）→ 选择"开发"场景 → 推荐工具正确显示（FancyZones/PowerToys Run/高级粘贴/OCR/File Locksmith/环境变量/注册表预览，全中文）→ Apply 成功（18 模块启用）→ 第二次启动不重复（openOobe=false）（UIA 实测，屏幕锁定不影响）
+- [x] **zh-CN UI**：中文界面真实渲染——Settings 导航全中文（仪表盘/常规设置/推荐配置/系统工具/窗口管理/输入与启动/屏幕与显示/文件管理/开发与高级）、Dashboard 快捷工具中文名、OOBE 全流程中文、版本显示 v0.1.0-preview.2（UIA 运行时实证；OOBE 欢迎页正文与少量新 key 仍英文，属 zh-CN 渐进覆盖既有状态非回归）
+- [ ] **经典右键菜单实际点击**：PowerRename / Image Resizer / File Locksmith 可用（**注册级已验证**：4 个 shell 扩展 DLL 的 COM 注册全部指向 PowerToysCuin 目录；**真实点击未执行**——测试期间屏幕被锁定无法操作 Explorer，留待解锁复验；Phase 3 曾对同机制实测通过）
+- [x] **EXE 覆盖升级**：preview.1 已装 → preview.2 EXE `-install -quiet` exit 0 → 六个 bal:Condition 全部正常解析（无 Failed to parse）、`DetectedForkPowerToysUserVersion=0.1.0` 检出、MSI 文件替换 `Overwrite; Existing file is a lower version`、升级后 FileVersion=0.1.0.2、runner `product_version=v0.1.0-preview.2`（final_exe_upgrade.log）
+- [x] **MSI 覆盖升级**：preview.1 → preview.2 MSI exit 0，RemoveExistingProducts 执行（Return value 1），用户数据保留（干净序列 79/79 hash 一致、模块启用状态 18→18）
+- [x] **Repair**（同版本维护模式重装）exit 0（repair_preview2.log）
+- [x] **Uninstall**：ARP/安装文件全清、用户配置保留（86 文件中 82 为用户数据全保留）、仅 4 个运行时状态文件残留（last_version_run/UpdateState/PowerRename 状态，与官方行为一致）
+- [x] **官方冲突**：官方 PowerToys (Preview) 0.101.2362.0 在场 → 干净状态下 preview.2 EXE 被 bal:Condition 阻止（条件 evaluates to false，非零退出，零安装）；bundle 注册残留时由 MSI Launch Condition 1603 兜底（同样零安装）；官方版本完好、卸载官方后环境还原（conflict2.log / conflict_fork_exe.log）
+- [ ] **perMachine**：**未执行（环境限制）**——本测试会话非提权，UAC 无法自动确认；perMachine MSI 的构建与属性（ProductVersion/UpgradeCode）由 Tag Build 与 §7 属性复核覆盖
+- [x] **restart / persistence（机制级）**：自启动计划任务 "Autorun for <user>" 正确注册且指向 PowerToysCuin\PowerToys.exe（Ready）；settings startup 标志持久化、托盘/进程跨操作稳定。**真实重启未执行**（避免中断用户会话），机制链路完整
+- [x] Settings 修改持久化到 `%LOCALAPPDATA%\PowerToysCuin`（settings.json 跨升级/重启 runner 保持）
+- [x] Runner 日志无 `Rejected unauthenticated Settings pipe client`（计数 0）
+- [x] Runner 日志确认后台 PeriodicUpdateWorker 未启动（自更新禁用，FORK_AUTO_UPDATE_INSTALL_ENABLED=false）
+- [x] 「检查更新」/「立即更新」= 打开 GitHub Releases 页（不下载不执行安装包）（代码路径 Phase 4 实现并经 check_fork_identity 断言；本轮 Settings UI 未逐点复验）
 
 ## 5. 功能抽查
-- [ ] Presets 应用（5 场景之一，经 OOBE 或 Settings）
-- [ ] File Locksmith（经典右键菜单）
-- [ ] PowerRename（经典右键菜单）
-- [ ] Image Resizer（经典右键菜单）
-- [ ] zh-CN 界面抽查（设置页 + 至少 2 个模块）
+- [x] Presets 应用（5 场景之一，经 OOBE 或 Settings）——"开发"场景经 OOBE Apply 成功（18 模块启用）
+- [ ] File Locksmith（经典右键菜单）（注册级 ✓，真实点击同上未执行）
+- [ ] PowerRename（经典右键菜单）（注册级 ✓，真实点击同上未执行）
+- [ ] Image Resizer（经典右键菜单）（注册级 ✓，真实点击同上未执行）
+- [x] zh-CN 界面抽查（设置页 + 至少 2 个模块）——设置页全中文 + OOBE（Preset 页）+ Dashboard 工具名；模块页面深度抽查受 UIA 稳定性限制，覆盖层静态检查兜底
 
 ## 6. 测试状态（真实记录，不掩饰）
 - [ ] `Settings.UI.UnitTests`：335/335 通过

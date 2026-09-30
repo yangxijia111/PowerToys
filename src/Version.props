@@ -8,6 +8,14 @@
          Git tag 计划 v0.1.0-preview.2（发布前经 RELEASE_CHECKLIST 复验）。 -->
     <VersionChannel>preview</VersionChannel>
     <VersionPreview>2</VersionPreview>
+    <!-- [fork-identity] 文件版本资源（FileVersion / VERSION_BUILD）同样把 preview 序号编入第四位：
+         MSI 覆盖升级的文件替换按"现存文件版本 &lt; 新文件版本"判定。Burn 引导路径下 MSI 内
+         Property 定义的 REINSTALLMODE=amus 不驱动 file costing，若两版文件版本相同会
+         "Won't Overwrite; Existing file is of an equal version"——注册表升级到 0.1.0.2
+         但二进制仍是旧的（2026-09-30 真机发现，preview.2 发布 Gate 拦截）。
+         显示版本（About/OOBE）仍为 0.1.0-preview.2，不受此影响。 -->
+    <FileVersion Condition="'$(VersionPreview)' != '' and '$(VersionPreview)' != '0'">$(Version).$(VersionPreview)</FileVersion>
+    <FileVersion Condition="'$(FileVersion)' == ''">$(Version)</FileVersion>
     <!-- Update once when main moves to the next stable release train. -->
     <ReleaseTrainVersion>0.101</ReleaseTrainVersion>
     <!-- Y in YDDDB counts calendar years from this January 1. Reset it on the first release-train minor change of a new year. -->

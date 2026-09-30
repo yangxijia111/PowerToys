@@ -30,7 +30,12 @@
    Burn 条件解析器大小写敏感，大写 AND/OR 会在运行时解析失败
    （exit 13, 0x8007000d "Failed to parse condition"）——preview.1 已发布
    EXE 即因此从未成功运行过（2026-09-30 首次真机执行 Bootstrapper 发现；
-   此前全部真机安装走 msiexec，EXE 路径无覆盖）。
+   此前全部真机安装走 msiexec，EXE 路径无覆盖）；
+10. 文件版本资源（FileVersion / VERSION_BUILD）把 preview 序号编入第四位。
+    MSI 覆盖升级的文件替换按"现存文件版本 < 新文件版本"判定；Burn 引导路径
+    下 MSI 内 Property 定义的 REINSTALLMODE=amus 不驱动 file costing，两版
+    文件版本相同会 "Won't Overwrite; Existing file is of an equal version"
+    ——注册表升级成功但二进制保留旧版（2026-09-30 发布 Gate 真机发现）。
 
 真机（安装 preview.1 → 覆盖安装 preview.2 → 验证数据保留）属于 preview.2
 发布前的 RELEASE_CHECKLIST §4 场景复验，不在本脚本范围。
@@ -75,6 +80,7 @@ def main() -> int:
     common = COMMON.read_text(encoding="utf-8", errors="replace")
     product = PRODUCT.read_text(encoding="utf-8", errors="replace")
     bundle = BUNDLE.read_text(encoding="utf-8", errors="replace")
+    version_props_text = (REPO / "src" / "Version.props").read_text(encoding="utf-8", errors="replace")
 
     # 1. UpgradeCode 字面量（perUser / perMachine 区分）
     ordered = re.findall(r'UpgradeCodeGUID="([0-9A-Fa-f-]{36})"', common)
@@ -190,6 +196,30 @@ def main() -> int:
         "bal:Condition 字面量带引号（裸 0.0.0.0/19041 解析失败）",
         not bare_literals,
         "; ".join(bare_literals[:2]),
+    )
+
+    # 10. 文件版本资源编码 preview 序号（Version.props FileVersion + version.vcxproj VersionBuild）
+    check(
+        "Version.props 定义 FileVersion 并编码 $(VersionPreview)",
+        re.search(
+            r'<FileVersion Condition="\'\$\(VersionPreview\)\' != \'\' and \'\$\(VersionPreview\)\' != \'0\'">\$\(Version\)\.\$\(VersionPreview\)</FileVersion>',
+            version_props_text,
+        )
+        is not None,
+    )
+    version_h_text = (REPO / "src" / "common" / "version" / "version.h").read_text(encoding="utf-8", errors="replace")
+    check(
+        "version.h 显示版本在 preview 渠道不拼 BUILD（避免 v0.1.0.2-preview.2）",
+        "VERSION_BUILD != 0 && VERSION_PREVIEW_SUFFIX[0]" in version_h_text,
+    )
+    vcxproj_text = (REPO / "src" / "common" / "version" / "version.vcxproj").read_text(encoding="utf-8", errors="replace")
+    check(
+        "version.vcxproj 的 VersionBuild 编码 $(VersionPreview)",
+        re.search(
+            r"<VersionBuild Condition=\"'\$\(VersionPreview\)' != '' and '\$\(VersionPreview\)' != '0' and '\$\(VersionChannel\)' == 'preview'\">\$\(VersionPreview\)</VersionBuild>",
+            vcxproj_text,
+        )
+        is not None,
     )
 
     print()

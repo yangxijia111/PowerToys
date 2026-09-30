@@ -11,6 +11,10 @@
     <PropertyGroup>
       <VersionBuild>0</VersionBuild>
       <VersionBuild Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(Version)', '^\d+\.\d+\.\d+\.\d+$'))">$([System.String]::Copy('$(Version)').Split('.')[3])</VersionBuild>
+      <!-- [fork-identity] preview 序号编入文件版本第四位（0.1.0-preview.2 → 0.1.0.2）：
+           MSI 文件替换按版本比较，文件版本不递增时 Burn 引导升级会保留旧二进制
+           （Won't Overwrite; equal version，见 src/Version.props 同名注释）。 -->
+      <VersionBuild Condition="'$(VersionPreview)' != '' and '$(VersionPreview)' != '0' and '$(VersionChannel)' == 'preview'">$(VersionPreview)</VersionBuild>
       <VersionSourceCommit Condition="'$(SourceCommit)' != ''">$(SourceCommit)</VersionSourceCommit>
       <VersionSourceCommit Condition="'$(VersionSourceCommit)' == '' and '$(BUILD_SOURCEVERSION)' != ''">$(BUILD_SOURCEVERSION)</VersionSourceCommit>
       <VersionSourceCommit Condition="'$(VersionSourceCommit)' == '' and '$(GITHUB_SHA)' != ''">$(GITHUB_SHA)</VersionSourceCommit>
