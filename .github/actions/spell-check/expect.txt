@@ -2287,3 +2287,6 @@ Dotnet
 ETW
 Hardlinks
 INSTALLDIR
+# Release-gate notes terminology (2026-09-30)
+cleaninstall
+runbook
