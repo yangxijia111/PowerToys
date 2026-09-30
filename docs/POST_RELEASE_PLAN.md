@@ -129,6 +129,42 @@ ProductCode 时三层机制**全部**拒绝覆盖安装：
 （RELEASE_CHECKLIST §4 的其余场景——OOBE 交互、右键菜单抽查、Repair/Uninstall、官方冲突——
 仍按计划在 preview.2 正式发布前执行；本次自动化环境覆盖升级链核心路径。）
 
+### 6.3 Bootstrapper EXE 缺陷发现与修复（2026-09-30，preview.1 已发布 EXE 从未成功运行）
+
+首次真机执行 Bootstrapper EXE（此前全部真机安装走 msiexec，EXE 路径无测试覆盖）发现：**preview.1
+已发布的 EXE 资产一启动即失败（exit 13）**。Burn 日志：`Error 0x8007000d: Failed to parse
+condition "...0.0.0.0..."`——`bal:Condition` 的两处语法错误（fork Phase 3 引入）：
+
+1. **操作符大写**：Burn 条件表达式操作符必须小写（`and`/`or`），与 MSI Condition（大写）不同；
+2. **字面量未加引号**：`Version = 0.0.0.0` 的裸字面量无法解析，必须 `Version = "0.0.0.0"`。
+
+修复（preview.2 候选）：`PowerToys.wxs` 全部 6 个 bal:Condition 改小写操作符 + 字面量加引号；
+`check_upgrade_chain.py` 新增第 9 项断言（操作符小写 + 字面量带引号，防回归）。
+
+真机复测（perUser，机器装着 preview.1）：EXE `-install -quiet` **退出码 0**，日志确认条件正确
+评估（官方检测条件 evaluates to true 放行、`DetectedForkPowerToysUserVersion` 检出 0.1.0），
+升级至 0.1.0.2 成功。**此项缺陷即满足 §7 preview.2 准入条件 2（installer 必修问题）**；
+正式发布前需走完整 RELEASE_CHECKLIST。
+
+### 6.4 RELEASE_CHECKLIST §4 场景复验（2026-09-30，preview.2 候选）
+
+自动化可达场景全部通过：
+
+| 场景 | 结果 |
+|---|---|
+| Clean install（静默 MSI） | ✅ exit 0，runner/Settings/模块进程启动 |
+| 覆盖升级 MSI 路径（preview.1 → preview.2） | ✅ exit 0，RemoveExistingProducts 执行，数据 79/79 保留 |
+| 覆盖升级 Bootstrapper EXE 路径 | ✅ exit 0（§6.3 修复后），条件正确评估 |
+| Repair（同版本维护模式重装） | ✅ exit 0 |
+| Uninstall | ✅ exit 0，ARP/安装文件移除；用户数据保留（仅 4 个运行时状态文件残留，与官方行为一致） |
+| Shell 扩展注册 | ✅ PowerRenameExt / ImageResizerExt / FileLocksmith / FileExplorerDLLExporter 全部指向 PowerToysCuin 目录 |
+| zh-CN 资源链路 | ✅ PRI 内嵌中文资源 + 系统区域 zh-CN（UI 视觉抽查因锁屏未完成，待解锁补验） |
+| Runner 日志 IPC 鉴权 | ✅ `Rejected unauthenticated` = 0 |
+
+未覆盖（需交互/特定环境）：OOBE 向导交互、真实右键点击、官方冲突复验（Phase 3 已验）、
+perMachine 全链路（需提权）、重启自启动。
+
+
 ## 7. preview.2 准入标准（任一满足才准备）
 
 1. preview.1 出现真实 P0/P1 Bug；
@@ -137,12 +173,20 @@ ProductCode 时三层机制**全部**拒绝覆盖安装：
 4. Win11 context menu 获得明显修复（等价于签名启用）；
 5. 多个明确的小修复值得集中发布。
 
-> **当前结论（2026-09-29）：条件均不满足 → STABILIZATION COMPLETE — KEEP v0.1.0-preview.1。**
+> **当前结论（2026-09-30 更新）：条件 2 已满足**——preview.1 已发布 Bootstrapper EXE
+> 一启动即失败（Burn 条件语法错误，见 §6.3，默认下载入口不可用），叠加升级链同版本拒绝
+> （§6.1）。两个必修缺陷在 cuin-dev 已修复并真机验证（§6.2/§6.3/§6.4）。
+> **preview.2 具备发布理由；是否发布（tag / release）由项目负责人确认后按 RELEASE_CHECKLIST 执行。**
+>
+> 历史结论（2026-09-29）：条件均不满足 → STABILIZATION COMPLETE — KEEP v0.1.0-preview.1。
 
 ## 8. 下一阶段建议
 
-1. 观察期：收集真实用户 Issue（当前 0），按 §3 口径分类；
-2. 签名决策：若确认采购证书，按 CODE_SIGNING.md §5 启用 Signed Release 模式并触发 preview.2（同时恢复 sparse 菜单 + 自动更新）；
-3. 小步维持：P2/P3 修复累计到值得集中发布时，按 RELEASE_CHECKLIST 走 preview.2 流程
-   （升级链核心路径已于 2026-09-30 真机实测通过，见 §6.2；剩余交互场景见 RELEASE_CHECKLIST §4）；
+1. **preview.2 发布决策（新增）**：两处 installer 必修缺陷已修复并本地/真机/CI 三重验证，
+   建议结束观察期、按 RELEASE_CHECKLIST 走 preview.2 发布（发布前复验 §4 未覆盖场景：
+   OOBE 交互、真实右键点击、官方冲突、perMachine 链路）；README 下载入口指向新 EXE 后，
+   preview.1 的损坏 EXE 资产即被替代；
+2. 观察期：收集真实用户 Issue（当前 0），按 §3 口径分类；
+3. 签名决策：若确认采购证书，按 CODE_SIGNING.md §5 启用 Signed Release 模式（同时恢复
+   sparse 菜单 + 自动更新，届时再发一版）；
 4. 上游同步：定期评估 SYNC_GUIDE 流程，避免落后上游安全修复。

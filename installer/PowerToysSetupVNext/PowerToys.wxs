@@ -54,24 +54,24 @@
       <util:ProductSearch Id="SearchInstalledForkPowerToysVersion" Variable="DetectedForkPowerToysVersion" UpgradeCode="78975C14-0AA0-41A7-99C2-55F44200A919" Result="version" />
       <util:ProductSearch Id="SearchInstalledForkPowerToysUserVersion" Variable="DetectedForkPowerToysUserVersion" UpgradeCode="DA33EB25-63A5-4E9A-8B04-D8AE81BB888D" Result="version" />
 
-      <bal:Condition Message="Microsoft PowerToys (official) is already installed on this system. To avoid overwriting each other's registration, files and settings, please uninstall the official version first. Coexistence is not supported by PowerToys Cuin (Community Edition)." Condition="(DetectedOfficialPowerToysVersion = 0.0.0.0 AND DetectedOfficialPowerToysUserVersion = 0.0.0.0) OR WixBundleInstalled" />
+      <bal:Condition Message="Microsoft PowerToys (official) is already installed on this system. To avoid overwriting each other's registration, files and settings, please uninstall the official version first. Coexistence is not supported by PowerToys Cuin (Community Edition)." Condition="(DetectedOfficialPowerToysVersion = &quot;0.0.0.0&quot; and DetectedOfficialPowerToysUserVersion = &quot;0.0.0.0&quot;) or WixBundleInstalled" />
 
       <?if $(var.PerUser) = "true" ?>
-        <bal:Condition Message="PowerToys Cuin (Community Edition) is already installed on this system for all users. Please uninstall that version before installing the per-user edition." Condition="DetectedForkPowerToysVersion = 0.0.0.0 OR WixBundleInstalled" />
-        <bal:Condition Message="The same or a later version of PowerToys Cuin (Community Edition) is already installed." Condition="TargetPowerToysVersion &gt;= DetectedForkPowerToysUserVersion OR WixBundleInstalled" />
+        <bal:Condition Message="PowerToys Cuin (Community Edition) is already installed on this system for all users. Please uninstall that version before installing the per-user edition." Condition="DetectedForkPowerToysVersion = &quot;0.0.0.0&quot; or WixBundleInstalled" />
+        <bal:Condition Message="The same or a later version of PowerToys Cuin (Community Edition) is already installed." Condition="TargetPowerToysVersion &gt;= DetectedForkPowerToysUserVersion or WixBundleInstalled" />
       <?else?>
-        <bal:Condition Message="PowerToys Cuin (Community Edition) is already installed on this system for the current user. Please uninstall that version before installing the all-users edition." Condition="DetectedForkPowerToysUserVersion = 0.0.0.0 OR WixBundleInstalled" />
-        <bal:Condition Message="A later version of PowerToys Cuin (Community Edition) is already installed." Condition="TargetPowerToysVersion &gt;= DetectedForkPowerToysVersion OR WixBundleInstalled" />
+        <bal:Condition Message="PowerToys Cuin (Community Edition) is already installed on this system for the current user. Please uninstall that version before installing the all-users edition." Condition="DetectedForkPowerToysUserVersion = &quot;0.0.0.0&quot; or WixBundleInstalled" />
+        <bal:Condition Message="A later version of PowerToys Cuin (Community Edition) is already installed." Condition="TargetPowerToysVersion &gt;= DetectedForkPowerToysVersion or WixBundleInstalled" />
       <?endif?>
 
       <Variable Name="DetectedWindowsBuildNumber" Type="version" Value="0" />
       <util:RegistrySearch Id="SearchWindowsBuildNumber" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Value="CurrentBuildNumber" Result="value" Variable="DetectedWindowsBuildNumber" />
-      <bal:Condition Message="This application is only supported on Windows 10 version v2004 (build 19041) or higher." Condition="DetectedWindowsBuildNumber &gt;= 19041 OR WixBundleInstalled" />
+      <bal:Condition Message="This application is only supported on Windows 10 version v2004 (build 19041) or higher." Condition="DetectedWindowsBuildNumber &gt;= &quot;19041&quot; or WixBundleInstalled" />
     
         <Chain>
             <ExePackage DisplayName="Closing PowerToys application" Name="terminate_powertoys.cmd" Cache="remove" Compressed="yes" Id="TerminatePowerToys" SourceFile="terminate_powertoys.cmd" Permanent="yes" PerMachine="$(var.PerMachineYesNo)" Vital="no">
             </ExePackage>
-            <ExePackage DisplayName="Microsoft Edge WebView2" Name="MicrosoftEdgeWebview2Setup.exe" Compressed="yes" Id="WebView2" DetectCondition="HasWebView2PerMachine OR HasWebView2PerUser" SourceFile="WebView2\MicrosoftEdgeWebview2Setup.exe" Permanent="yes" PerMachine="$(var.PerMachineYesNo)" InstallArguments="/silent /install" RepairArguments="/repair /passive" UninstallArguments="/silent /uninstall">
+            <ExePackage DisplayName="Microsoft Edge WebView2" Name="MicrosoftEdgeWebview2Setup.exe" Compressed="yes" Id="WebView2" DetectCondition="HasWebView2PerMachine or HasWebView2PerUser" SourceFile="WebView2\MicrosoftEdgeWebview2Setup.exe" Permanent="yes" PerMachine="$(var.PerMachineYesNo)" InstallArguments="/silent /install" RepairArguments="/repair /passive" UninstallArguments="/silent /uninstall">
             </ExePackage>
             <MsiPackage DisplayName="PowerToys MSI" SourceFile="$(var.PowerToysPlatform)\Release\$(var.MSIPath)\$(var.MSIName)" Compressed="yes" bal:DisplayInternalUICondition="false">
                 <MsiProperty Name="BOOTSTRAPPERINSTALLFOLDER" Value="[InstallFolder]" />

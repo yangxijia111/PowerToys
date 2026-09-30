@@ -25,7 +25,12 @@
    与 preview.2 的 ProductVersion 同为 0.1.0：MajorUpgrade 的 UpgradeVersion
    （Maximum 含自身、不含等号）检测不到旧版、MSI 以 1638 拒绝同版本异
    ProductCode 安装、Bootstrapper 的 `TargetPowerToysVersion >= Detected*`
-   条件拦截引导——三层全部挡住覆盖升级（2026-09-30 真机预演发现）。
+   条件拦截引导——三层全部挡住覆盖升级（2026-09-30 真机预演发现）；
+9. Bootstrapper bal:Condition 使用 Burn 小写操作符（and/or/not）。
+   Burn 条件解析器大小写敏感，大写 AND/OR 会在运行时解析失败
+   （exit 13, 0x8007000d "Failed to parse condition"）——preview.1 已发布
+   EXE 即因此从未成功运行过（2026-09-30 首次真机执行 Bootstrapper 发现；
+   此前全部真机安装走 msiexec，EXE 路径无覆盖）。
 
 真机（安装 preview.1 → 覆盖安装 preview.2 → 验证数据保留）属于 preview.2
 发布前的 RELEASE_CHECKLIST §4 场景复验，不在本脚本范围。
@@ -164,6 +169,28 @@ def main() -> int:
             if re.search(r"LOCALAPPDATA|PowerToysCuin", m.group(0), re.I):
                 offenders.append(f"{p.name}: {m.group(0)}")
     check("无 Remove* 元素指向 LOCALAPPDATA / PowerToysCuin", not offenders, "; ".join(offenders[:3]))
+
+    # 9. bal:Condition 必须使用 Burn 小写操作符 + 带引号字面量（大写操作符或
+    #    未加引号的 0.0.0.0/19041 之类字面量都会在运行时解析失败 exit 13）
+    bal_conditions = re.findall(r'<bal:Condition\b[^>]*Condition="([^"]*)"', bundle)
+    check("bal:Condition 至少 5 个（互斥/同版本/系统检测）", len(bal_conditions) >= 5, str(len(bal_conditions)))
+    upper_ops = [c for c in bal_conditions if re.search(r"\b(AND|OR|NOT)\b", c)]
+    check(
+        "bal:Condition 无大写 AND/OR/NOT（Burn 操作符必须小写）",
+        not upper_ops,
+        "; ".join(upper_ops[:2]),
+    )
+    bare_literals = [
+        c
+        for c in bal_conditions
+        if re.search(r'=\s*[\d][\w.]*\s', c.replace("&quot;", '"').replace("&gt;", ">"))
+        and not re.search(r'=\s*&quot;', c)
+    ]
+    check(
+        "bal:Condition 字面量带引号（裸 0.0.0.0/19041 解析失败）",
+        not bare_literals,
+        "; ".join(bare_literals[:2]),
+    )
 
     print()
     if errors:
