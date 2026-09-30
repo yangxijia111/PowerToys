@@ -2,10 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Version>0.1.0</Version>
-    <!-- [fork-identity] fork 独立版本体系：0.1.0-preview.1（显示后缀由 VersionPreview 生成）。
-         MSI/Bundle ProductVersion 仍为纯数字 0.1.0.0；Git tag 计划 v0.1.0-preview.1。 -->
+    <!-- [fork-identity] fork 独立版本体系：0.1.0-preview.2（显示后缀由 VersionPreview 生成）。
+         MSI/Bundle ProductVersion 由安装器工程编码为 0.1.0.2（preview 序号进第四位，
+         保证 preview 系列间可覆盖升级，详见 tools/check_upgrade_chain.py 第 8 项断言）；
+         Git tag 计划 v0.1.0-preview.2（发布前经 RELEASE_CHECKLIST 复验）。 -->
     <VersionChannel>preview</VersionChannel>
-    <VersionPreview>1</VersionPreview>
+    <VersionPreview>2</VersionPreview>
     <!-- Update once when main moves to the next stable release train. -->
     <ReleaseTrainVersion>0.101</ReleaseTrainVersion>
     <!-- Y in YDDDB counts calendar years from this January 1. Reset it on the first release-train minor change of a new year. -->

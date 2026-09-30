@@ -87,7 +87,47 @@
 - `REMOVE=ALL` 卸载语义不删 `%LOCALAPPDATA%\PowerToysCuin` 用户数据（安装器仅写安装目录 + HKCU/HKLM 配置键）；
 - Settings / OOBE / Presets 状态位于用户数据目录，升级不触碰。
 
-运行时（真机）验证推迟到 preview.2 发布前的发布检查（RELEASE_CHECKLIST §4 场景复验）。
+### 6.1 真机预演发现：同 ProductVersion 拒绝升级（2026-09-30，已修复）
+
+真机升级预演前的 MSI 属性核对发现：preview.1 的 MSI `ProductVersion = 0.1.0`，而 Version 生成链不会把
+preview 序号编入 ProductVersion——preview.2 与 preview.1 的 ProductVersion 完全相同。同版本 + 不同
+ProductCode 时三层机制**全部**拒绝覆盖安装：
+
+1. MSI `MajorUpgrade`（未设 `AllowSameVersionUpgrades`，同版本不调度 `RemoveExistingProducts`）→ 报 1638
+   "Another version of this product is already installed"；
+2. `Product.wxs` 手写 `UpgradeVersion Maximum="$(var.Version)" IncludeMaximum="no"`（同版本不满足
+   `< Maximum`）→ `PREVIOUSVERSIONSINSTALLED` 不设置；
+3. Bootstrapper `bal:Condition TargetPowerToysVersion >= DetectedForkPowerToysUserVersion`（0.1.0 >= 0.1.0
+   为真）→ 引导器弹出 "The same or a later version is already installed"。
+
+静态检查此前未覆盖 ProductVersion 语义（只断言 UpgradeCode / MajorUpgrade 存在性），属于"真机一测
+就会暴露"的盲区。修复（preview.2 起）：
+
+- 两个安装器 wixproj 新增 `MsiVersion = Version + "." + VersionPreview`（0.1.0-preview.2 → **0.1.0.2**）；
+- MSI `Package @Version`、`UpgradeVersion @Maximum`、Bundle `@Version`、`TargetPowerToysVersion` 全部改引
+  `$(var.MsiVersion)`；Bootstrapper 日志前缀同步带第四位（preview.1/2 日志不再同名难区分）；
+- `check_upgrade_chain.py` 新增第 8 项断言（6 条子断言）：上述四处引用 + 两个 wixproj 的 MsiVersion 定义与
+  DefineConstants 传递，防回归；
+- 版本语义：preview.N → `0.1.0.N` 单调递增，已发布 preview.1（0.1.0.0）可被任何后续 preview 覆盖升级；
+  stable 发布使用递增的 X.Y.Z（如 0.2.0），天然高于 preview 线。
+
+### 6.2 真机覆盖升级实测（2026-09-30，已执行）
+
+实测结果：**preview.1 → preview.2 候选（本地构建）覆盖升级成功**。perUser 路线，msiexec 静默安装：
+
+- 安装已发布 preview.1 perUser MSI（ProductVersion 0.1.0，ProductCode `{A060AC30-…}`）→ 启动
+  runner/Settings 生成用户数据（79 个 settings/layout/OOBE/DSC JSON 快照 + 标记文件）；
+- 覆盖安装 preview.2 候选 perUser MSI（ProductVersion 0.1.0.2，ProductCode `{C56A9FF2-…}`）→
+  **msiexec 退出码 0**（未修复时此路径为 1638 拒绝）；日志确认 `RemoveExistingProducts` 动作执行；
+- 升级后 ARP `DisplayVersion = 0.1.0.2`，旧 ProductCode 移除、新 ProductCode 注册；
+- 安装目录 runner/Settings 二进制与本地构建输出 SHA256 一致（新文件确认落盘）；
+- `%LOCALAPPDATA%\PowerToysCuin` 用户数据 79/79 文件 SHA256 逐一致，标记文件保留；
+- Smoke：runner 日志 `Scoobe: product_version=v0.1.0-preview.2 last_version_run=v0.1.0-preview.1`
+  （升级被识别），runner + Settings + 7 个模块进程正常，用户原模块开关状态原样生效，
+  `Rejected unauthenticated` 计数 0（IPC 鉴权放行正常）。
+
+（RELEASE_CHECKLIST §4 的其余场景——OOBE 交互、右键菜单抽查、Repair/Uninstall、官方冲突——
+仍按计划在 preview.2 正式发布前执行；本次自动化环境覆盖升级链核心路径。）
 
 ## 7. preview.2 准入标准（任一满足才准备）
 
@@ -103,5 +143,6 @@
 
 1. 观察期：收集真实用户 Issue（当前 0），按 §3 口径分类；
 2. 签名决策：若确认采购证书，按 CODE_SIGNING.md §5 启用 Signed Release 模式并触发 preview.2（同时恢复 sparse 菜单 + 自动更新）；
-3. 小步维持：P2/P3 修复累计到值得集中发布时，按 RELEASE_CHECKLIST 走 preview.2 流程；
+3. 小步维持：P2/P3 修复累计到值得集中发布时，按 RELEASE_CHECKLIST 走 preview.2 流程
+   （升级链核心路径已于 2026-09-30 真机实测通过，见 §6.2；剩余交互场景见 RELEASE_CHECKLIST §4）；
 4. 上游同步：定期评估 SYNC_GUIDE 流程，避免落后上游安全修复。

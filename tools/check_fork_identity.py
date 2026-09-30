@@ -154,7 +154,9 @@ def main() -> int:
     version_props = read("src/Version.props")
     check("Version.props 版本为 0.1.0", "<Version>0.1.0</Version>" in version_props)
     check("Version.props 渠道为 preview", "<VersionChannel>preview</VersionChannel>" in version_props)
-    check("Version.props preview 序号为 1", "<VersionPreview>1</VersionPreview>" in version_props)
+    # preview 序号不锁死具体数字（preview.1 → preview.2 → …），只断言为正整数且单调推进合法
+    _preview = re.search(r"<VersionPreview>(\d+)</VersionPreview>", version_props)
+    check("Version.props preview 序号为正整数", _preview is not None and int(_preview.group(1)) >= 1)
     check("版本生成链含 preview 后缀宏", "VERSION_PREVIEW_SUFFIX" in read("src/common/version/version.vcxproj"))
     check("显示版本拼接 preview 后缀", "VERSION_PREVIEW_SUFFIX" in read("src/common/version/version.h"))
 

@@ -238,9 +238,9 @@ jobs:
           $ErrorActionPreference = 'Stop'
           # 改版本号时必须同步更新此清单（check_release_assets.py 会在构建前拦截遗漏）
           $expected = @(
-            "PowerToysCuin-0.1.0-preview.1-x64.exe",
-            "PowerToysCuin-0.1.0-preview.1-x64-perUser.msi",
-            "PowerToysCuin-0.1.0-preview.1-x64-perMachine.msi"
+            "PowerToysCuin-0.1.0-preview.2-x64.exe",
+            "PowerToysCuin-0.1.0-preview.2-x64-perUser.msi",
+            "PowerToysCuin-0.1.0-preview.2-x64-perMachine.msi"
           )
           $roots = @(
             "installer\PowerToysSetupVNext\x64\Release\UserSetup",
