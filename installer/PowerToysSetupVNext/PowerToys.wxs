@@ -6,8 +6,10 @@
 
     <?include $(sys.CURRENTDIR)\Common.wxi?>
 
-    <!-- [fork-identity] Bundle 名与发行者改为社区发行版，避免 ARP 中被误认为微软官方 -->
-    <Bundle Name="PowerToys Cuin (Community Edition) $(var.PowerToysPlatform)" Version="$(var.Version)" Manufacturer="PowerToys Cuin Community" IconSourceFile="$(var.BinDir)svgs\icon.ico" UpgradeCode="$(var.UpgradeCode)">
+    <!-- [fork-identity] Bundle 名与发行者改为社区发行版，避免 ARP 中被误认为微软官方。
+         Version 用 MsiVersion（preview 序号编入第四位，如 0.1.0.2）：Burn 相关包比较与
+         bal:Condition 版本判定需要 preview 系列间递增，覆盖升级才不被判为同版本。 -->
+    <Bundle Name="PowerToys Cuin (Community Edition) $(var.PowerToysPlatform)" Version="$(var.MsiVersion)" Manufacturer="PowerToys Cuin Community" IconSourceFile="$(var.BinDir)svgs\icon.ico" UpgradeCode="$(var.UpgradeCode)">
         <BootstrapperApplication>
             <bal:WixStandardBootstrapperApplication 
                 LicenseFile="$(var.RepoDir)\installer\License.rtf" 
@@ -29,7 +31,7 @@
             <Variable Name="InstallFolder" Type="formatted" Value="$(var.PlatformProgramFiles)PowerToysCuin" bal:Overridable="yes" />
         <?endif?>
 
-        <Log Disable="no" Prefix="powertoys-bootstrapper-msi-$(var.Version)" Extension=".log" />
+        <Log Disable="no" Prefix="powertoys-bootstrapper-msi-$(var.MsiVersion)" Extension=".log" />
 
         <!-- Store Bundle UpgradeCode for CustomAction -->
         <Variable Name="BundleUpgradeCode" Type="string" Value="$(var.UpgradeCode)" />
@@ -39,7 +41,7 @@
            2) fork 自身另一 scope 已装 → 阻止；fork 同 scope 升级由 MSI MajorUpgrade 处理。
            bal:Condition 的 Condition 属性为"允许继续"的条件；OR WixBundleInstalled 保证
            fork 自身的修复/升级/卸载不被这些检测卡住。 -->
-      <Variable Name="TargetPowerToysVersion" Type="version" Value="$(var.Version)" />
+      <Variable Name="TargetPowerToysVersion" Type="version" Value="$(var.MsiVersion)" />
       <Variable Name="DetectedForkPowerToysVersion" Type="version" Value="0.0.0.0" />
       <Variable Name="DetectedForkPowerToysUserVersion" Type="version" Value="0.0.0.0" />
       <Variable Name="DetectedOfficialPowerToysVersion" Type="version" Value="0.0.0.0" />

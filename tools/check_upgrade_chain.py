@@ -18,7 +18,14 @@
 6. 安装器不删除/不搬移用户数据目录：WiX 源中不得出现指向
    LOCALAPPDATA / PowerToysCuin（AppData）的 RemoveFile / RemoveFolder /
    RemoveFileEx —— 卸载保留 `%LOCALAPPDATA%\\PowerToysCuin`（与官方一致）；
-7. REINSTALLMODE=amus（升级时强制覆盖旧版本文件）。
+7. REINSTALLMODE=amus（升级时强制覆盖旧版本文件）；
+8. MSI/Bundle 的 ProductVersion 引用 `$(var.MsiVersion)`（preview 序号编入
+   第四位，0.1.0-preview.2 → 0.1.0.2），且两个 wixproj 均定义 MsiVersion 并
+   引用 `$(VersionPreview)`、经 DefineConstants 传入。缺此编码时 preview.1
+   与 preview.2 的 ProductVersion 同为 0.1.0：MajorUpgrade 的 UpgradeVersion
+   （Maximum 含自身、不含等号）检测不到旧版、MSI 以 1638 拒绝同版本异
+   ProductCode 安装、Bootstrapper 的 `TargetPowerToysVersion >= Detected*`
+   条件拦截引导——三层全部挡住覆盖升级（2026-09-30 真机预演发现）。
 
 真机（安装 preview.1 → 覆盖安装 preview.2 → 验证数据保留）属于 preview.2
 发布前的 RELEASE_CHECKLIST §4 场景复验，不在本脚本范围。
@@ -96,6 +103,33 @@ def main() -> int:
             pkg_tag.group(0),
         )
 
+    # 8. ProductVersion 编码 preview 序号：MSI/Bundle 的版本比较必须跨 preview 递增
+    if pkg_tag:
+        check(
+            "Package Version 引用 $(var.MsiVersion)",
+            'Version="$(var.MsiVersion)"' in pkg_tag.group(0),
+            pkg_tag.group(0),
+        )
+    check(
+        "UpgradeVersion Maximum 引用 $(var.MsiVersion)",
+        re.search(r'<UpgradeVersion[^>]*Maximum="\$\(var\.MsiVersion\)"[^>]*Property="PREVIOUSVERSIONSINSTALLED"', product)
+        is not None,
+    )
+    for wixproj_name in ("PowerToysInstallerVNext.wixproj", "PowerToysBootstrapperVNext.wixproj"):
+        wixproj_text = (WXS_DIR / wixproj_name).read_text(encoding="utf-8", errors="replace")
+        check(
+            f"{wixproj_name} 定义 MsiVersion 并编码 $(VersionPreview)",
+            re.search(
+                r"<MsiVersion Condition=\"'\$\(VersionPreview\)' != '' and '\$\(VersionPreview\)' != '0'\">\$\(Version\)\.\$\(VersionPreview\)</MsiVersion>",
+                wixproj_text,
+            )
+            is not None,
+        )
+        check(
+            f"{wixproj_name} 经 DefineConstants 传入 MsiVersion",
+            re.search(r"<DefineConstants>[^<]*MsiVersion=\$\(MsiVersion\)", wixproj_text) is not None,
+        )
+
     # 5. Bootstrapper Bundle UpgradeCode：字面量 define + Bundle 元素引用该变量
     #    （PowerToys.wxs 中的官方 GUID 仅用于互斥检测 Upgrade 表，属预期，不作断言对象）
     b_define = re.findall(r'<\?define UpgradeCode="([0-9A-Fa-f-]{36})"\?>', bundle)
@@ -112,6 +146,15 @@ def main() -> int:
             'UpgradeCode="$(var.UpgradeCode)"' in bundle_tag.group(0),
             bundle_tag.group(0),
         )
+        check(
+            "Bundle Version 引用 $(var.MsiVersion)",
+            'Version="$(var.MsiVersion)"' in bundle_tag.group(0),
+            bundle_tag.group(0),
+        )
+    check(
+        "Bootstrapper TargetPowerToysVersion 引用 $(var.MsiVersion)",
+        'Name="TargetPowerToysVersion" Type="version" Value="$(var.MsiVersion)"' in bundle,
+    )
 
     # 6. 用户数据保留：任何 wxs/wxi 不得有指向 AppData 的 Remove* 元素
     offenders = []

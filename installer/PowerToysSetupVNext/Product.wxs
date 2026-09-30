@@ -17,14 +17,16 @@
            -->
 
   <!-- [fork-identity] 社区发行版名称与发行者；UpgradeCode 为 fork 专属（docs/IDENTITY_MAP.md）。
-       Manufacturer 不再用 Microsoft Corporation，避免 ARP 发布者被误认为官方。 -->
-  <Package Name="PowerToys Cuin (Community Edition)" Language="1033" Version="$(var.Version)" Manufacturer="PowerToys Cuin Community" UpgradeCode="$(var.UpgradeCodeGUID)" Scope="$(var.InstallScope)">
+       Manufacturer 不再用 Microsoft Corporation，避免 ARP 发布者被误认为官方。
+       Version 用 MsiVersion（preview 序号编入第四位，如 0.1.0.2）：preview 系列间
+       ProductVersion 递增，MajorUpgrade / Upgrade 表的版本比较才能识别旧版本并覆盖升级。 -->
+  <Package Name="PowerToys Cuin (Community Edition)" Language="1033" Version="$(var.MsiVersion)" Manufacturer="PowerToys Cuin Community" UpgradeCode="$(var.UpgradeCodeGUID)" Scope="$(var.InstallScope)">
 
 
     <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed." />
 
     <Upgrade Id="$(var.UpgradeCodeGUID)">
-      <UpgradeVersion Minimum="0.0.0" Maximum="$(var.Version)" Property="PREVIOUSVERSIONSINSTALLED" IncludeMinimum="yes" IncludeMaximum="no" />
+      <UpgradeVersion Minimum="0.0.0" Maximum="$(var.MsiVersion)" Property="PREVIOUSVERSIONSINSTALLED" IncludeMinimum="yes" IncludeMaximum="no" />
     </Upgrade>
 
     <!-- [fork-identity] 官方 Microsoft PowerToys 已装则阻止（互斥安装，仅检测不移除；官方码不是 fork 身份） -->

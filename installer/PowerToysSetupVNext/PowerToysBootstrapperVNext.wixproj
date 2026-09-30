@@ -5,7 +5,13 @@
   <PropertyGroup>
     <VersionFile>$(Version)-preview.$(VersionPreview)</VersionFile>
     <!-- [fork-identity] fork 发行资产命名 -->
-    <DefineConstants>Version=$(Version);VersionFile=$(VersionFile)</DefineConstants>
+    <!-- [fork-identity] MSI/Bundle ProductVersion 编码 preview 序号（0.1.0-preview.2 → 0.1.0.2）：
+         preview 系列之间 ProductVersion 必须递增，Burn 相关包比较与 bal:Condition 的
+         TargetPowerToysVersion >= Detected* 判定才能视新包为更高版本，覆盖升级不被拒；
+         已发布 preview.1 的 ProductVersion 为 0.1.0（0.1.0.0），preview.2 起为 0.1.0.N。 -->
+    <MsiVersion Condition="'$(VersionPreview)' != '' and '$(VersionPreview)' != '0'">$(Version).$(VersionPreview)</MsiVersion>
+    <MsiVersion Condition="'$(MsiVersion)' == ''">$(Version)</MsiVersion>
+    <DefineConstants>Version=$(Version);VersionFile=$(VersionFile);MsiVersion=$(MsiVersion)</DefineConstants>
     <Name>PowerToysVNextBootstrapper</Name>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition=" '$(PerUser)' == 'true' ">
