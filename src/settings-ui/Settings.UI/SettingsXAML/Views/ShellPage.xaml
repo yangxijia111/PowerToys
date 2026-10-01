@@ -451,6 +451,12 @@
             </NavigationView.MenuItems>
             <NavigationView.PaneFooter>
                 <StackPanel Orientation="Vertical">
+                    <!--  [fork-i18n] 一键切换中英文：Content 由代码按目标语言动态设置  -->
+                    <NavigationViewItem
+                        x:Name="LanguageSwitchNavigationItem"
+                        AutomationProperties.AutomationId="LanguageSwitchNavItem"
+                        Icon="{ui:FontIcon Glyph=&#xE774;}"
+                        Tapped="LanguageSwitchItem_Tapped" />
                     <NavigationViewItem
                         x:Name="OOBENavigationItem"
                         x:Uid="OOBE_NavViewItem"
@@ -499,6 +505,13 @@
             IsPrimaryButtonEnabled="True"
             IsSecondaryButtonEnabled="True"
             PrimaryButtonClick="CloseDialog_Click"
+            PrimaryButtonStyle="{StaticResource AccentButtonStyle}" />
+        <!--  [fork-i18n] 语言切换重启确认：文案由代码按当前进程语言加载  -->
+        <ContentDialog
+            x:Name="LanguageSwitchDialog"
+            IsPrimaryButtonEnabled="True"
+            IsSecondaryButtonEnabled="True"
+            PrimaryButtonClick="LanguageSwitchDialog_PrimaryClick"
             PrimaryButtonStyle="{StaticResource AccentButtonStyle}" />
     </Grid>
 </UserControl>

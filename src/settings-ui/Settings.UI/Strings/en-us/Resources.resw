@@ -2509,6 +2509,26 @@ From there, simply click on one of the supported files in the File Explorer and 
   <data name="ScoobeReleaseNotes_ViewOnGitHub" xml:space="preserve">
     <value>View on GitHub</value>
   </data>
+  <data name="Shell_LanguageSwitch_ToolTip" xml:space="preserve">
+    <value>Switch interface language</value>
+    <comment>[fork-i18n] Nav footer language switch tooltip</comment>
+  </data>
+  <data name="LanguageSwitch_Dialog_Title" xml:space="preserve">
+    <value>Language switched</value>
+    <comment>[fork-i18n] Dialog title after toggling language</comment>
+  </data>
+  <data name="LanguageSwitch_Dialog_Message" xml:space="preserve">
+    <value>The interface language has been switched to {0}. Restart PowerToys to apply it everywhere.</value>
+    <comment>[fork-i18n] {0} is the target language display name</comment>
+  </data>
+  <data name="LanguageSwitch_Dialog_RestartNow" xml:space="preserve">
+    <value>Restart now</value>
+    <comment>[fork-i18n] Dialog primary button</comment>
+  </data>
+  <data name="LanguageSwitch_Dialog_Later" xml:space="preserve">
+    <value>Later</value>
+    <comment>[fork-i18n] Dialog secondary button</comment>
+  </data>
   <data name="SettingsWindow_Title" xml:space="preserve">
     <value>PowerToys Cuin Settings</value>
     <comment>Title of the settings window when running as user</comment>

@@ -122,6 +122,8 @@ namespace Microsoft.PowerToys.Settings.UI.Views
             ShellHandler = this;
             ViewModel.Initialize(shellFrame, navigationView, KeyboardAccelerators);
 
+            UpdateLanguageSwitchItemLabel();
+
             // NL moved navigation to general page to the moment when the window is first activated (to not make flyout window disappear)
             // shellFrame.Navigate(typeof(GeneralPage));
             IPCResponseHandleList.Add(ReceiveMessage);
@@ -307,6 +309,63 @@ namespace Microsoft.PowerToys.Settings.UI.Views
         private void OOBEItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ((App)App.Current)!.OpenOobe();
+        }
+
+        // [fork-i18n] 导航页脚一键切换中英文：
+        // 当前语言以 language.json 为准（未设置时跟随系统 UI 语言），
+        // 切换即经 IPC 交由 runner 写入 language.json，重启后全部模块生效。
+        private const string LanguageZhCN = "zh-CN";
+        private const string LanguageEnUS = "en-US";
+
+        private static string GetCurrentLanguageTag()
+        {
+            var saved = LanguageModel.LoadSetting();
+            if (!string.IsNullOrEmpty(saved))
+            {
+                return saved;
+            }
+
+            var systemUiLanguage = System.Globalization.CultureInfo.CurrentUICulture.Name;
+            return systemUiLanguage.StartsWith("zh", StringComparison.OrdinalIgnoreCase) ? LanguageZhCN : LanguageEnUS;
+        }
+
+        private static string GetLanguageDisplayName(string tag)
+        {
+            return tag == LanguageZhCN ? "中文" : "English";
+        }
+
+        private void UpdateLanguageSwitchItemLabel()
+        {
+            var current = GetCurrentLanguageTag();
+            var target = current == LanguageZhCN ? LanguageEnUS : LanguageZhCN;
+            LanguageSwitchNavigationItem.Content = GetLanguageDisplayName(target);
+            ToolTipService.SetToolTip(LanguageSwitchNavigationItem, ResourceLoaderInstance.ResourceLoader.GetString("Shell_LanguageSwitch_ToolTip"));
+        }
+
+        private async void LanguageSwitchItem_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var current = GetCurrentLanguageTag();
+            var target = current == LanguageZhCN ? LanguageEnUS : LanguageZhCN;
+
+            // 与常规页语言下拉一致：runner 负责持久化到 %LOCALAPPDATA% 下的 language.json
+            SendDefaultIPCMessage(new OutGoingLanguageSettings(target).ToString());
+
+            var loader = ResourceLoaderInstance.ResourceLoader;
+            LanguageSwitchDialog.Title = loader.GetString("LanguageSwitch_Dialog_Title");
+            LanguageSwitchDialog.Content = string.Format(System.Globalization.CultureInfo.InvariantCulture, loader.GetString("LanguageSwitch_Dialog_Message"), GetLanguageDisplayName(target));
+            LanguageSwitchDialog.PrimaryButtonText = loader.GetString("LanguageSwitch_Dialog_RestartNow");
+            LanguageSwitchDialog.SecondaryButtonText = loader.GetString("LanguageSwitch_Dialog_Later");
+
+            await LanguageSwitchDialog.ShowAsync();
+        }
+
+        private void LanguageSwitchDialog_PrimaryClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // 与 GeneralViewModel.Restart() 相同的"保持提权状态重启"，使所有模块一同换语言
+            var restartMessage = System.Text.Json.JsonSerializer.Serialize(
+                ActionMessage.Create("restart_maintain_elevation"),
+                SerializationContext.SourceGenerationContextContext.Default.ActionMessage);
+            SendRestartAdminIPCMessage(restartMessage);
         }
 
         private void WhatIsNewItem_Tapped(object sender, TappedRoutedEventArgs e)
