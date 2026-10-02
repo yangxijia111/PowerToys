@@ -92,7 +92,7 @@ runner（`src/runner/main.cpp:257` `knownModules` 列表）对每个模块 DLL�
 
 | 文件 | 说明 |
 |---|---|
-| `src/modules/cuin/<x>/<x>.vccxproj` + `dllmain.cpp` + `trace.*` + `pch.*` + `packages.config` + `.rc` | C++ 壳，抄 Peek（`src/modules/peek/peek/`）或官方 `tools/project_template/ModuleTemplate/`。TargetName=`PowerToys.<X>`，输出 `WinUI3Apps\` |
+| `src/modules/cuin/<x>/<x>.vcxproj` + `dllmain.cpp` + `trace.*` + `pch.*` + `packages.config` + `.rc` | C++ 壳，抄 Peek（`src/modules/peek/peek/`）或官方 `tools/project_template/ModuleTemplate/`。TargetName=`PowerToys.<X>`，输出 `WinUI3Apps\` |
 | `src/modules/cuin/<X>.UI/` | WinUI3 主程序，抄 `Peek.UI.csproj` 关键属性：`WindowsPackageType=None`、`WindowsAppSDKSelfContained=true`、import `Common.SelfContained.props`、`OutputPath=$(RepoRoot)$(Platform)$(Configuration)\WinUI3Apps`、app.manifest asInvoker |
 | `src/modules/cuin/<X>.UI/Strings/{en-us,zh-CN}/Resources.resw` | 模块自身 UI 字符串 |
 | `src/modules/cuin/<X>.Common/`（可选） | 纯 C# 业务逻辑库（与 Windows API 分层，保可测性） |
