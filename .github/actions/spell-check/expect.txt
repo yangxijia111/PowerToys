@@ -2310,3 +2310,28 @@ spoolsv
 # misc
 WLAN
 hasattr
+# zh-CN settings translation + touched-file legacy terms (2026-10-02)
+Bezelled
+CMDPAL
+CUIN
+GDI
+GRABANDMOVE
+Gdiplus
+Hotkeys
+LIGHTSWITCH
+LIVEZOOM
+LPARAM
+Ocr
+Ollama
+PInvoke
+Previewer
+QOI
+Qoi
+Rasterization
+VCP
+Vcp
+WINAPI
+WMI
+Wifi
+Wox
+ZOOMIT
