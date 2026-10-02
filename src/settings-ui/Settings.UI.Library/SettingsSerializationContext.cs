@@ -58,6 +58,9 @@ namespace Microsoft.PowerToys.Settings.UI.Library
     [JsonSerializable(typeof(FileLocksmithSettings))]
     [JsonSerializable(typeof(FindMyMouseSettings))]
     [JsonSerializable(typeof(HostsSettings))]
+
+    // [fork-feature] Cuin Quick Actions
+    [JsonSerializable(typeof(CuinQuickActionsSettings))]
     [JsonSerializable(typeof(ImageResizerSettings))]
     [JsonSerializable(typeof(KeyboardManagerSettings))]
     [JsonSerializable(typeof(LightSwitchSettings))]
@@ -81,6 +84,8 @@ namespace Microsoft.PowerToys.Settings.UI.Library
     [JsonSerializable(typeof(ZoomItSettings))]
 
     // Properties Classes
+    // [fork-feature] Cuin Quick Actions
+    [JsonSerializable(typeof(CuinQuickActionsProperties))]
     [JsonSerializable(typeof(AdvancedPasteProperties))]
     [JsonSerializable(typeof(AlwaysOnTopProperties))]
     [JsonSerializable(typeof(AutoHideCursorProperties))]

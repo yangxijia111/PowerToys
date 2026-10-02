@@ -82,6 +82,9 @@ namespace Microsoft.PowerToys.Settings.UI.Library.Helpers
                 ModuleType.Workspaces => generalSettingsConfig.Enabled.Workspaces,
                 ModuleType.GrabAndMove => generalSettingsConfig.Enabled.GrabAndMove,
                 ModuleType.ZoomIt => generalSettingsConfig.Enabled.ZoomIt,
+
+                // [fork-feature] Cuin Quick Actions
+                ModuleType.CuinQuickActions => generalSettingsConfig.Enabled.CuinQuickActions,
                 ModuleType.GeneralSettings => generalSettingsConfig.EnableQuickAccess,
                 _ => false,
             };
@@ -125,6 +128,9 @@ namespace Microsoft.PowerToys.Settings.UI.Library.Helpers
                 case ModuleType.Workspaces: generalSettingsConfig.Enabled.Workspaces = isEnabled; break;
                 case ModuleType.GrabAndMove: generalSettingsConfig.Enabled.GrabAndMove = isEnabled; break;
                 case ModuleType.ZoomIt: generalSettingsConfig.Enabled.ZoomIt = isEnabled; break;
+
+                // [fork-feature] Cuin Quick Actions
+                case ModuleType.CuinQuickActions: generalSettingsConfig.Enabled.CuinQuickActions = isEnabled; break;
                 case ModuleType.GeneralSettings: generalSettingsConfig.EnableQuickAccess = isEnabled; break;
             }
         }
@@ -171,6 +177,9 @@ namespace Microsoft.PowerToys.Settings.UI.Library.Helpers
                 ModuleType.Workspaces => WorkspacesSettings.ModuleName,
                 ModuleType.GrabAndMove => GrabAndMoveSettings.ModuleName,
                 ModuleType.ZoomIt => ZoomItSettings.ModuleName,
+
+                // [fork-feature] Cuin Quick Actions
+                ModuleType.CuinQuickActions => CuinQuickActionsSettings.ModuleName,
                 _ => moduleType.ToString(),
             };
         }
