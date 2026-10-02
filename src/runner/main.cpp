@@ -291,6 +291,8 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
             L"PowerToys.PowerDisplayModuleInterface.dll",
             L"PowerToys.GrabAndMoveModuleInterface.dll",
             L"PowerToys.AltWindowCycle.dll",
+            // [fork-feature] Cuin custom module: Quick Actions panel.
+            L"WinUI3Apps/PowerToys.CuinQuickActions.dll",
         };
 
         for (auto moduleSubdir : knownModules)

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [fork-feature] Cuin Quick Actions 面板字符串（zh-CN）。 -->
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Panel_Title">
+    <value>快捷操作</value>
+  </data>
+  <data name="Panel_Subtitle">
+    <value>常用系统操作，一键直达</value>
+  </data>
+  <data name="Panel_Group_System">
+    <value>系统</value>
+  </data>
+  <data name="Panel_Group_Maintenance">
+    <value>维护</value>
+  </data>
+  <data name="Panel_Group_SettingsPage">
+    <value>系统设置</value>
+  </data>
+  <data name="Panel_Group_Tools">
+    <value>工具</value>
+  </data>
+  <data name="QuickAction_open_task_manager_Title">
+    <value>打开任务管理器</value>
+  </data>
+  <data name="QuickAction_open_task_manager_Description">
+    <value>查看并管理正在运行的应用和进程</value>
+  </data>
+  <data name="QuickAction_lock_screen_Title">
+    <value>锁定屏幕</value>
+  </data>
+  <data name="QuickAction_lock_screen_Description">
+    <value>立即锁定当前电脑</value>
+  </data>
+  <data name="QuickAction_close_foreground_app_Title">
+    <value>结束无响应程序</value>
+  </data>
+  <data name="QuickAction_close_foreground_app_Description">
+    <value>强制关闭打开面板前的活动窗口程序</value>
+  </data>
+  <data name="QuickAction_restart_explorer_Title">
+    <value>重启资源管理器</value>
+  </data>
+  <data name="QuickAction_restart_explorer_Description">
+    <value>重启 Windows 外壳进程，任务栏和桌面将刷新</value>
+  </data>
+  <data name="QuickAction_clear_clipboard_Title">
+    <value>清空剪贴板</value>
+  </data>
+  <data name="QuickAction_clear_clipboard_Description">
+    <value>清除剪贴板中的所有内容</value>
+  </data>
+  <data name="QuickAction_open_windows_settings_Title">
+    <value>Windows 设置</value>
+  </data>
+  <data name="QuickAction_open_windows_settings_Description">
+    <value>打开 Windows 设置主页</value>
+  </data>
+  <data name="QuickAction_open_network_settings_Title">
+    <value>网络设置</value>
+  </data>
+  <data name="QuickAction_open_network_settings_Description">
+    <value>WLAN、VPN、适配器等网络选项</value>
+  </data>
+  <data name="QuickAction_open_apps_features_Title">
+    <value>应用和功能</value>
+  </data>
+  <data name="QuickAction_open_apps_features_Description">
+    <value>卸载或修改已安装的应用</value>
+  </data>
+  <data name="QuickAction_open_startup_apps_Title">
+    <value>启动应用</value>
+  </data>
+  <data name="QuickAction_open_startup_apps_Description">
+    <value>管理开机自动运行的应用</value>
+  </data>
+  <data name="QuickAction_edit_environment_variables_Title">
+    <value>编辑环境变量</value>
+  </data>
+  <data name="QuickAction_edit_environment_variables_Description">
+    <value>打开系统环境变量编辑器</value>
+  </data>
+  <data name="QuickAction_open_hosts_file_Title">
+    <value>打开 Hosts 文件</value>
+  </data>
+  <data name="QuickAction_open_hosts_file_Description">
+    <value>用记事本打开 hosts 文件</value>
+  </data>
+  <data name="QuickAction_open_cuin_settings_Title">
+    <value>PowerToys Cuin 设置</value>
+  </data>
+  <data name="QuickAction_open_cuin_settings_Description">
+    <value>打开 PowerToys Cuin 设置窗口</value>
+  </data>
+  <data name="Dialog_ConfirmTitle">
+    <value>确认执行此操作？</value>
+  </data>
+  <data name="Dialog_ConfirmButton">
+    <value>是，继续</value>
+  </data>
+  <data name="Dialog_CancelButton">
+    <value>取消</value>
+  </data>
+  <data name="Dialog_ConfirmTargetFormat">
+    <value>目标程序：{0}</value>
+  </data>
+  <data name="Dialog_UnknownTarget">
+    <value>未知程序</value>
+  </data>
+  <data name="Dialog_ErrorTitle">
+    <value>操作失败</value>
+  </data>
+  <data name="Dialog_ErrorContent">
+    <value>操作未能完成。详情请查看 Cuin Quick Actions 日志。</value>
+  </data>
+</root>

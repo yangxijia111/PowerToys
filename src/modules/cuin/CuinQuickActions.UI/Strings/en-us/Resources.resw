@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [fork-feature] Cuin Quick Actions 面板字符串（en-US）。 -->
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Panel_Title">
+    <value>Quick Actions</value>
+  </data>
+  <data name="Panel_Subtitle">
+    <value>Common system tasks, one key away</value>
+  </data>
+  <data name="Panel_Group_System">
+    <value>System</value>
+  </data>
+  <data name="Panel_Group_Maintenance">
+    <value>Maintenance</value>
+  </data>
+  <data name="Panel_Group_SettingsPage">
+    <value>Windows Settings</value>
+  </data>
+  <data name="Panel_Group_Tools">
+    <value>Tools</value>
+  </data>
+  <data name="QuickAction_open_task_manager_Title">
+    <value>Open Task Manager</value>
+  </data>
+  <data name="QuickAction_open_task_manager_Description">
+    <value>View and manage running apps and processes</value>
+  </data>
+  <data name="QuickAction_lock_screen_Title">
+    <value>Lock screen</value>
+  </data>
+  <data name="QuickAction_lock_screen_Description">
+    <value>Lock this PC immediately</value>
+  </data>
+  <data name="QuickAction_close_foreground_app_Title">
+    <value>Close unresponsive app</value>
+  </data>
+  <data name="QuickAction_close_foreground_app_Description">
+    <value>Force close the app that was active before you opened this panel</value>
+  </data>
+  <data name="QuickAction_restart_explorer_Title">
+    <value>Restart Explorer</value>
+  </data>
+  <data name="QuickAction_restart_explorer_Description">
+    <value>Restart the Windows shell; the taskbar and desktop will refresh</value>
+  </data>
+  <data name="QuickAction_clear_clipboard_Title">
+    <value>Clear clipboard</value>
+  </data>
+  <data name="QuickAction_clear_clipboard_Description">
+    <value>Remove everything currently on the clipboard</value>
+  </data>
+  <data name="QuickAction_open_windows_settings_Title">
+    <value>Windows Settings</value>
+  </data>
+  <data name="QuickAction_open_windows_settings_Description">
+    <value>Open the main Windows Settings app</value>
+  </data>
+  <data name="QuickAction_open_network_settings_Title">
+    <value>Network settings</value>
+  </data>
+  <data name="QuickAction_open_network_settings_Description">
+    <value>Wi-Fi, VPN, adapters and other network options</value>
+  </data>
+  <data name="QuickAction_open_apps_features_Title">
+    <value>Apps &amp; features</value>
+  </data>
+  <data name="QuickAction_open_apps_features_Description">
+    <value>Uninstall or modify installed apps</value>
+  </data>
+  <data name="QuickAction_open_startup_apps_Title">
+    <value>Startup apps</value>
+  </data>
+  <data name="QuickAction_open_startup_apps_Description">
+    <value>Manage which apps run at startup</value>
+  </data>
+  <data name="QuickAction_edit_environment_variables_Title">
+    <value>Edit environment variables</value>
+  </data>
+  <data name="QuickAction_edit_environment_variables_Description">
+    <value>Open the system environment variables editor</value>
+  </data>
+  <data name="QuickAction_open_hosts_file_Title">
+    <value>Open Hosts file</value>
+  </data>
+  <data name="QuickAction_open_hosts_file_Description">
+    <value>Open the hosts file in Notepad</value>
+  </data>
+  <data name="QuickAction_open_cuin_settings_Title">
+    <value>PowerToys Cuin Settings</value>
+  </data>
+  <data name="QuickAction_open_cuin_settings_Description">
+    <value>Open the PowerToys Cuin settings window</value>
+  </data>
+  <data name="Dialog_ConfirmTitle">
+    <value>Are you sure?</value>
+  </data>
+  <data name="Dialog_ConfirmButton">
+    <value>Yes, continue</value>
+  </data>
+  <data name="Dialog_CancelButton">
+    <value>Cancel</value>
+  </data>
+  <data name="Dialog_ConfirmTargetFormat">
+    <value>Target app: {0}</value>
+  </data>
+  <data name="Dialog_UnknownTarget">
+    <value>Unknown</value>
+  </data>
+  <data name="Dialog_ErrorTitle">
+    <value>Action failed</value>
+  </data>
+  <data name="Dialog_ErrorContent">
+    <value>The action could not be completed. Check the Cuin Quick Actions log for details.</value>
+  </data>
+</root>

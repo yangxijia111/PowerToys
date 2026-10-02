@@ -1063,6 +1063,23 @@
       <Platform Solution="*|x64" Project="x64" />
     </Project>
   </Folder>
+  <!-- [fork-feature] PowerToys Cuin 自有模块 -->
+  <Folder Name="/modules/Cuin/">
+    <Project Path="src/modules/cuin/CuinQuickActions.Common/CuinQuickActions.Common.csproj">
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="src/modules/cuin/CuinQuickActions.UnitTests/CuinQuickActions.UnitTests.csproj">
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="src/modules/cuin/CuinQuickActions.UI/CuinQuickActions.UI.csproj">
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Deploy />
+    </Project>
+    <Project Path="src/modules/cuin/cuinquickactions/cuinquickactions.vcxproj" Id="8c5e4a21-3b6f-4c8d-9e72-a1d4f5b6c7e8" />
+  </Folder>
   <Folder Name="/modules/Peek/">
     <Project Path="src/modules/peek/Peek.Common/Peek.Common.csproj">
       <Platform Solution="*|ARM64" Project="ARM64" />

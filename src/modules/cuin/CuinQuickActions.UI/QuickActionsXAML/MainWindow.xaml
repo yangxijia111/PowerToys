@@ -1,0 +1,97 @@
+<!-- [fork-feature] Cuin Quick Actions 面板窗口：标题 + 分组卡片列表，
+     危险操作带警示标识并强制确认对话框。 -->
+<Window
+    x:Class="CuinQuickActions.UI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        x:Name="RootGrid"
+        Padding="20,16,20,16"
+        RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 标题区 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12">
+            <FontIcon
+                FontSize="20"
+                Foreground="{ThemeResource AccentFillDefaultBrush}"
+                Glyph="&#xE945;" />
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock x:Uid="Panel_Title" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock
+                    x:Uid="Panel_Subtitle"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{ThemeResource CaptionTextBlockStyle}" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- 分组卡片列表 -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16">
+                <ItemsControl ItemsSource="{Binding Path=Groups}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Spacing="6">
+                                <TextBlock
+                                    Margin="0,8,0,0"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Text="{Binding Title}" />
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button
+                                                Margin="0,2"
+                                                Click="OnActionClick"
+                                                CornerRadius="{StaticResource ControlCornerRadius}"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Stretch">
+                                                <Grid ColumnSpacing="14">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <FontIcon
+                                                        Grid.Column="0"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="18"
+                                                        Glyph="{Binding Glyph}" />
+                                                    <StackPanel
+                                                        Grid.Column="1"
+                                                        VerticalAlignment="Center"
+                                                        Spacing="2">
+                                                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{Binding Title}" />
+                                                        <TextBlock
+                                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                            Style="{ThemeResource CaptionTextBlockStyle}"
+                                                            Text="{Binding Description}"
+                                                            TextWrapping="Wrap" />
+                                                    </StackPanel>
+                                                    <!-- 危险操作警示标识 -->
+                                                    <FontIcon
+                                                        Grid.Column="2"
+                                                        VerticalAlignment="Center"
+                                                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                        Glyph="&#xE7BA;"
+                                                        Visibility="{Binding IsDestructive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                </Grid>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
