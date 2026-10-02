@@ -15,8 +15,8 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Windows.ApplicationModel.Resources;
 using Windows.Graphics;
+using ResourceLoader = Microsoft.Windows.ApplicationModel.Resources.ResourceLoader;
 
 namespace CuinQuickActions.UI
 {

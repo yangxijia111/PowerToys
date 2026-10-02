@@ -21,7 +21,7 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12">
             <FontIcon
                 FontSize="20"
-                Foreground="{ThemeResource AccentFillDefaultBrush}"
+                Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                 Glyph="&#xE945;" />
             <StackPanel VerticalAlignment="Center">
                 <TextBlock x:Uid="Panel_Title" Style="{ThemeResource SubtitleTextBlockStyle}" />

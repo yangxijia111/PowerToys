@@ -64,6 +64,7 @@ namespace CuinQuickActions.UI
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             Logger.LogError("Unhandled exception in Cuin Quick Actions", e.Exception);
+            DumpDiagnostics("UnhandledException", e.Exception);
             e.Handled = true;
         }
 
@@ -72,14 +73,38 @@ namespace CuinQuickActions.UI
         /// </summary>
         private void OnShowQuickActions()
         {
-            _lastForegroundWindow = Windows.Win32.PInvoke_CuinQuickActions.GetForegroundWindow();
-
-            if (Window == null)
+            try
             {
-                Window = new MainWindow(Executor, () => _lastForegroundWindow);
-            }
+                _lastForegroundWindow = Windows.Win32.PInvoke_CuinQuickActions.GetForegroundWindow();
 
-            Window.ShowPanel();
+                if (Window == null)
+                {
+                    Window = new MainWindow(Executor, () => _lastForegroundWindow);
+                }
+
+                Window.ShowPanel();
+            }
+            catch (Exception ex)
+            {
+                DumpDiagnostics("OnShowQuickActions", ex);
+                throw;
+            }
+        }
+
+        // 诊断输出：0xc000027b 一类 XAML/异步异常可能绕过日志器，先落盘再分析。
+        private static void DumpDiagnostics(string stage, Exception? ex)
+        {
+            try
+            {
+                var path = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    @"PowerToysCuin\CuinQuickActions\crash_report.txt");
+                System.IO.File.AppendAllText(path, $"[{DateTime.Now:O}] [{stage}]{Environment.NewLine}{ex}{Environment.NewLine}{Environment.NewLine}");
+            }
+            catch
+            {
+                // 诊断本身绝不能再抛。
+            }
         }
 
         /// <summary>面板窗口关闭后由其回调，允许下次热键重建窗口。</summary>

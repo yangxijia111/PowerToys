@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CuinQuickActions.Common.Actions;
-using Windows.ApplicationModel.Resources;
+using ResourceLoader = Microsoft.Windows.ApplicationModel.Resources.ResourceLoader;
 
 namespace CuinQuickActions.UI.ViewModels
 {
@@ -21,7 +21,7 @@ namespace CuinQuickActions.UI.ViewModels
         {
             _runner = runner ?? throw new ArgumentNullException(nameof(runner));
 
-            var loader = new ResourceLoader();
+            var loader = new ResourceLoader("PowerToys.CuinQuickActions.UI.pri");
             var groups = new List<QuickActionGroupViewModel>();
 
             foreach (QuickActionGroup group in Enum.GetValues<QuickActionGroup>())
