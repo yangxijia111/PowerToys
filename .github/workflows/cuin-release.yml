@@ -45,6 +45,8 @@ jobs:
           python tools/check_release_assets.py
           python tools/check_sparse_registration.py
           python tools/check_upgrade_chain.py
+          # [fork-feature] Cuin 自有模块一致性检查
+          python tools/check_cuin_modules.py
 
       - name: Restore & full Release build (PowerToys.slnx)
         shell: cmd

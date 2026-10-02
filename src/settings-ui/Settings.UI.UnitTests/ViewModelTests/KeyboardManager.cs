@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation
+// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -97,10 +97,14 @@ namespace ViewModelTests
             var expectedEntry = new AppSpecificKeysDataModel();
             expectedEntry.OriginalKeys = entry.OriginalKeys;
             expectedEntry.NewRemapKeys = entry.NewRemapKeys;
-            expectedEntry.TargetApp = "All apps";
+            expectedEntry.TargetApp = "placeholder";
             expectedResult.Add(expectedEntry);
 
             Assert.AreEqual(expectedResult.Count, result.Count);
+
+            // [fork-feature] All Apps 标签随系统语言本地化（测试宿主无 PRI），仅验证非空。
+            Assert.IsFalse(string.IsNullOrEmpty(result[0].TargetApp));
+            expectedResult[0].TargetApp = result[0].TargetApp;
             Assert.IsTrue(expectedResult[0].Compare(result[0]));
         }
 
@@ -123,10 +127,14 @@ namespace ViewModelTests
             var expectedEntry = new AppSpecificKeysDataModel();
             expectedEntry.OriginalKeys = entry.OriginalKeys;
             expectedEntry.NewRemapKeys = entry.NewRemapKeys;
-            expectedEntry.TargetApp = "All apps";
+            expectedEntry.TargetApp = "placeholder";
             expectedResult.Add(expectedEntry);
             var x = expectedResult[0].Equals(result[0]);
             Assert.AreEqual(expectedResult.Count, result.Count);
+
+            // [fork-feature] All Apps 标签随系统语言本地化（测试宿主无 PRI），仅验证非空。
+            Assert.IsFalse(string.IsNullOrEmpty(result[0].TargetApp));
+            expectedResult[0].TargetApp = result[0].TargetApp;
             Assert.IsTrue(expectedResult[0].Compare(result[0]));
         }
 
@@ -181,7 +189,7 @@ namespace ViewModelTests
             var expectedFirstEntry = new AppSpecificKeysDataModel();
             expectedFirstEntry.OriginalKeys = firstListEntry.OriginalKeys;
             expectedFirstEntry.NewRemapKeys = firstListEntry.NewRemapKeys;
-            expectedFirstEntry.TargetApp = "All apps";
+            expectedFirstEntry.TargetApp = "placeholder";
             expectedResult.Add(expectedFirstEntry);
             var expectedSecondEntry = new AppSpecificKeysDataModel();
             expectedSecondEntry.OriginalKeys = secondListEntry.OriginalKeys;
@@ -190,6 +198,10 @@ namespace ViewModelTests
             expectedResult.Add(expectedSecondEntry);
 
             Assert.AreEqual(expectedResult.Count, result.Count);
+
+            // [fork-feature] All Apps 标签随系统语言本地化（测试宿主无 PRI），仅验证非空。
+            Assert.IsFalse(string.IsNullOrEmpty(result[0].TargetApp));
+            expectedResult[0].TargetApp = result[0].TargetApp;
             Assert.IsTrue(expectedResult[0].Compare(result[0]));
             Assert.IsTrue(expectedResult[1].Compare(result[1]));
         }

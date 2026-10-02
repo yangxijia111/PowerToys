@@ -4,7 +4,8 @@ name: Cuin CI
 
 on:
   push:
-    branches: [cuin-dev, main]
+    # [fork-feature] feature/* 分支同样跑快速 CI（功能合回 cuin-dev 前先验证）
+    branches: [cuin-dev, main, "feature/*"]
   pull_request:
     branches: [cuin-dev, main]
 
@@ -30,6 +31,9 @@ jobs:
         run: python tools/check_sparse_registration.py
       - name: Preview upgrade chain check
         run: python tools/check_upgrade_chain.py
+      # [fork-feature] Cuin 自有模块一致性检查（事件名/注册点/resw 双语）
+      - name: Cuin custom modules check
+        run: python tools/check_cuin_modules.py
 
   build-and-test:
     name: Build core & unit tests (x64 Release)
@@ -56,6 +60,10 @@ jobs:
       - name: Build runner (C++ toolchain sanity)
         run: msbuild src\runner\runner.vcxproj /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
 
+      # [fork-feature] Cuin Quick Actions：C++ 壳 + C# 逻辑库/测试工程
+      - name: Build Cuin Quick Actions module
+        run: msbuild src\modules\cuin\cuinquickactions\cuinquickactions.vcxproj /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
       - name: Build Settings unit tests
         run: msbuild src\settings-ui\Settings.UI.UnitTests\Settings.UI.UnitTests.csproj /restore /p:Configuration=Release /p:Platform=x64 /m /v:q /nologo
 
@@ -65,6 +73,23 @@ jobs:
         shell: pwsh
         run: |
           $dll = "Release\x64\tests\SettingsTests\net10.0-windows10.0.26100.0\Settings.UI.UnitTests.dll"
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsPath = & $vswhere -latest -products * -property installationPath
+          if (-not $vsPath) { throw "vswhere found no Visual Studio installation" }
+          $vstest = @(
+            (Join-Path $vsPath "Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"),
+            (Join-Path $vsPath "Common7\IDE\Extensions\TestPlatform\vstest.console.exe")
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $vstest) { throw "vstest.console.exe not found under $vsPath" }
+          & $vstest $dll /logger:"console;verbosity=normal"
+
+      # [fork-feature] Cuin Quick Actions 单元测试（纯逻辑层）
+      - name: Build & run Cuin Quick Actions unit tests
+        shell: pwsh
+        run: |
+          msbuild src\modules\cuin\CuinQuickActions.UnitTests\CuinQuickActions.UnitTests.csproj /restore /p:Configuration=Release /p:Platform=x64 /m /v:q /nologo
+          $dll = "Release\x64\tests\CuinQuickActions.Tests\PowerToys.CuinQuickActions.UnitTests.dll"
+          if (-not (Test-Path $dll)) { throw "PowerToys.CuinQuickActions.UnitTests.dll not found" }
           $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
           $vsPath = & $vswhere -latest -products * -property installationPath
           if (-not $vsPath) { throw "vswhere found no Visual Studio installation" }

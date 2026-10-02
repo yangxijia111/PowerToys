@@ -193,6 +193,12 @@ namespace CommonSharedConstants
     const wchar_t MWB_TOGGLE_EASY_MOUSE_EVENT[] = L"Local\\PowerToysMWB-ToggleEasyMouseEvent-a9c8d7b6-e5f4-3c2a-1b0d-9e8f7a6b5c4d";
     const wchar_t MWB_RECONNECT_EVENT[] = L"Local\\PowerToysMWB-ReconnectEvent-b8d7c6a5-f4e3-2b1c-0a9d-8e7f6a5b4c3d";
 
+    // [fork-feature] Cuin Quick Actions：面板显示/退出事件（C++ 侧定义，
+    // C# 侧 CuinQuickActions.Common/CuinConstants.cs 保存同名字符串，
+    // 由 tools/check_cuin_modules.py 保证两侧一致）。
+    const wchar_t CUIN_QUICK_ACTIONS_SHOW_EVENT[] = L"Local\\PowerToysCuin-QuickActions-ShowEvent-4f3a9c2e-8b1d-4e6f-9a7c-5d2e8f1a3b4c";
+    const wchar_t CUIN_QUICK_ACTIONS_TERMINATE_EVENT[] = L"Local\\PowerToysCuin-QuickActions-TerminateEvent-9e5f2a7c-3d4b-4c8e-8f1a-6b2d9e4c7a5f";
+
     // Max DWORD for key code to disable keys.
     const DWORD VK_DISABLED = 0x100;
 }

@@ -22,8 +22,31 @@
 | 安装器名称 | `installer/PowerToysSetupVNext/Product.wxs`、`Core.wxs` | 字符串 + 身份项 | 低（字符串）/ 见 §1.1 |
 | 托盘品牌串 | `src/runner/tray_icon.cpp`（搜索 `[fork-brand]`） | 3 处字符串 | 低 |
 | 图标资产 | `Assets/Settings/icon.ico`、`logo*.png`、`runner/svgs/icon.ico` | 二进制替换 | 低 |
+| **Cuin 自有模块（Phase 7）** | 见下方 §1.2 | 模块本体纯新增 + 上游文件小改 | 低~中 |
 
-### 1.1 发行身份热点表（Phase 3 新增，合并时逐一核对）
+### 1.2 Cuin 自有模块热点表（Phase 7 新增）
+
+Cuin 自有功能集中在 `src/modules/cuin/`（模块本体**纯新增，无冲突**），上游文件仅做
+**尾部追加式小改**（全部带 `[fork-feature]` 锚点，完整清单见 `docs/CUSTOM_MODULE_GUIDE.md`）：
+
+| 文件 | fork 侧内容 | 冲突风险 |
+|---|---|---|
+| `src/runner/main.cpp` | knownModules 数组尾部 +1 行 | 低（尾部追加） |
+| `src/common/interop/shared_constants.h` | 末尾 +2 事件常量（CUIN_QUICK_ACTIONS_*） | 低 |
+| `src/common/ManagedCommon/ModuleType.cs` | 枚举 +CuinQuickActions | 低 |
+| `src/settings-ui/Settings.UI.Library/EnabledModules.cs` | +1 属性（CuinQuickActions） | 低 |
+| `src/settings-ui/Settings.UI.Library/Helpers/ModuleHelper.cs` | 3 处 switch case | 中（上游加模块同区域） |
+| `src/settings-ui/Settings.UI.Library/SettingsSerializationContext.cs` | +2 `[JsonSerializable]` | 低 |
+| `src/settings-ui/Settings.UI/SerializationContext/SourceGenerationContextContext.cs` | +1 `[JsonSerializable]` | 低 |
+| `SettingsXAML/Views/ShellPage.xaml` | SystemTools 组首位 +1 导航项 | **高**（与既有分组重组叠加） |
+| `SettingsXAML/App.xaml.cs` / `Helpers/ModuleGpoHelper.cs` | +1 case | 中 |
+| `Strings/en-us/zh-CN/Resources.resw`（Settings） | +12 键（Shell_CuinQuickActions 等） | 中 |
+| `PowerToys.slnx` | +/modules/Cuin/ folder（4 项目） | 低 |
+
+合并后必跑 `python tools/check_cuin_modules.py`（校验事件名两侧一致、注册点齐全、
+模块 resw 双语键对齐）。
+
+
 
 上游改动下列文件时最容易与 fork 身份隔离冲突。**处理原则：凡 `[fork-identity]` 锚点 hunk，保留 fork 侧取值；
 上游若升级了"官方检测"逻辑（官方 UpgradeCode 42B84BF7 / D8B559DB 只允许出现在检测锚位置），

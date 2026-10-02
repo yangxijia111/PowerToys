@@ -414,6 +414,24 @@ namespace Microsoft.PowerToys.Settings.UI.Library
             }
         }
 
+        // [fork-feature] Cuin Quick Actions：默认关闭（新增常驻面板进程的模块
+        // 默认不启用，由用户在 Settings 中显式开启，符合禁用态零成本原则）。
+        private bool cuinQuickActions; // defaulting to off
+
+        [JsonPropertyName("CuinQuickActions")]
+        public bool CuinQuickActions
+        {
+            get => cuinQuickActions;
+            set
+            {
+                if (cuinQuickActions != value)
+                {
+                    LogTelemetryEvent(value);
+                    cuinQuickActions = value;
+                }
+            }
+        }
+
         private bool registryPreview; // defaulting to off
 
         [JsonPropertyName("RegistryPreview")]

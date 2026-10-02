@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- [fork-feature] Cuin Quick Actions —— 纯业务逻辑库（无 UI / 无 WinRT 依赖，保证可单测）。 -->
+  <!-- Look at Directory.Build.props in root for common stuff as well -->
+  <Import Project="$(RepoRoot)src\Common.Dotnet.CsWinRT.props" />
+
+  <PropertyGroup>
+    <RootNamespace>CuinQuickActions.Common</RootNamespace>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>

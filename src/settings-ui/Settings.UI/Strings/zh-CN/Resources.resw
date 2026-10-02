@@ -445,6 +445,42 @@ opera.exe</value>
   <data name="Shell_General.Content" xml:space="preserve">
     <value>常规设置</value>
   </data>
+  <data name="Shell_CuinQuickActions.Content" xml:space="preserve">
+    <value>快捷操作</value>
+  </data>
+  <data name="CuinQuickActions.ModuleTitle" xml:space="preserve">
+    <value>快捷操作</value>
+  </data>
+  <data name="CuinQuickActions.ModuleDescription" xml:space="preserve">
+    <value>常用系统操作的快捷面板，一键呼出。</value>
+  </data>
+  <data name="CuinQuickActions_Enable.Header" xml:space="preserve">
+    <value>启用快捷操作</value>
+  </data>
+  <data name="CuinQuickActions_Enable.Description" xml:space="preserve">
+    <value>通过热键呼出的常用系统快捷操作面板。</value>
+  </data>
+  <data name="CuinQuickActions_Activation_GroupSettings.Header" xml:space="preserve">
+    <value>激活</value>
+  </data>
+  <data name="CuinQuickActions_BehaviorHeader.Header" xml:space="preserve">
+    <value>行为</value>
+  </data>
+  <data name="CuinQuickActions_CloseAfterLosingFocus.Header" xml:space="preserve">
+    <value>失去焦点时关闭面板</value>
+  </data>
+  <data name="CuinQuickActions_CloseAfterLosingFocus.Description" xml:space="preserve">
+    <value>启用后，点击面板以外的地方时面板会自动关闭。</value>
+  </data>
+  <data name="CuinQuickActions_SafetyHeader.Header" xml:space="preserve">
+    <value>安全</value>
+  </data>
+  <data name="CuinQuickActions_Safety_ConfirmNote.Header" xml:space="preserve">
+    <value>危险操作始终需要确认</value>
+  </data>
+  <data name="CuinQuickActions_Safety_ConfirmNote.Description" xml:space="preserve">
+    <value>结束程序、重启资源管理器等操作会先弹出明确的确认对话框。</value>
+  </data>
   <data name="Shell_Awake.Content" xml:space="preserve">
     <value>保持唤醒</value>
     <comment>{Locked}</comment>

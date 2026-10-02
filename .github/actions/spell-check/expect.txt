@@ -2281,6 +2281,7 @@ WVT
 pcwsz
 winver
 # Legacy upstream warnings surfaced when fork touched these files (only_check_changed_files)
+Gpo
 Authenticode
 Dacl
 Dotnet
@@ -2290,3 +2291,22 @@ INSTALLDIR
 # Release-gate notes terminology (2026-09-30)
 cleaninstall
 runbook
+# Cuin Quick Actions module (2026-10-02)
+cuinquickactions
+# Windows system processes protected by ForegroundProcessGuard
+csrss
+lsass
+smss
+wininit
+memcompression
+fontdrvhost
+runtimebroker
+sihost
+taskhostw
+ctfmon
+audiodg
+searchindexer
+spoolsv
+# misc
+WLAN
+hasattr

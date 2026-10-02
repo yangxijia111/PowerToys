@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation
+// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -14,6 +14,9 @@ using Microsoft.PowerToys.Settings.UI.Library;
 namespace Microsoft.PowerToys.Settings.UI.SerializationContext;
 
 [JsonSerializable(typeof(ActionMessage))]
+
+// [fork-feature] Cuin Quick Actions
+[JsonSerializable(typeof(CuinQuickActionsSettings))]
 [JsonSerializable(typeof(AdvancedPasteSettings))]
 [JsonSerializable(typeof(AlwaysOnTopSettings))]
 [JsonSerializable(typeof(AutoHideCursorSettings))]

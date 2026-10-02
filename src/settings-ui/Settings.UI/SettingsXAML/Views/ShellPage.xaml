@@ -197,6 +197,13 @@
                     Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/SystemTools.png}"
                     SelectsOnInvoked="False">
                     <NavigationViewItem.MenuItems>
+                        <!-- [fork-feature] Cuin Quick Actions：Cuin 自有模块（快捷操作面板）。 -->
+                        <NavigationViewItem
+                            x:Name="CuinQuickActionsNavigationItem"
+                            x:Uid="Shell_CuinQuickActions"
+                            helpers:NavHelper.NavigateTo="views:CuinQuickActionsPage"
+                            AutomationProperties.AutomationId="CuinQuickActionsNavItem"
+                            Icon="{ui:BitmapIcon Source=/Assets/Settings/Icons/CuinQuickActions.png}" />
                         <NavigationViewItem
                             x:Name="AwakeNavigationItem"
                             x:Uid="Shell_Awake"

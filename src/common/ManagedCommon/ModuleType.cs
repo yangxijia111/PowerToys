@@ -40,6 +40,9 @@ namespace ManagedCommon
         Workspaces,
         GrabAndMove,
         ZoomIt,
+
+        // [fork-feature] PowerToys Cuin 自有模块（见 docs/CUSTOM_MODULE_GUIDE.md）。
+        CuinQuickActions,
         GeneralSettings,
     }
 }
