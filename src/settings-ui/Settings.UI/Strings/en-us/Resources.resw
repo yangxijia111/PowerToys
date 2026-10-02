@@ -564,6 +564,42 @@ opera.exe</value>
     <value>General</value>
     <comment>Navigation view item name for General</comment>
   </data>
+  <data name="Shell_CuinQuickActions.Content" xml:space="preserve">
+    <value>Quick Actions</value>
+  </data>
+  <data name="CuinQuickActions.ModuleTitle" xml:space="preserve">
+    <value>Quick Actions</value>
+  </data>
+  <data name="CuinQuickActions.ModuleDescription" xml:space="preserve">
+    <value>A quick actions panel for common system tasks, one hotkey away.</value>
+  </data>
+  <data name="CuinQuickActions_Enable.Header" xml:space="preserve">
+    <value>Enable Quick Actions</value>
+  </data>
+  <data name="CuinQuickActions_Enable.Description" xml:space="preserve">
+    <value>Show a hotkey-activated panel with common system quick actions.</value>
+  </data>
+  <data name="CuinQuickActions_Activation_GroupSettings.Header" xml:space="preserve">
+    <value>Activation</value>
+  </data>
+  <data name="CuinQuickActions_BehaviorHeader.Header" xml:space="preserve">
+    <value>Behavior</value>
+  </data>
+  <data name="CuinQuickActions_CloseAfterLosingFocus.Header" xml:space="preserve">
+    <value>Close the panel when it loses focus</value>
+  </data>
+  <data name="CuinQuickActions_CloseAfterLosingFocus.Description" xml:space="preserve">
+    <value>When enabled, the panel closes automatically as soon as you click elsewhere.</value>
+  </data>
+  <data name="CuinQuickActions_SafetyHeader.Header" xml:space="preserve">
+    <value>Safety</value>
+  </data>
+  <data name="CuinQuickActions_Safety_ConfirmNote.Header" xml:space="preserve">
+    <value>Destructive actions are always confirmed</value>
+  </data>
+  <data name="CuinQuickActions_Safety_ConfirmNote.Description" xml:space="preserve">
+    <value>Closing an app or restarting Explorer will always ask for explicit confirmation first.</value>
+  </data>
   <data name="Shell_Awake.Content" xml:space="preserve">
     <value>Awake</value>
     <comment>{Locked}</comment>

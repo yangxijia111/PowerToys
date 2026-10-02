@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation
+// Copyright (c) Microsoft Corporation
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -93,6 +93,9 @@ namespace Microsoft.PowerToys.Settings.UI.Helpers
                 ModuleType.PowerDisplay => typeof(PowerDisplayPage),
                 ModuleType.ZoomIt => typeof(ZoomItPage),
                 ModuleType.GrabAndMove => typeof(GrabAndMovePage),
+
+                // [fork-feature] Cuin Quick Actions
+                ModuleType.CuinQuickActions => typeof(CuinQuickActionsPage),
                 _ => typeof(DashboardPage), // never called, all values listed above
             };
         }

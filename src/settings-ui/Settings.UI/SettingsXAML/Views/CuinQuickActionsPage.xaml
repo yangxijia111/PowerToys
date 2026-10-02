@@ -1,0 +1,52 @@
+<!-- [fork-feature] Cuin Quick Actions 的 Settings 页（结构抄自 PeekPage）。 -->
+<local:NavigablePage
+    x:Class="Microsoft.PowerToys.Settings.UI.Views.CuinQuickActionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.PowerToys.Settings.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Microsoft.PowerToys.Settings.UI.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tkcontrols="using:CommunityToolkit.WinUI.Controls"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    AutomationProperties.LandmarkType="Main"
+    mc:Ignorable="d">
+
+    <controls:SettingsPageControl x:Uid="CuinQuickActions" ModuleImageSource="ms-appx:///Assets/Settings/Modules/CuinQuickActions.png">
+        <controls:SettingsPageControl.ModuleContent>
+            <StackPanel Orientation="Vertical">
+                <tkcontrols:SettingsCard
+                    Name="CuinQuickActionsEnable"
+                    x:Uid="CuinQuickActions_Enable"
+                    HeaderIcon="{ui:FontIcon Glyph=&#xE945;}">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsEnabled, Mode=TwoWay}" />
+                </tkcontrols:SettingsCard>
+
+                <controls:SettingsGroup x:Uid="CuinQuickActions_Activation_GroupSettings" IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
+                    <tkcontrols:SettingsCard
+                        Name="CuinQuickActionsActivationShortcut"
+                        x:Uid="Activation_Shortcut"
+                        HeaderIcon="{ui:FontIcon Glyph=&#xEDA7;}">
+                        <controls:ShortcutControl HotkeySettings="{x:Bind Path=ViewModel.ActivationShortcut, Mode=TwoWay}" />
+                    </tkcontrols:SettingsCard>
+                </controls:SettingsGroup>
+
+                <controls:SettingsGroup x:Uid="CuinQuickActions_BehaviorHeader" IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
+                    <tkcontrols:SettingsCard
+                        Name="CuinQuickActionsCloseAfterLosingFocus"
+                        x:Uid="CuinQuickActions_CloseAfterLosingFocus"
+                        HeaderIcon="{ui:FontIcon Glyph=&#xED1A;}">
+                        <ToggleSwitch x:Uid="ToggleSwitch" IsOn="{x:Bind ViewModel.CloseAfterLosingFocus, Mode=TwoWay}" />
+                    </tkcontrols:SettingsCard>
+                </controls:SettingsGroup>
+
+                <controls:SettingsGroup x:Uid="CuinQuickActions_SafetyHeader">
+                    <tkcontrols:SettingsCard
+                        x:Uid="CuinQuickActions_Safety_ConfirmNote"
+                        HeaderIcon="{ui:FontIcon Glyph=&#xE7BA;}" />
+                </controls:SettingsGroup>
+
+            </StackPanel>
+        </controls:SettingsPageControl.ModuleContent>
+    </controls:SettingsPageControl>
+</local:NavigablePage>
