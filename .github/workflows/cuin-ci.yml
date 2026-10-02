@@ -4,7 +4,8 @@ name: Cuin CI
 
 on:
   push:
-    branches: [cuin-dev, main]
+    # [fork-feature] feature/* 分支同样跑快速 CI（功能合回 cuin-dev 前先验证）
+    branches: [cuin-dev, main, "feature/*"]
   pull_request:
     branches: [cuin-dev, main]
 
