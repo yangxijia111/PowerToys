@@ -33,6 +33,12 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      # [fork-infra] vcpkg 预还原 + 二进制缓存：在首个 MSBuild 之前显式完成 vcpkg
+      # install（有限重试，退出码语义不削弱），避免下载镜像瞬时故障的 "error :"
+      # 日志文本被 MSBuild vcpkg integration 的 Exec 解析为 MSB3077（详见 action 注释）。
+      - name: Restore vcpkg dependencies (pre-install + binary cache)
+        uses: ./.github/actions/vcpkg-restore
+
       - name: Setup Python (checks)
         uses: actions/setup-python@v5
         with:

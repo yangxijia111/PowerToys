@@ -1,0 +1,98 @@
+# [fork-infra] vcpkg 预还原 + 二进制缓存（对齐上游 .pipelines/v2 的
+# steps-install-vcpkg.yml + job-build-project.yml 里的 Cache@2「vcpkg binary archives」）。
+#
+# 为什么需要预还原：
+#   vcpkg 下载镜像瞬时故障时（如 mirror.msys2.org curl error 7），vcpkg 自身会
+#   fallback 到备用镜像并成功完成（进程 exit 0），但其日志中包含 "error :" 文本。
+#   MSBuild vcpkg integration（InstallImplementation.targets）用普通 <Exec> 运行
+#   vcpkg install，MSBuild 会把输出中符合 canonical error 格式的行解析为 MSBuild
+#   error —— 即使 vcpkg.exe 返回 0 也强制 ExitCode=-1（MSB3077），导致构建失败。
+#
+# 解决方式（不掩盖任何真实错误）：
+#   1. 在 shell 步骤里显式运行与 MSBuild integration 完全相同的 vcpkg install 命令
+#      （同 manifest root / install root / triplet）。shell 只看 vcpkg 的真实退出码：
+#      exit 0（含 fallback 镜像下载成功）= 成功；exit 非 0 = 失败，有限重试后仍
+#      失败则本步骤失败。不过滤输出、不忽略返回码。
+#   2. 之后 MSBuild 内的 vcpkg install 变成无下载的幂等 no-op，不再产生下载错误
+#      文本；MSBuild 对真实 C++ 编译错误的检测语义完全不变。
+#   3. GitHub Actions cache 持久化 vcpkg binary cache（%LOCALAPPDATA%\vcpkg\archives，
+#      key 关联 vcpkg.json / vcpkg-configuration.json / overlay ports，与上游一致）。
+#      命中时跳过源码构建与 msys2 工具下载，减少网络暴露面；cache miss 时从零
+#      构建，正确性不依赖缓存。
+name: 'vcpkg restore (pre-install + binary cache)'
+description: 在 MSBuild 之前显式完成 vcpkg manifest install（有限重试），并恢复 vcpkg binary cache。
+
+inputs:
+  triplet:
+    description: 'vcpkg 目标 triplet（须与 Cpp.Build.props 对 x64 + VcpkgUseStatic 的推导一致）'
+    required: false
+    default: 'x64-windows-static'
+  platform:
+    description: 'VcpkgInstalledDir 的平台子目录（vcpkg_installed\<platform>\）'
+    required: false
+    default: 'x64'
+  max-attempts:
+    description: 'vcpkg install 最大尝试次数（含首次）'
+    required: false
+    default: '3'
+
+runs:
+  using: 'composite'
+  steps:
+    # 与上游 job-build-project.yml 的 Cache@2 等价：key 覆盖 vcpkg 计算 ABI 所需的
+    # 全部仓库侧输入（manifest / configuration / overlay ports）+ runner OS。
+    # restore-keys 允许宽松回退：binary cache 条目按包 ABI 哈希索引，manifest 变化
+    # 只会自然 miss 后源码构建，不会误用不匹配的二进制。
+    - name: Restore vcpkg binary cache
+      uses: actions/cache@v4
+      with:
+        path: ~\AppData\Local\vcpkg\archives
+        key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'deps/vcpkg-overlays/**') }}
+        restore-keys: |
+          vcpkg-${{ runner.os }}-
+          vcpkg-
+
+    - name: Pre-install vcpkg manifest dependencies (limited retry)
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        # 与上游 steps-install-vcpkg.yml 相同的检测方式：优先 VS 自带的 vcpkg 组件
+        # （仓库根 .vsconfig 已声明 Microsoft.VisualStudio.Component.Vcpkg）。
+        $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+        $vsPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.Vcpkg -property installationPath
+        if (-not $vsPath) { throw "vswhere found no Visual Studio installation with the vcpkg component" }
+        $vcpkgRoot = Join-Path $vsPath 'VC\vcpkg'
+        $vcpkgExe = Join-Path $vcpkgRoot 'vcpkg.exe'
+        if (-not (Test-Path $vcpkgExe)) { throw "vcpkg.exe not found at $vcpkgExe" }
+
+        # 参数与 InstallImplementation.targets 里 MSBuild integration 实际下发的命令
+        # 逐项一致（结尾反斜杠亦同），确保本步骤完成后 MSBuild 内的 install 是对
+        # 同一 install root 的幂等 no-op，而不是再装一遍。
+        $repo = "$env:GITHUB_WORKSPACE"
+        $triplet = '${{ inputs.triplet }}'
+        $platform = '${{ inputs.platform }}'
+        $installRoot = Join-Path $repo "vcpkg_installed\$platform"
+        New-Item -ItemType Directory -Force -Path $installRoot | Out-Null
+
+        $maxAttempts = [int]'${{ inputs.max-attempts }}'
+        $code = 0
+        for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+            # 输出原样透传到步骤日志（不做任何 error 文本过滤）；成败只取决于
+            # vcpkg 的真实退出码。vcpkg 对镜像 fallback 成功的判定（exit 0）是权威语义。
+            & $vcpkgExe install --x-wait-for-lock --triplet $triplet `
+                --vcpkg-root "$vcpkgRoot\" `
+                "--x-manifest-root=$repo\" `
+                "--x-install-root=$installRoot\"
+            $code = $LASTEXITCODE
+            if ($code -eq 0) { break }
+            if ($attempt -eq $maxAttempts) { break }
+            Write-Host "::warning::vcpkg install 第 $attempt/$maxAttempts 次尝试失败（exit $code），30 秒后重试同一命令"
+            Start-Sleep -Seconds 30
+        }
+
+        if ($code -ne 0) {
+            Write-Host "::error::vcpkg install 在 $maxAttempts 次尝试后仍失败（最后退出码 $code）"
+            exit $code
+        }
+        Write-Host "vcpkg install 成功（exit 0）；MSBuild integration 内的 install 将是无下载的 no-op"

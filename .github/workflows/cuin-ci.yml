@@ -49,6 +49,13 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      # [fork-infra] vcpkg 预还原 + 二进制缓存：在 MSBuild 之前用与 integration
+      # 完全相同的参数显式完成 vcpkg install（有限重试，退出码语义不削弱），使
+      # MSBuild 内的 vcpkg install 成为无下载 no-op，避免下载镜像瞬时故障的
+      # "error :" 日志文本被 MSBuild Exec 解析为 MSB3077。详见 action 内注释。
+      - name: Restore vcpkg dependencies (pre-install + binary cache)
+        uses: ./.github/actions/vcpkg-restore
+
       # 上游构建方式（.pipelines/v2/templates/job-build-project.yml）：packages.config
       # 形式的 C++ 原生包（CppWinRT / ImplementationLibrary 等）由 MSBuild restore 配合
       # RestorePackagesConfig=true 还原到仓库根 packages\ 目录；单纯 /restore 只处理
