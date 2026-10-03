@@ -29,6 +29,32 @@ $ComponentGroup = "MonacoSRCHeatGenerated"
 $DirectoryRef = "MonacoPreviewHandlerMonacoSRCFolder"
 $Variable = "var.MonacoSRCHarvestPath"
 
+# [fork-identity] 组件 GUID 稳定化（与 generateAllFileComponents.ps1 同一策略，详见其头部注释）：
+# heat -gg 每次运行生成随机 GUID，违反 MSI 组件规则且导致 Bootstrapper 升级丢文件。
+# harvest 后在后处理中把每个 cmp 组件的 GUID 替换为稳定值（冻结表优先，UUIDv5 派生兜底）。
+$script:frozenComponentGuids = Import-PowerShellDataFile "$scriptDir\componentGuidMap.psd1"
+$script:componentGuidNamespace = [guid]'6f9b7f6e-2c3a-5d44-9a41-1f2a3b4c5d6e'
+
+Function Get-StableComponentGuid() {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $True, Position = 1)]
+        [string]$ComponentId
+    )
+    if ($script:frozenComponentGuids.ContainsKey($ComponentId)) {
+        return $script:frozenComponentGuids[$ComponentId]
+    }
+    $nsBytes = $script:componentGuidNamespace.ToByteArray()
+    $nameBytes = [Text.Encoding]::UTF8.GetBytes($ComponentId)
+    $sha1 = [Security.Cryptography.SHA1]::Create()
+    $hash = $sha1.ComputeHash($nsBytes + $nameBytes)
+    $sha1.Dispose()
+    $guidBytes = $hash[0..15]
+    $guidBytes[7] = ($guidBytes[7] -band 0x0F) -bor 0x50   # version 5
+    $guidBytes[8] = ($guidBytes[8] -band 0x3F) -bor 0x80   # variant RFC 4122
+    return ([guid][byte[]]$guidBytes).ToString().ToUpper()
+}
+
 & $heatExe dir "$SourceDir" -out "$OutputFile" -cg "$ComponentGroup" -dr "$DirectoryRef" -var "$Variable" -gg -srd -nologo
 
 $fileWxs = Get-Content $monacoWxsFile;
@@ -51,6 +77,10 @@ $fileWxs | ForEach-Object {
     }
     if ($line -match "<Component Id=`"(.*)`" Directory") {
         $componentId = $matches[1]
+        # 把 heat 随机生成的 GUID 替换为跨构建稳定值
+        if ($line -match 'Guid="\{[0-9A-Fa-f-]+\}"') {
+            $line = $line -replace 'Guid="\{[0-9A-Fa-f-]+\}"', "Guid=`"$(Get-StableComponentGuid -ComponentId $componentId)`""
+        }
     }
     if ($line -match "<Directory Id=`"(.*)`" Name=`".*`" />") {
         $directories += $matches[1]
@@ -70,7 +100,7 @@ $fileWxs | ForEach-Object {
 
 $removeFolderEntries =
 @"
-`r`n            <Component Id="RemoveMonacoSRCFolders" Guid="$((New-Guid).ToString().ToUpper())" Directory="MonacoPreviewHandlerMonacoSRCFolder" >
+`r`n            <Component Id="RemoveMonacoSRCFolders" Guid="$(Get-StableComponentGuid -ComponentId 'RemoveMonacoSRCFolders')" Directory="MonacoPreviewHandlerMonacoSRCFolder" >
                 <RegistryKey Root="`$(var.RegistryScope)" Key="Software\Classes\powertoys\components">
                     <RegistryValue Type="string" Name="RemoveMonacoSRCFolders" Value="" KeyPath="yes"/>
                 </RegistryKey>`r`n
