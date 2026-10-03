@@ -167,6 +167,24 @@ runner（`src/runner/main.cpp:257` `knownModules` 列表）对每个模块 DLL�
 
 分层原则：业务逻辑与 Windows API 调用分离（`I<Action>Executor` 接口 + 实现），单测只测逻辑层，`mock` 掉 Shell/进程/剪贴板。**测试绝不真实执行** shutdown/logout/杀系统进程/删文件。
 
+### 3.1 发布前必过的 Installer Gate（Phase 7.1 教训）
+
+> **模块 Full Build 成功，不代表 Installer 自动包含模块。**
+
+WiX payload 由 `generateAllFileComponents.ps1` 对 `WinUI3Apps\` 做 **glob 收集**（`*.exe/*.dll/*.pri/*.json/*.winmd`），
+理论上"输出到 WinUI3Apps 即进 MSI"，但这条链路没有任何编译期校验——glob 列表被改动、文件被排除表
+误伤、或输出目录变化时，源码构建依然全绿，而安装出来的产品缺文件。因此**每个 Cuin 模块在进入
+preview 前必须完整走一遍**（缺一不可）：
+
+1. `workflow_dispatch` 触发 **cuin-release.yml**（不打 tag、不发 Release）；
+2. Full Build + Installer Build + 双 MSI + Bootstrapper + Tests 全绿，产出 `cuin-release-candidate` artifact；
+3. 下载 artifact，**解包检查模块全套文件在 MSI payload 清单中**（`PowerToys.<X>.dll`、`<X>.UI.exe/.pri/.deps.json/.runtimeconfig.json` 等）；
+4. 用 CI 产物（不是本地 `x64/Release`）真机安装：模块出现在 Settings、可启用、功能正常；
+5. 公开 preview → candidate 覆盖升级一遍（老 settings 无新模块字段必须安全回退）。
+
+`tools/check_cuin_modules.py` 已静态锁定 glob 机制 wiring（fileInclusionList 关键模式、占位符、排除表），
+但**静态检查不能替代上述真实安装验证**。
+
 ---
 
 ## 4. Fork 边界与上游同步
@@ -183,9 +201,11 @@ runner（`src/runner/main.cpp:257` `knownModules` 列表）对每个模块 DLL�
 
 - **AOT 序列化**：Settings/UI 两侧序列化上下文都要注册新类型，漏一处 = 运行时 `InvalidOperationException`。
 - **slnx 不 glob**：新 csproj 忘记加 `PowerToys.slnx` → 本地单项目构建正常、CI 全量构建缺失。
+- **Window 根级 XAML 的三大禁忌（Quick Actions 真机踩坑实录）**：① Window 不是 FrameworkElement，**DataTemplate 内的 `Click="handler"` 会静默绑定失败**（点击完全无反应且不报错）——列表项交互必须用 `ListView.IsItemClickEnabled + ItemClick`（事件挂控件层）；② 根级与模板内的 `x:Bind` 生成代码把 Window 传给需要 FrameworkElement 的 API（CS1503）——全用经典 `Binding` + DataContext；③ unpackaged 进程取自身资源必须用 WinAppSDK 的 `Microsoft.Windows.ApplicationModel.Resources.ResourceLoader("模块.pri")` 显式 pri 名，WinRT 默认构造直接抛 FileNotFoundException。资源键名用错（如 `AccentFillDefaultBrush`，正确 `AccentFillColorDefaultBrush`）在窗口创建时以 0xc000027b 崩溃且**绕过 UnhandledException**——保留落盘诊断（crash_report）是定位的唯一手段。
 - **resw**：en-us 资源只做键级插入；zh-CN 全量翻译时注意占位符 `{0}`/`%s`、`\r\n`、XML 转义必须与 en-us 完全一致（`i18n_tools` 有校验脚本）。
 - **installer 三连构建**：每次构建前要重新 prep（`.bk` 恢复机制），PostBuild 会消耗占位 wxs。
 - **本地构建**：`_CL_=/MP2`（XAML 大文件 /MP4 会 OOM）、`/m:2`、构建前看 `FreePhysicalMemory` 和 D 盘余量（全量产物 ~90GB）。
 - **vstest 过滤器**用 `FullyQualifiedName~`，`Name~` 在本机版本不匹配 FQN。
+- **自动化验证 WinUI3 islands 的限制**：UIA `InvokePattern` 会 E_FAIL 且可能带崩进程；自动化会话里 `mouse_event`/`SendKeys` 可能被输入隔离静默吞掉（连系统标题栏按钮都无效）。可靠的程序化路径是 UIA 树**枚举/断言**（元素、文本、坐标映射）+ 人工真实点击；或用具备真实注入能力的工具链。面板失焦→最后窗口关闭→进程退出是设计内行为（runner 下次热键重拉），不要误判为崩溃。
 - **新增 C++ 项目**记得 import 该有的 props（如 `deps/spdlog.props`），否则 PCH 宏缺失 C2220（上游 AutoHideCursor 踩过）。
 - **CI 拼写**：新单词（含模块名）加 `.github/actions/spelling/expect.txt` fork 段；expect.txt 禁止 CamelCase 复合词条目（拆成单词）。

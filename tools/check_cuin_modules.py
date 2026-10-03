@@ -122,6 +122,38 @@ for action_id in action_ids:
 # 6) Settings 侧 resw 双语齐备 -------------------------------------------------
 settings_resw_en = resw_keys(r"src/settings-ui/Settings.UI/Strings/en-us/Resources.resw")
 settings_resw_zh = resw_keys(r"src/settings-ui/Settings.UI/Strings/zh-CN/Resources.resw")
+
+# 7) solution membership（slnx 不 glob，必须显式注册）-----------------------------
+slnx = read(r"PowerToys.slnx")
+for project_path in [
+    r"src/modules/cuin/CuinQuickActions.Common/CuinQuickActions.Common.csproj",
+    r"src/modules/cuin/CuinQuickActions.UI/CuinQuickActions.UI.csproj",
+    r"src/modules/cuin/CuinQuickActions.UnitTests/CuinQuickActions.UnitTests.csproj",
+    r"src/modules/cuin/cuinquickactions/cuinquickactions.vcxproj",
+]:
+    check(('Path="%s"' % project_path).replace("/", "\\") in slnx or project_path in slnx,
+          "PowerToys.slnx 缺少项目 %s（slnx 不自动收集，Release 全量构建会缺失）" % project_path)
+
+# 8) installer payload 自动收集机制（WinUI3Apps glob + 排除表不含 Cuin 文件）-------
+# 注意：Full Build 成功不代表 Installer 包含模块——这里锁定 glob 机制的关键 wiring。
+installer_ps1 = read(r"installer/PowerToysSetupVNext/generateAllFileComponents.ps1")
+for pattern in ['"*.exe"', '"*.dll"', '"*.pri"', '"*.json"', '"*.winmd"']:
+    check(pattern in installer_ps1,
+          "generateAllFileComponents.ps1 的 fileInclusionList 缺少 %s（模块文件不会被收进 MSI）" % pattern)
+check("*.deps.json" in installer_ps1,
+      "generateAllFileComponents.ps1 缺少 *.deps.json 收集（自包含 exe 的依赖清单会缺失）")
+check("PowerToys.CuinQuickActions" not in installer_ps1,
+      "generateAllFileComponents.ps1 不应按名排除 Cuin 模块文件")
+winui3_wxs = read(r"installer/PowerToysSetupVNext/WinUI3Applications.wxs")
+check("WinUI3ApplicationsFiles_Component_Def" in winui3_wxs,
+      "WinUI3Applications.wxs 缺少生成占位符（glob 自动收集机制被破坏）")
+
+# 9) CI 防回归：模块构建与单测步骤仍在 cuin-ci.yml --------------------------------
+ci_yml = read(r".github/workflows/cuin-ci.yml")
+check("cuinquickactions.vcxproj" in ci_yml, "cuin-ci.yml 缺少 C++ 壳构建步骤")
+check("CuinQuickActions.UnitTests.csproj" in ci_yml, "cuin-ci.yml 缺少模块单测步骤")
+check("check_cuin_modules.py" in ci_yml, "cuin-ci.yml 缺少 Cuin 模块静态检查步骤")
+
 required_settings_keys = [
     "Shell_CuinQuickActions.Content",
     "CuinQuickActions.ModuleTitle",
