@@ -51,6 +51,15 @@
     <MediaTemplate EmbedCab="yes" />
 
     <Property Id="REINSTALLMODE" Value="amus" />
+    <!-- [fork-identity] Burn 引擎对升级场景的 MSI 包在命令行强制传 REINSTALLMODE=muso，
+         覆盖上面 Property 表的 amus（'a'=强制重装所有文件）。muso 的 'o' 只在文件缺失或
+         更旧时重装，而 file costing 判定发生在旧文件被 RemoveExistingProducts 删除之前，
+         "内容相同的无版本文件"被判定 Won't Overwrite 跳过、随后被旧产品卸载删除且不再
+         重装 —— 升级 exit 0 但丢失 1600+ 文件（2026-10-04 preview.2 → preview.3 真机实测，
+         msiexec 直装（amus 生效）文件完整、Burn 路径（muso）文件丢失，已隔离验证）。
+         此 immediate CustomAction 在 costing 初始化前把 REINSTALLMODE 恢复为 amus：
+         命令行属性在序列开始时已应用，CustomAction 晚于其执行，一定生效。 -->
+    <CustomAction Id="ForceReinstallModeAmus" Property="REINSTALLMODE" Value="amus" Execute="immediate" />
     <Property Id="WINDOWSBUILDNUMBER" Secure="yes">
       <RegistrySearch Id="BuildNumberSearch" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Name="CurrentBuildNumber" Type="raw" />
     </Property>
@@ -129,6 +138,7 @@
 
     <SetProperty Id="InstallScope" Value="$(var.InstallScope)" Before="DetectPrevInstallPath" Sequence="execute"></SetProperty>
     <InstallExecuteSequence>
+      <Custom Action="ForceReinstallModeAmus" Before="CostInitialize" />
       <Custom Action="DetectPrevInstallPath" After="AppSearch" />
       <Custom Action="SetLaunchPowerToysParam" Before="LaunchPowerToys" />
       <Custom Action="SetInstallCmdPalPackageParam" Before="InstallCmdPalPackage" />

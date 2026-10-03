@@ -106,6 +106,14 @@ def main() -> int:
         "MajorUpgrade Schedule=afterInstallExecute（防升级丢文件）",
         re.search(r'<MajorUpgrade[^>]*Schedule="afterInstallExecute"', product) is not None,
     )
+    # 12. ForceReinstallModeAmus：Burn 命令行 REINSTALLMODE=muso 覆盖 Property 表的 amus，
+    #     costing 跳过 + REP 删除 = 升级丢文件（同上）。immediate CA 在 CostInitialize 前
+    #     强制恢复 amus（'a'=全文件强制重装），晚于命令行属性应用，必然生效。
+    check(
+        "ForceReinstallModeAmus CA 存在并排在 CostInitialize 前",
+        re.search(r'<CustomAction Id="ForceReinstallModeAmus" Property="REINSTALLMODE" Value="amus"', product) is not None
+        and re.search(r'<Custom Action="ForceReinstallModeAmus" Before="CostInitialize" />', product) is not None,
+    )
     check(
         "PREVIOUSVERSIONSINSTALLED 检测存在",
         'Property="PREVIOUSVERSIONSINSTALLED"' in product,
