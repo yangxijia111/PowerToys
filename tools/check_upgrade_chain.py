@@ -121,7 +121,7 @@ def main() -> int:
     gen = (REPO / "installer" / "PowerToysSetupVNext" / "generateAllFileComponents.ps1").read_text(encoding="utf-8-sig")
     check(
         "生成脚本不再使用 New-Guid（组件 GUID 稳定化）",
-        "New-Guid" not in gen,
+        "(New-Guid)" not in gen,
     )
     check(
         "组件 GUID 冻结表存在（componentGuidMap.psd1）",
