@@ -306,6 +306,14 @@ public:
         return m_enabled;
     }
 
+    // [fork-feature] settings.json 尚无本模块键时的 runner 侧默认值。必须与 Settings 侧
+    // EnabledModules.CuinQuickActions 的 C# 默认值（defaulting to off）一致，否则会出现
+    // "开关显示关闭但模块实际在运行"的状态漂移（preview.3 升级链真机验证发现）。
+    bool is_enabled_by_default() const override
+    {
+        return false;
+    }
+
     virtual size_t get_hotkeys(Hotkey* hotkeys, size_t buffer_size) override
     {
         if (m_hotkey.key)

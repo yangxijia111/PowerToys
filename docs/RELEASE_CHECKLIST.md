@@ -44,6 +44,17 @@
 - [ ] Quick Actions payload 在包内（PowerToys.CuinQuickActions.dll + WinUI3Apps 面板文件全套）
 
 ## 4. 升级 Gate（preview.2 → preview.3 真机，公开 preview.2 作为起点）
+
+**第一轮（Release run 37129233314 candidate，dd5e5b477）结果**：升级 exit 0；Bundle 检测 0.1.0.2 → 0.1.0.3
+（DetectedForkPowerToysUserVersion=0.1.0.2、TargetPowerToysVersion>= 条件 true、planned Upgrade）；
+MSI ProductVersion 0.1.0.3；PowerToys.exe/壳/UI 二进制 FileVersion 全 0.1.0.3；Burn/MSI 日志零
+"Won't Overwrite; equal version"；Quick Actions 9 文件全新落盘（CI 构建时间戳）；settings.json
+SHA256 与升级前基线逐字节一致；35 模块 enabled 状态一致；OOBE openedAtFirstLaunch=true 不重复。
+**发现并修复一个真实缺陷**：升级后 runner 日志显示 "Enabling powertoy CuinQuickActions"——
+C++ 壳未 override `is_enabled_by_default()`（基类默认 true），与 Settings C# 侧 `defaulting to off`
+不一致 → 无 settings 键时模块实际运行而开关显示关闭。修复 = dllmain.cpp 显式 override 返回
+false（与上游 Hosts 模块同款做法）。第二轮 candidate 重测本节全部项。
+
 - [ ] preview.2 已装（Bundle 检测 0.1.0.2）→ preview.3 candidate Bootstrapper EXE `-install -quiet` exit 0
 - [ ] Bundle 检测 0.1.0.2 → 0.1.0.3（DetectedForkPowerToysUserVersion 正确评估）
 - [ ] MSI ProductVersion 递增（0.1.0.2 → 0.1.0.3）
@@ -54,7 +65,7 @@
 - [ ] OOBE 不重复（openOobe 保持 false）
 - [ ] Presets 不重置（用户 custom preset 保留）
 - [ ] 原模块 enabled state 保留（升级前后模块启用清单一致）
-- [ ] Quick Actions 默认行为符合设计（Settings 中默认**关闭**，需手动启用）
+- [ ] Quick Actions 默认行为符合设计：**默认关闭**（runner 侧 is_enabled_by_default=false 与 Settings 侧一致；升级后无键状态模块不运行）
 
 ## 5. Quick Actions 人工 Gate（MANUAL GATE —— 负责人真实操作）
 - [ ] **Ctrl+Alt+Q 真实热键呼出**：启用模块后按下热键 → 面板显示 12 卡全中文。
