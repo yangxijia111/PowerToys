@@ -1,125 +1,154 @@
-# Release Checklist（v0.1.0-preview.2）
+# Release Checklist（v0.1.0-preview.3）
 
 > 每一项必须在**本次发布的真实构建（Tag Build）**上实际验证后才能打勾。任何强制 Gate 失败 = 不发布。
 > 流程性约束：未经项目负责人明确确认，禁止创建公开 Git Tag / Published Release / 上传公开资产。
-> 本次发布已获项目负责人明确授权（2026-09-30 发布 runbook）。
 >
-> 发布理由（准入条件 2 已满足，详见 docs/POST_RELEASE_PLAN.md §6.3/§7）：
-> 1. preview.1 已发布 Bootstrapper EXE 一启动即 exit 13（Burn bal:Condition 语法错误，默认下载入口不可用）；
-> 2. preview.1 → preview.2 升级链 ProductVersion 不递增（同版本拒绝，三层拦截）；
-> 3. 两项均已在 cuin-dev 修复，preview.2 使用 MSI/Bundle ProductVersion **0.1.0.2**。
+> 本次发布内容：Cuin Quick Actions（快捷操作中心，Phase 7 自有模块）+ Phase 7.1 集成加固
+> （P0 卡片点击修复 / 首显窗口尺寸修复 / installer payload / lifecycle / uninstall / resource soak 验证）。
+> 无其它新增功能。
 
 ## 0. 仓库状态
 - [ ] 干净工作区（`git status` 无未提交改动），最终发布 commit 已推送到 `origin/cuin-dev`
 - [ ] `main` 未修改（保持 `dd65f4017`）
-- [ ] preview.1 tag / Release / 资产未被移动、替换或删除
-- [ ] 本地无官方 PowerToys / 旧版 fork 残留安装（卸载注册表为空，测试场景需要的临时安装除外）
+- [ ] preview.1 / preview.2 的 tag / Release / 资产未被移动、替换或删除
+- [ ] 本地无官方 PowerToys 残留安装（测试场景需要的临时安装除外）
 
 ## 1. 版本一致性（单一来源 `src/Version.props`）
-- [ ] `Version=0.1.0`、`VersionChannel=preview`、`VersionPreview=2`
-- [ ] MSI/Bundle ProductVersion = **0.1.0.2**（preview 序号编入第四位；preview.1 为 0.1.0.0，0.1.0.2 > 0.1.0.0 被识别为升级）
-- [ ] About 页显示 `v0.1.0-preview.2`，Channel 显示 `preview`
-- [ ] 托盘 About / tooltip 显示 `v0.1.0-preview.2`
+- [ ] `Version=0.1.0`、`VersionChannel=preview`、`VersionPreview=3`
+- [ ] MSI/Bundle ProductVersion = **0.1.0.3**（preview 序号编入第四位；0.1.0.3 > 0.1.0.2 被识别为升级）
+- [ ] FileVersion / VERSION_BUILD = **0.1.0.3**（文件版本第四位编入 preview 序号，防 Burn "Won't Overwrite; equal version"）
+- [ ] About 页显示 `v0.1.0-preview.3`，Channel 显示 `preview`
+- [ ] 托盘 About / tooltip 显示 `v0.1.0-preview.3`
 - [ ] 发行资产文件名（`tools/check_release_assets.py` 静态强制）：
-  - Bootstrapper = `PowerToysCuin-0.1.0-preview.2-x64.exe`
-  - perUser MSI = `PowerToysCuin-0.1.0-preview.2-x64-perUser.msi`
-  - perMachine MSI = `PowerToysCuin-0.1.0-preview.2-x64-perMachine.msi`
-- [ ] Git tag 名确认为 `v0.1.0-preview.2`（指向最终发布源码 commit）
+  - Bootstrapper = `PowerToysCuin-0.1.0-preview.3-x64.exe`
+  - perUser MSI = `PowerToysCuin-0.1.0-preview.3-x64-perUser.msi`
+  - perMachine MSI = `PowerToysCuin-0.1.0-preview.3-x64-perMachine.msi`
+- [ ] Git tag 名确认为 `v0.1.0-preview.3`（指向最终发布源码 commit）
 
 ## 2. 静态检查与 CI
-- [ ] `tools/check_upgrade_chain.py` 通过（含第 8 项 MsiVersion 断言、第 9 项 bal:Condition 语法断言）
+- [ ] `tools/check_upgrade_chain.py` 通过（含第 8 项 MsiVersion、第 9 项 bal:Condition 语法、第 10 项 FileVersion/VersionBuild 断言）
 - [ ] `tools/check_fork_identity.py` 通过
 - [ ] `tools/check_release_assets.py` 通过
 - [ ] `tools/check_zh_cn_coverage.py --fail-on-orphan` 通过
 - [ ] `tools/check_sparse_registration.py` 通过
-- [ ] GitHub Actions **Cuin CI** 绿（最终发布 commit 的 run，记录 run ID：______）
-- [ ] GitHub Actions **Spell checking** 绿（同 commit）
+- [ ] `tools/check_cuin_modules.py` 通过
+- [ ] GitHub Actions **Cuin CI** 绿（CI 稳定化 commit `f5694a608` run 37127885747 + 版本提升 commit run：______）
+- [ ] GitHub Actions **Spell checking** 绿（同 commit；37127885743 + ______）
 
-## 3. 安装器（Tag Build 产物，非本地构建）
+## 3. 安装器（Release workflow 产物，非本地构建）
 - [ ] perMachine MSI 构建成功（大小：______ B）
 - [ ] perUser MSI 构建成功（大小：______ B）
 - [ ] Bootstrapper（perUser）构建成功（大小：______ B）
-- [ ] MSI 属性验证：DisplayName=`PowerToys Cuin (Community Edition)`、Publisher=`PowerToys Cuin Community`、UpgradeCode=fork 值、ProductVersion=`0.1.0.2`
-- [ ] Bundle 属性验证：Version=`0.1.0.2`
+- [ ] MSI 属性验证：DisplayName=`PowerToys Cuin (Community Edition)`、ProductVersion=`0.1.0.3`
+- [ ] Bundle 属性验证：Version=`0.1.0.3`
+- [ ] Quick Actions payload 在包内（PowerToys.CuinQuickActions.dll + WinUI3Apps 面板文件全套）
 
-## 4. 发布前真机 Gate（本地候选构建执行；Tag Build EXE 在 §7 复验）
-- [x] **EXE clean install**：无已装版本 → EXE 静默安装 exit 0 → runner/Settings/模块进程启动（2026-09-30 本地候选实测，gate_exe_cleaninstall.log）
-- [x] **OOBE**：全新用户状态首启出现向导（窗口"欢迎使用 PowerToys Cuin"，openOobe=true）→ 选择"开发"场景 → 推荐工具正确显示（FancyZones/PowerToys Run/高级粘贴/OCR/File Locksmith/环境变量/注册表预览，全中文）→ Apply 成功（18 模块启用）→ 第二次启动不重复（openOobe=false）（UIA 实测，屏幕锁定不影响）
-- [x] **zh-CN UI**：中文界面真实渲染——Settings 导航全中文（仪表盘/常规设置/推荐配置/系统工具/窗口管理/输入与启动/屏幕与显示/文件管理/开发与高级）、Dashboard 快捷工具中文名、OOBE 全流程中文、版本显示 v0.1.0-preview.2（UIA 运行时实证；OOBE 欢迎页正文与少量新 key 仍英文，属 zh-CN 渐进覆盖既有状态非回归）
-- [ ] **经典右键菜单实际点击**：PowerRename / Image Resizer / File Locksmith 可用（**注册级已验证**：4 个 shell 扩展 DLL 的 COM 注册全部指向 PowerToysCuin 目录；**真实点击未执行**——测试期间屏幕被锁定无法操作 Explorer，留待解锁复验；Phase 3 曾对同机制实测通过）
-- [x] **EXE 覆盖升级**：preview.1 已装 → preview.2 EXE `-install -quiet` exit 0 → 六个 bal:Condition 全部正常解析（无 Failed to parse）、`DetectedForkPowerToysUserVersion=0.1.0` 检出、MSI 文件替换 `Overwrite; Existing file is a lower version`、升级后 FileVersion=0.1.0.2、runner `product_version=v0.1.0-preview.2`（final_exe_upgrade.log）
-- [x] **MSI 覆盖升级**：preview.1 → preview.2 MSI exit 0，RemoveExistingProducts 执行（Return value 1），用户数据保留（干净序列 79/79 hash 一致、模块启用状态 18→18）
-- [x] **Repair**（同版本维护模式重装）exit 0（repair_preview2.log）
-- [x] **Uninstall**：ARP/安装文件全清、用户配置保留（86 文件中 82 为用户数据全保留）、仅 4 个运行时状态文件残留（last_version_run/UpdateState/PowerRename 状态，与官方行为一致）
-- [x] **官方冲突**：官方 PowerToys (Preview) 0.101.2362.0 在场 → 干净状态下 preview.2 EXE 被 bal:Condition 阻止（条件 evaluates to false，非零退出，零安装）；bundle 注册残留时由 MSI Launch Condition 1603 兜底（同样零安装）；官方版本完好、卸载官方后环境还原（conflict2.log / conflict_fork_exe.log）
-- [ ] **perMachine**：**未执行（环境限制）**——本测试会话非提权，UAC 无法自动确认；perMachine MSI 的构建与属性（ProductVersion/UpgradeCode）由 Tag Build 与 §7 属性复核覆盖
-- [x] **restart / persistence（机制级）**：自启动计划任务 "Autorun for <user>" 正确注册且指向 PowerToysCuin\PowerToys.exe（Ready）；settings startup 标志持久化、托盘/进程跨操作稳定。**真实重启未执行**（避免中断用户会话），机制链路完整
-- [x] Settings 修改持久化到 `%LOCALAPPDATA%\PowerToysCuin`（settings.json 跨升级/重启 runner 保持）
-- [x] Runner 日志无 `Rejected unauthenticated Settings pipe client`（计数 0）
-- [x] Runner 日志确认后台 PeriodicUpdateWorker 未启动（自更新禁用，FORK_AUTO_UPDATE_INSTALL_ENABLED=false）
-- [x] 「检查更新」/「立即更新」= 打开 GitHub Releases 页（不下载不执行安装包）（代码路径 Phase 4 实现并经 check_fork_identity 断言；本轮 Settings UI 未逐点复验）
+## 4. 升级 Gate（preview.2 → preview.3 真机，公开 preview.2 作为起点）
+- [ ] preview.2 已装（Bundle 检测 0.1.0.2）→ preview.3 candidate Bootstrapper EXE `-install -quiet` exit 0
+- [ ] Bundle 检测 0.1.0.2 → 0.1.0.3（DetectedForkPowerToysUserVersion 正确评估）
+- [ ] MSI ProductVersion 递增（0.1.0.2 → 0.1.0.3）
+- [ ] FileVersion 递增（升级后二进制 FileVersion=0.1.0.3）
+- [ ] **安装文件实际被替换**：升级日志无 `Won't Overwrite; equal version`；Quick Actions 新二进制真正落盘（文件时间戳/哈希与 CI 解包一致）
+- [ ] Quick Actions 被安装（模块文件齐全）
+- [ ] 原设置保留（settings.json 迁移无重置）
+- [ ] OOBE 不重复（openOobe 保持 false）
+- [ ] Presets 不重置（用户 custom preset 保留）
+- [ ] 原模块 enabled state 保留（升级前后模块启用清单一致）
+- [ ] Quick Actions 默认行为符合设计（Settings 中默认**关闭**，需手动启用）
 
-## 5. 功能抽查
-- [x] Presets 应用（5 场景之一，经 OOBE 或 Settings）——"开发"场景经 OOBE Apply 成功（18 模块启用）
-- [ ] File Locksmith（经典右键菜单）（注册级 ✓，真实点击同上未执行）
-- [ ] PowerRename（经典右键菜单）（注册级 ✓，真实点击同上未执行）
-- [ ] Image Resizer（经典右键菜单）（注册级 ✓，真实点击同上未执行）
-- [x] zh-CN 界面抽查（设置页 + 至少 2 个模块）——设置页全中文 + OOBE（Preset 页）+ Dashboard 工具名；模块页面深度抽查受 UIA 稳定性限制，覆盖层静态检查兜底
+## 5. Quick Actions 人工 Gate（MANUAL GATE —— 负责人真实操作）
+- [ ] **Ctrl+Alt+Q 真实热键呼出**：启用模块后按下热键 → 面板显示 12 卡全中文。
+      状态：**MANUAL GATE PENDING**（自动化 E2E 已用 SetEvent 命名事件 + CUA 点击覆盖面板显示与卡片执行；
+      真实键盘热键路径 Phase 7 dev 构建真机 smoke 曾通过（2026-10-02，用户操作），preview.3 候选待复验）
+- [ ] **"锁定屏幕"真实点击**：面板 → 锁定屏幕卡片 → 确认对话框 → 确认 → 系统锁屏。
+      状态：**MANUAL GATE PENDING**（E2E 中留人工执行——自动化注入会被锁屏会话拒绝，设计如此；
+      尚无负责人已执行的记录）
 
 ## 6. 测试状态（真实记录，不掩饰）
 - [ ] `Settings.UI.UnitTests`：335/335 通过
-- [ ] `Common.Utils.UnitTests`（C++）：486 项中 483 通过；3 项提权测试**未执行（环境限制）**：
+- [ ] `PowerToys.CuinQuickActions.UnitTests`：54/54 通过
+- [ ] `Common.Utils.UnitTests`（C++）：483 通过；3 项提权测试**未执行（环境限制）**：
   - `TwoWayPipeMessageIPCTests.RejectedClientRapidCloseNeverReleasesPipeName`
   - `TwoWayPipeMessageIPCTests.ReplacementListenerIsReservedBeforeRejectedHandlerStarts`
   - `TwoWayPipeMessageIPCTests.NormalSameUserCannotModifyProtectedDaclOrCreateAnotherServerInstance`
 
-## 7. Tag Build 与 EXE 实物验证（强制 Gate）
-- [ ] Tag `v0.1.0-preview.2` 指向最终发布 commit 并已推送
-- [ ] **Cuin Release Build**（tag 触发）完整成功，run ID：______
-  - Static checks / Full Release build / perUser MSI / perMachine MSI / Bootstrapper / Settings 335 / C++ 483（3 项提权排除按既定方式真实记录）/ SHA256 / artifact upload 全部 ✓
+## 7. Release workflow（正式 Tag 前的 workflow_dispatch 验证）
+- [ ] **Cuin Release Build**（dispatch，版本提升 commit）完整成功，run ID：______
+  - Static checks / Full Release build / perUser MSI / perMachine MSI / Bootstrapper /
+    Quick Actions payload / Settings 335 / CuinQuickActions 54 / C++ 483（3 项提权排除按既定方式真实记录）/
+    SHA256 / artifact upload 全部 ✓
 - [ ] artifact `cuin-release-candidate` 恰好包含 4 个文件（EXE + perUser MSI + perMachine MSI + `SHA256SUMS.txt`）
 - [ ] `SHA256SUMS.txt` 本地独立重算逐文件一致
-- [ ] **Tag Build EXE 真机验证（强制）**：preview.1 已装 → 运行 Tag Build EXE → 升级 exit 0 → 启动 runner/Settings → 版本显示 preview.2 → 用户配置保留
-- [ ] MSI 属性复核（Tag Build 实物）：ProductVersion=0.1.0.2、UpgradeCode=fork 值
+- [ ] **CI artifact Bootstrapper 实装（强制）**：下载 CI 生成的 EXE 在真机完成 §4 升级 Gate（不只测本地 build）
 
 ## 8. 发行资产 SHA256（Tag Build 实物，构建后填写；禁止复制本地候选哈希）
-- [ ] EXE `PowerToysCuin-0.1.0-preview.2-x64.exe`：______ B，SHA256 ______
+- [ ] EXE `PowerToysCuin-0.1.0-preview.3-x64.exe`：______ B，SHA256 ______
 - [ ] perUser MSI：______ B，SHA256 ______
 - [ ] perMachine MSI：______ B，SHA256 ______
 
 ## 9. 发布动作（Draft 审阅通过后执行；本节全部完成才算 PUBLISHED）
-- [ ] 创建 annotated tag `v0.1.0-preview.2`（commit：______）
-- [ ] GitHub Release Draft：中英双语 Notes（修复重点：Bootstrapper EXE exit 13、升级链 ProductVersion、preview.1 用户应升级的醒目提示；保留非官方/unsigned/SmartScreen/不共存/Win11 菜单/自动更新关闭/配置保留声明）
+- [ ] 创建 annotated tag `v0.1.0-preview.3`（commit：______）
+- [ ] GitHub Release Draft：中英双语 Notes（新增 Cuin Quick Actions 主题 + Phase 7.1 修复；
+      保留非官方/unsigned/SmartScreen/不共存/Win11 菜单/自动更新关闭/配置保留声明）
 - [ ] 上传恰好 4 个资产（EXE / perUser MSI / perMachine MSI / SHA256SUMS.txt）
 - [ ] 核对：文件大小 / SHA256 / Tag SHA / Tag Build run / Pre-release=true
 - [ ] Publish（Pre-release）
 
 ## 10. 发布后动作
-- [ ] preview.1 Release Notes 顶部新增 Superseded 警告（不删除 Release、不替换资产、不动 tag）
-- [ ] README：默认 EXE 下载链接切 preview.2、当前版本改 v0.1.0-preview.2、Roadmap/Preview Notice 更新、注明 preview.1 已因 installer 缺陷被替代（中英同步）；README 提交不移动 preview.2 tag
-- [ ] preview.2 Release 公开可下载、4 资产 URL 有效
+- [ ] preview.2 Release Notes 顶部新增 Superseded 警告（不删除 Release、不替换资产、不动 tag）
+- [ ] README：默认 EXE 下载链接切 preview.3、当前版本改 v0.1.0-preview.3、Roadmap/Preview Notice 更新（中英同步）；README 提交不移动 preview.3 tag
+- [ ] preview.3 Release 公开可下载、4 资产 URL 有效
 - [ ] Issues 保持开启
 
 ---
 
-# 历史 / 参考（v0.1.0-preview.1，已发布冻结——不作为本次 Gate）
+# Phase 7.1 验证记录（2026-10-03，preview.3 候选基础）
 
-## A. preview.1 发布记录（2026-09-29）
+1. **E2E 动作验证 11/12 过**（CI candidate 37106792517 净装环境，CUA click + UIA Invoke 组合）：
+   - 12 动作中 11 项通过（任务管理器/结束无响应程序⚠（close_app 杀 LockApp 目标无误伤）/重启Explorer⚠（PID 62268→38036）/清剪贴板/Win设置/网络/应用功能/启动应用/环境变量/Hosts/Cuin设置 + 危险动作确认弹窗 8 项全过）；
+   - **lock_screen 留人工**（锁屏会锁死自动化会话，注入被拒属预期）→ §5 MANUAL GATE PENDING。
+2. **CI Release run 37106792517 全绿**（基于 ba484a0c3 含 P0 修复）；MSI 解包验证 Quick Actions 全套 9 文件 +
+   Settings.dll/runner 二进制/PRI 中文全在。
+3. **净装验证**：卸 preview.2 → 装 CI candidate exit 0 → 哈希与 CI 解包一致 → Settings 系统工具组+开关在 →
+   3 安全动作 + 1 确认型真实执行。
+4. **同版本升级链限制（已知特性）**：candidate 与 preview.2 文件版本同 0.1.0.2 → 覆盖安装不换二进制；
+   跨版本升级链验证在 preview.3（VersionPreview=3）进行 → §4。
+5. **修复**：P0 DataTemplate Click 静默失效（ba484a0c3，改 ListView ItemClick）；P2 首显窗口系统默认尺寸
+   （2bc23de96，GetDpiForWindow 兜底）。
+6. **卸载验证**：bundle 注册丢失场景用 `WindowsInstaller.Installer.RelatedProducts(fork perUser UpgradeCode)`
+   枚举真实 ProductCode 逐个卸载；用户数据保留 ✓。
+7. **CI vcpkg 稳定化（2026-10-03）**：run 37115002462（attempt 1/2/3）Build runner 步骤 MSB3077 根因 =
+   mirror.msys2.org curl error 7 瞬时失败 → vcpkg 自身 fallback 成功且 exit 0，但 MSBuild vcpkg integration
+   的 Exec 把输出中 "error :" 文本解析为 MSBuild error。修复 = `.github/actions/vcpkg-restore`（预 install
+   与 integration 同参数 + 有限重试 3 次 + binary cache，对齐上游 .pipelines/v2）；退出码语义不削弱，
+   MSBuild 编译错误检测不变（commit f5694a608）。
 
-- tag `v0.1.0-preview.1` → `0fe746ea4`（不移动）；Release：Pre-release，2026-09-29 02:03 UTC 发布，4 资产：
-  - EXE 318,767,976B `4E4E7061…93D8E`（**已知缺陷：一启动即 exit 13，已被 preview.2 替代**）
-  - perUser MSI 318,006,316B `ED983EB2…7780C`
-  - perMachine MSI 318,020,556B `59950FD8…9FFF3`
-  - SHA256SUMS.txt
-- 发布时 Gate 证据：Full Release Build run 36423063866（约 68 分钟）全绿；Cuin CI run 36402328656（Settings 335/335、C++ 483）；Tag Build run 36503908122 全绿 1h09m58s；本地独立重算 SHA256 一致。
-- Phase 3（2026-09-28，同源代码）真机场景实测通过：官方在场装 fork → 1603 阻止；fork 在场装官方 → 官方成功但 runner 同名 mutex 互斥。
+---
 
-## B. preview.1 的已知缺陷（preview.2 修复对象）
+# 历史 / 参考
 
-1. **Bootstrapper EXE exit 13**（docs/POST_RELEASE_PLAN.md §6.3）：bal:Condition 操作符大写 + 字面量未加引号，Burn 条件解析失败。所有 preview.1 真机安装当时都走 msiexec，EXE 路径零覆盖，发布后才暴露。
-2. **升级链同版本拒绝**（§6.1）：preview.1 与后续版本 ProductVersion 同为 0.1.0，MajorUpgrade 1638 / UpgradeVersion 检测失效 / bal:Condition `>=` 拦截，三层全部挡住覆盖升级。
+## A. v0.1.0-preview.2 发布记录（2026-10-01，已发布冻结——不作为本次 Gate）
 
-## C. Release workflow 排障记录（2026-09-28，workflow_dispatch 实跑迭代，preview.2 沿用）
+- 发布 commit/tag `fbdd93399`（文件版本修复+checklist 真机结果+词典）；README 提交 `dc9589e58` 在 tag 后（tag 未移动）。
+- Gate 证据：Cuin CI 36731355083 绿 + Spell 36731355334 绿；Tag Build 36733254689 全绿（1h9m）；
+  三件套 SHA256 与 CI 一致（EXE 318,816,750B `ccb15fb7…`、perUser 317,973,544B `17eb3cda…`、
+  perMachine 317,987,783B `f8c9b284…`）。
+- **Tag Build EXE 真机强制 Gate 通过**：preview.1→TagEXE 升级 exit 0、文件 FV 0.1.0.2、
+  product_version=v0.1.0-preview.2、数据保留、六条件正常解析。
+- 发布中发现的第三缺陷（文件版本）：两版文件版本资源同为 0.1.0.0 时 Burn 会话 REINSTALLMODE=amus 不驱动
+  file costing → Won't Overwrite（注册表升级但二进制保留）→ 修复=FileVersion/VERSION_BUILD 编码 preview 序号。
+- preview.2 相对 preview.1 修复：Bootstrapper EXE exit 13（bal:Condition 语法）、升级链同版本拒绝（MsiVersion
+  编码）、文件版本不递增（FileVersion 编码）。
+- 已知未执行项（preview.2 当时）：经典右键菜单真实点击（锁屏限制，注册级已验证）、perMachine 实装（非提权环境）。
+
+## B. v0.1.0-preview.1 发布记录（2026-09-29，已发布冻结）
+
+- tag `v0.1.0-preview.1` → `0fe746ea4`（不移动）；Release：Pre-release，2026-09-29 02:03 UTC，4 资产。
+- **已知缺陷：EXE 一启动即 exit 13（bal:Condition 语法错误），已被 preview.2 替代**；perUser MSI 318,006,316B
+  `ED983EB2…7780C`；perMachine MSI 318,020,556B `59950FD8…9FFF3`。
+- Gate 证据：Release Build 36423063866 全绿（约 68 分钟）；Tag Build 36503908122 全绿 1h09m58s。
+
+## C. Release workflow 排障记录（2026-09-28 workflow_dispatch 实跑迭代）
 
 1. run 36398905908：Static checks 挂在 Python cp1252 控制台打印中文 → 三脚本强制 UTF-8 输出。
 2. run 36399961547（取消）：vstest 搜索只扫 Program Files (x86) → 改用 vswhere 定位。

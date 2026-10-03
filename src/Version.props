@@ -2,18 +2,18 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Version>0.1.0</Version>
-    <!-- [fork-identity] fork 独立版本体系：0.1.0-preview.2（显示后缀由 VersionPreview 生成）。
-         MSI/Bundle ProductVersion 由安装器工程编码为 0.1.0.2（preview 序号进第四位，
+    <!-- [fork-identity] fork 独立版本体系：0.1.0-preview.3（显示后缀由 VersionPreview 生成）。
+         MSI/Bundle ProductVersion 由安装器工程编码为 0.1.0.3（preview 序号进第四位，
          保证 preview 系列间可覆盖升级，详见 tools/check_upgrade_chain.py 第 8 项断言）；
-         Git tag 计划 v0.1.0-preview.2（发布前经 RELEASE_CHECKLIST 复验）。 -->
+         Git tag 计划 v0.1.0-preview.3（发布前经 RELEASE_CHECKLIST 复验）。 -->
     <VersionChannel>preview</VersionChannel>
-    <VersionPreview>2</VersionPreview>
+    <VersionPreview>3</VersionPreview>
     <!-- [fork-identity] 文件版本资源（FileVersion / VERSION_BUILD）同样把 preview 序号编入第四位：
          MSI 覆盖升级的文件替换按"现存文件版本 &lt; 新文件版本"判定。Burn 引导路径下 MSI 内
          Property 定义的 REINSTALLMODE=amus 不驱动 file costing，若两版文件版本相同会
-         "Won't Overwrite; Existing file is of an equal version"——注册表升级到 0.1.0.2
+         "Won't Overwrite; Existing file is of an equal version"——注册表升级到 0.1.0.3
          但二进制仍是旧的（2026-09-30 真机发现，preview.2 发布 Gate 拦截）。
-         显示版本（About/OOBE）仍为 0.1.0-preview.2，不受此影响。 -->
+         显示版本（About/OOBE）仍为 0.1.0-preview.3，不受此影响。 -->
     <FileVersion Condition="'$(VersionPreview)' != '' and '$(VersionPreview)' != '0'">$(Version).$(VersionPreview)</FileVersion>
     <FileVersion Condition="'$(FileVersion)' == ''">$(Version)</FileVersion>
     <!-- Update once when main moves to the next stable release train. -->

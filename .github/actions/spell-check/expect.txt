@@ -1141,6 +1141,7 @@ msstore
 mstsc
 msvcp
 mswhql
+msys
 MT
 MTND
 multimonitor
