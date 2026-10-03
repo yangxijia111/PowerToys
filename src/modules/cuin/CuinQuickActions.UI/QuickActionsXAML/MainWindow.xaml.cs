@@ -89,11 +89,13 @@ namespace CuinQuickActions.UI
             }
         }
 
-        private async void OnActionClick(object sender, RoutedEventArgs e)
+        // 卡片点击经 ListView.ItemClick（控件层事件）进入——DataTemplate 内的
+        // Click 事件绑定在 Window 上会静默失败（Window 不是 FrameworkElement）。
+        private void OnActionItemClick(object sender, ItemClickEventArgs e)
         {
-            if (sender is FrameworkElement { DataContext: QuickActionItemViewModel item })
+            if (e.ClickedItem is QuickActionItemViewModel item)
             {
-                await InvokeActionAsync(item);
+                _ = InvokeActionAsync(item);
             }
         }
 

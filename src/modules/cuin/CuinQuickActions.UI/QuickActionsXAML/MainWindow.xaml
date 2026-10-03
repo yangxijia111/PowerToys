@@ -1,5 +1,7 @@
 <!-- [fork-feature] Cuin Quick Actions 面板窗口：标题 + 分组卡片列表，
-     危险操作带警示标识并强制确认对话框。 -->
+     危险操作带警示标识并强制确认对话框。
+     注意：卡片点击用 ListView.ItemClick（挂在控件层）——DataTemplate 内的
+     Click 事件在 Window（非 FrameworkElement）上会静默绑定失败。 -->
 <Window
     x:Class="CuinQuickActions.UI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -44,49 +46,54 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource BodyStrongTextBlockStyle}"
                                     Text="{Binding Title}" />
-                                <ItemsControl ItemsSource="{Binding Items}">
-                                    <ItemsControl.ItemTemplate>
+                                <ListView
+                                    IsItemClickEnabled="True"
+                                    ItemClick="OnActionItemClick"
+                                    ItemsSource="{Binding Items}"
+                                    SelectionMode="None">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="MinHeight" Value="0" />
+                                            <Setter Property="Padding" Value="0" />
+                                            <Setter Property="Margin" Value="0,2" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <Button
-                                                Margin="0,2"
-                                                Click="OnActionClick"
-                                                CornerRadius="{StaticResource ControlCornerRadius}"
-                                                HorizontalAlignment="Stretch"
-                                                HorizontalContentAlignment="Stretch">
-                                                <Grid ColumnSpacing="14">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <FontIcon
-                                                        Grid.Column="0"
-                                                        VerticalAlignment="Center"
-                                                        FontSize="18"
-                                                        Glyph="{Binding Glyph}" />
-                                                    <StackPanel
-                                                        Grid.Column="1"
-                                                        VerticalAlignment="Center"
-                                                        Spacing="2">
-                                                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{Binding Title}" />
-                                                        <TextBlock
-                                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                            Style="{ThemeResource CaptionTextBlockStyle}"
-                                                            Text="{Binding Description}"
-                                                            TextWrapping="Wrap" />
-                                                    </StackPanel>
-                                                    <!-- 危险操作警示标识 -->
-                                                    <FontIcon
-                                                        Grid.Column="2"
-                                                        VerticalAlignment="Center"
-                                                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                                                        Glyph="&#xE7BA;"
-                                                        Visibility="{Binding IsDestructive, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                                </Grid>
-                                            </Button>
+                                            <Grid ColumnSpacing="14" Padding="10,8,10,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <FontIcon
+                                                    Grid.Column="0"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="18"
+                                                    Glyph="{Binding Glyph}" />
+                                                <StackPanel
+                                                    Grid.Column="1"
+                                                    VerticalAlignment="Center"
+                                                    Spacing="2">
+                                                    <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{Binding Title}" />
+                                                    <TextBlock
+                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                                        Text="{Binding Description}"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+                                                <!-- 危险操作警示标识 -->
+                                                <FontIcon
+                                                    Grid.Column="2"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                    Glyph="&#xE7BA;"
+                                                    Visibility="{Binding IsDestructive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            </Grid>
                                         </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                    </ListView.ItemTemplate>
+                                </ListView>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
