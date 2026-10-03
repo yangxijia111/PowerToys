@@ -65,12 +65,19 @@ namespace CuinQuickActions.UI
 
         internal void CenterOnScreen()
         {
-            if (Content?.XamlRoot is null)
+            // 首次显示时 XamlRoot 可能尚未加载（RasterizationScale 不可用），
+            // 退回窗口 DPI 计算物理尺寸，避免面板以系统默认大小（全屏级）出现。
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            double scale;
+            if (Content?.XamlRoot is not null)
             {
-                return;
+                scale = Content.XamlRoot.RasterizationScale;
+            }
+            else
+            {
+                scale = Windows.Win32.PInvoke_CuinQuickActions.GetDpiForWindow((Windows.Win32.Foundation.HWND)hwnd) / 96.0;
             }
 
-            var scale = Content.XamlRoot.RasterizationScale;
             var workArea = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Primary).WorkArea;
             var width = (int)(PanelWidthDip * scale);
             var height = (int)(PanelHeightDip * scale);
