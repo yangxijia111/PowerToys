@@ -131,8 +131,8 @@
 
 - 发布 commit/tag `fbdd93399`（文件版本修复+checklist 真机结果+词典）；README 提交 `dc9589e58` 在 tag 后（tag 未移动）。
 - Gate 证据：Cuin CI 36731355083 绿 + Spell 36731355334 绿；Tag Build 36733254689 全绿（1h9m）；
-  三件套 SHA256 与 CI 一致（EXE 318,816,750B `ccb15fb7…`、perUser 317,973,544B `17eb3cda…`、
-  perMachine 317,987,783B `f8c9b284…`）。
+  三件套 SHA256 与 CI 一致（EXE 318,816,750B `ccb15fb74…`、perUser 317,973,544B `17eb3cda1…`、
+  perMachine 317,987,783B `f8c9b2847…`）。
 - **Tag Build EXE 真机强制 Gate 通过**：preview.1→TagEXE 升级 exit 0、文件 FV 0.1.0.2、
   product_version=v0.1.0-preview.2、数据保留、六条件正常解析。
 - 发布中发现的第三缺陷（文件版本）：两版文件版本资源同为 0.1.0.0 时 Burn 会话 REINSTALLMODE=amus 不驱动
