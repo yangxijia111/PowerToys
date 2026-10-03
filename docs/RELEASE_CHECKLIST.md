@@ -50,12 +50,24 @@ MSI ProductVersion 0.1.0.3；版本化二进制 FileVersion 全 0.1.0.3 落盘�
 发现并修复：C++ 壳未 override `is_enabled_by_default()`（基类默认 true）与 Settings C# 侧 off 不一致
 → 3546179d3 显式 override false。
 
-**第二轮（Release run 37133254558 candidate，3546179d3）发现升级链 P0（已修复）**：升级 exit 0 但安装
+**第二轮（Release run 37133254558 candidate，3546179d3）发现升级链 P0（修复中）**：升级 exit 0 但安装
 目录丢失 1600+ 文件（2287 → 241），runner 因依赖缺失 0x80000003 崩溃。MSI verbose 日志显示 1378 个
 `Won't Overwrite; Existing file is of an equal version`（两 preview 版间内容相同的无版本文件被 costing
 跳过）+ RemoveExistingProducts 在默认 Schedule=afterInstallValidate 下先删旧文件 → 跳过的文件被删后
-不再重装。修复 = `Product.wxs` MajorUpgrade `Schedule="afterInstallExecute"`（先装新后卸旧，共享组件
-引用计数保护文件）；check_upgrade_chain.py 增加防回归断言。第三轮 candidate 重测本节全部项。
+不再重装。
+
+**根因隔离（msiexec 对照实验）**：msiexec 直装 R3 MSI（Property 表 REINSTALLMODE=amus 生效）升级后
+**文件完整（2339）**；Burn EXE 路径丢文件 —— Burn 引擎对升级 MSI 命令行强制传 `REINSTALLMODE=muso`
+覆盖 amus，'o' 只在文件缺失/更旧时重装。
+
+**修复迭代（两处必须同时正确）**：
+- **5e83a3a46** 试 `Schedule="afterInstallExecute"` —— 不足：R4 实测 CA 已生效（REINSTALLMODE 恢复
+  amus、零 Won't Overwrite、全部文件 planned install）仍丢文件：afterInstallExecute 下 REP 在
+  InstallFiles **之后**执行，旧产品卸载按其 File 表删除**同路径的新装文件**。
+- **be5d5b13f** 加 `ForceReinstallModeAmus` immediate CA（CostInitialize 前恢复 amus，晚于命令行属性应用）。
+- **c53fd1f8d** 恢复 MajorUpgrade 默认 Schedule（afterInstallValidate：REP 先删旧文件、InstallFiles
+  再按 amus 全量安装，顺序安全）。第五轮 candidate（Release run 37149233824）验证。
+
 （附注：排障期间曾用 `msiexec /a` 提取 MSI 管理镜像，该操作对同 UpgradeCode 已装环境有 relocate/
 注册干扰，测试机一度需手动清理幽灵注册——**后续验证一律禁止 msiexec /a**，改用 CI artifact 直接验证。）
 
