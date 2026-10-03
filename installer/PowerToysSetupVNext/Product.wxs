@@ -23,17 +23,18 @@
   <Package Name="PowerToys Cuin (Community Edition)" Language="1033" Version="$(var.MsiVersion)" Manufacturer="PowerToys Cuin Community" UpgradeCode="$(var.UpgradeCodeGUID)" Scope="$(var.InstallScope)">
 
 
-    <!-- [fork-identity] Schedule=afterInstallExecute（2026-10-04 真机升级 Gate 发现）：
-         WiX 默认 afterInstallValidate 会先 RemoveExistingProducts 再 InstallFiles。
-         当新旧版本存在"内容相同且无 FileVersion"的文件（两 preview 版间未变的
-         dll/assets）时，file costing 在 InstallValidate 阶段（旧文件仍在盘上）判定
-         Won't Overwrite; equal version 并跳过安装；随后 RemoveExistingProducts 卸载
-         旧 ProductCode 把这些文件物理删除 —— 升级"成功"但大量文件丢失（preview.2 →
-         preview.3 真机升级实测丢失 1600+ 文件，runner 因依赖缺失 0x80000003 崩溃）。
-         afterInstallExecute 让新版本先完成安装（跳过的文件物理保留且组件注册已更新），
-         RemoveExistingProducts 随后卸旧时共享组件引用计数 > 0，不再删文件。
-         防回归断言见 tools/check_upgrade_chain.py（MajorUpgrade Schedule 检查）。 -->
-    <MajorUpgrade Schedule="afterInstallExecute" DowngradeErrorMessage="A later version of [ProductName] is already installed." />
+    <!-- [fork-identity] 升级丢文件问题的修复由两半组成（2026-10-04 真机三轮升级 Gate 迭代）：
+         1) Burn 引擎对升级 MSI 在命令行传 REINSTALLMODE=muso，覆盖 Property 表的 amus。
+            'o' 只在文件缺失或更旧时重装，内容相同的无版本文件被 costing 跳过
+            （Won't Overwrite; equal version），随后被旧产品卸载删除 —— 升级 exit 0 但
+            丢失 1600+ 文件。修复 = 下方 ForceReinstallModeAmus CustomAction 在
+            CostInitialize 前把 REINSTALLMODE 恢复为 amus（'a'=全文件强制重装）。
+         2) MajorUpgrade 必须保持默认 Schedule（afterInstallValidate）：RemoveExistingProducts
+            先删旧文件、InstallFiles 再全量安装，顺序安全。曾试过 afterInstallExecute
+            （新装后再卸旧）——旧产品卸载按其 File 表删除同路径文件，会把刚装好的新文件
+            再删一遍（真机实测 2339 → 241 文件），不可用。
+         防回归断言见 tools/check_upgrade_chain.py。 -->
+    <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed." />
 
     <Upgrade Id="$(var.UpgradeCodeGUID)">
       <UpgradeVersion Minimum="0.0.0" Maximum="$(var.MsiVersion)" Property="PREVIOUSVERSIONSINSTALLED" IncludeMinimum="yes" IncludeMaximum="no" />

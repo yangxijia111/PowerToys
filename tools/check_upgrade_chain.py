@@ -98,17 +98,17 @@ def main() -> int:
 
     # 2/3/7. MSI 升级语义
     check("<MajorUpgrade> 存在", "<MajorUpgrade" in product)
-    # 11. MajorUpgrade Schedule=afterInstallExecute：默认 afterInstallValidate 下
-    #     RemoveExistingProducts 先于 InstallFiles 执行，内容相同的无版本文件被
-    #     costing 判定 Won't Overwrite 跳过后又被旧产品卸载物理删除（升级即丢文件）。
-    #     2026-10-04 preview.2 → preview.3 真机升级实测丢失 1600+ 文件。
+    # 11. 升级丢文件防回归（2026-10-04 真机三轮升级 Gate）：
+    #     - MajorUpgrade 保持默认 Schedule（afterInstallValidate）：REP 先删旧、InstallFiles
+    #       后全量安装，顺序安全；afterInstallExecute 会让旧产品卸载把刚装好的同路径新文件
+    #       再删一遍（真机实测 2339 → 241 文件）。
+    #     - ForceReinstallModeAmus：Burn 命令行 REINSTALLMODE=muso 覆盖 Property 表 amus，
+    #       costing 跳过 + REP 删除 = 丢文件。immediate CA 在 CostInitialize 前强制恢复
+    #       amus（'a'=全文件强制重装），晚于命令行属性应用，必然生效。
     check(
-        "MajorUpgrade Schedule=afterInstallExecute（防升级丢文件）",
-        re.search(r'<MajorUpgrade[^>]*Schedule="afterInstallExecute"', product) is not None,
+        "MajorUpgrade 不指定 Schedule（保持默认 afterInstallValidate）",
+        re.search(r'<MajorUpgrade(?![^>]*Schedule=)[^>]*>', product) is not None,
     )
-    # 12. ForceReinstallModeAmus：Burn 命令行 REINSTALLMODE=muso 覆盖 Property 表的 amus，
-    #     costing 跳过 + REP 删除 = 升级丢文件（同上）。immediate CA 在 CostInitialize 前
-    #     强制恢复 amus（'a'=全文件强制重装），晚于命令行属性应用，必然生效。
     check(
         "ForceReinstallModeAmus CA 存在并排在 CostInitialize 前",
         re.search(r'<CustomAction Id="ForceReinstallModeAmus" Property="REINSTALLMODE" Value="amus"', product) is not None
