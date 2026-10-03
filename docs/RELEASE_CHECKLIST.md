@@ -45,27 +45,33 @@
 
 ## 4. 升级 Gate（preview.2 → preview.3 真机，公开 preview.2 作为起点）
 
-**第一轮（Release run 37129233314 candidate，dd5e5b477）结果**：升级 exit 0；Bundle 检测 0.1.0.2 → 0.1.0.3
-（DetectedForkPowerToysUserVersion=0.1.0.2、TargetPowerToysVersion>= 条件 true、planned Upgrade）；
-MSI ProductVersion 0.1.0.3；PowerToys.exe/壳/UI 二进制 FileVersion 全 0.1.0.3；Burn/MSI 日志零
-"Won't Overwrite; equal version"；Quick Actions 9 文件全新落盘（CI 构建时间戳）；settings.json
-SHA256 与升级前基线逐字节一致；35 模块 enabled 状态一致；OOBE openedAtFirstLaunch=true 不重复。
-**发现并修复一个真实缺陷**：升级后 runner 日志显示 "Enabling powertoy CuinQuickActions"——
-C++ 壳未 override `is_enabled_by_default()`（基类默认 true），与 Settings C# 侧 `defaulting to off`
-不一致 → 无 settings 键时模块实际运行而开关显示关闭。修复 = dllmain.cpp 显式 override 返回
-false（与上游 Hosts 模块同款做法）。第二轮 candidate 重测本节全部项。
+**第一轮（Release run 37129233314 candidate，dd5e5b477）**：升级 exit 0；Bundle 检测 0.1.0.2 → 0.1.0.3；
+MSI ProductVersion 0.1.0.3；版本化二进制 FileVersion 全 0.1.0.3 落盘；settings/模块状态/OOBE 全保留。
+发现并修复：C++ 壳未 override `is_enabled_by_default()`（基类默认 true）与 Settings C# 侧 off 不一致
+→ 3546179d3 显式 override false。
+
+**第二轮（Release run 37133254558 candidate，3546179d3）发现升级链 P0（已修复）**：升级 exit 0 但安装
+目录丢失 1600+ 文件（2287 → 241），runner 因依赖缺失 0x80000003 崩溃。MSI verbose 日志显示 1378 个
+`Won't Overwrite; Existing file is of an equal version`（两 preview 版间内容相同的无版本文件被 costing
+跳过）+ RemoveExistingProducts 在默认 Schedule=afterInstallValidate 下先删旧文件 → 跳过的文件被删后
+不再重装。修复 = `Product.wxs` MajorUpgrade `Schedule="afterInstallExecute"`（先装新后卸旧，共享组件
+引用计数保护文件）；check_upgrade_chain.py 增加防回归断言。第三轮 candidate 重测本节全部项。
+（附注：排障期间曾用 `msiexec /a` 提取 MSI 管理镜像，该操作对同 UpgradeCode 已装环境有 relocate/
+注册干扰，测试机一度需手动清理幽灵注册——**后续验证一律禁止 msiexec /a**，改用 CI artifact 直接验证。）
 
 - [ ] preview.2 已装（Bundle 检测 0.1.0.2）→ preview.3 candidate Bootstrapper EXE `-install -quiet` exit 0
 - [ ] Bundle 检测 0.1.0.2 → 0.1.0.3（DetectedForkPowerToysUserVersion 正确评估）
 - [ ] MSI ProductVersion 递增（0.1.0.2 → 0.1.0.3）
 - [ ] FileVersion 递增（升级后二进制 FileVersion=0.1.0.3）
-- [ ] **安装文件实际被替换**：升级日志无 `Won't Overwrite; equal version`；Quick Actions 新二进制真正落盘（文件时间戳/哈希与 CI 解包一致）
+- [ ] **安装文件实际被替换且完整**：升级后安装目录文件数与净装一致（~2300，不允许大量缺失）；
+      升级日志无 `Won't Overwrite; equal version`（含无版本文件）；Quick Actions 新二进制真正落盘
 - [ ] Quick Actions 被安装（模块文件齐全）
 - [ ] 原设置保留（settings.json 迁移无重置）
 - [ ] OOBE 不重复（openOobe 保持 false）
 - [ ] Presets 不重置（用户 custom preset 保留）
 - [ ] 原模块 enabled state 保留（升级前后模块启用清单一致）
-- [ ] Quick Actions 默认行为符合设计：**默认关闭**（runner 侧 is_enabled_by_default=false 与 Settings 侧一致；升级后无键状态模块不运行）
+- [ ] Quick Actions 默认行为符合设计：**默认关闭**（runner 侧 is_enabled_by_default=false 与 Settings 侧一致；升级后无键状态模块不运行、不 spawn UI 进程）
+- [ ] 升级后 runner 正常运行（无 0x80000003 崩溃、模块正常加载）
 
 ## 5. Quick Actions 人工 Gate（MANUAL GATE —— 负责人真实操作）
 - [ ] **Ctrl+Alt+Q 真实热键呼出**：启用模块后按下热键 → 面板显示 12 卡全中文。

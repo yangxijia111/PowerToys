@@ -98,6 +98,14 @@ def main() -> int:
 
     # 2/3/7. MSI 升级语义
     check("<MajorUpgrade> 存在", "<MajorUpgrade" in product)
+    # 11. MajorUpgrade Schedule=afterInstallExecute：默认 afterInstallValidate 下
+    #     RemoveExistingProducts 先于 InstallFiles 执行，内容相同的无版本文件被
+    #     costing 判定 Won't Overwrite 跳过后又被旧产品卸载物理删除（升级即丢文件）。
+    #     2026-10-04 preview.2 → preview.3 真机升级实测丢失 1600+ 文件。
+    check(
+        "MajorUpgrade Schedule=afterInstallExecute（防升级丢文件）",
+        re.search(r'<MajorUpgrade[^>]*Schedule="afterInstallExecute"', product) is not None,
+    )
     check(
         "PREVIOUSVERSIONSINSTALLED 检测存在",
         'Property="PREVIOUSVERSIONSINSTALLED"' in product,
