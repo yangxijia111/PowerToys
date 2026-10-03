@@ -114,6 +114,19 @@ def main() -> int:
         re.search(r'<CustomAction Id="ForceReinstallModeAmus" Property="REINSTALLMODE" Value="amus"', product) is not None
         and re.search(r'<Custom Action="ForceReinstallModeAmus" Before="CostInitialize" />', product) is not None,
     )
+    # 13. 组件 GUID 跨构建稳定（升级链的文件保护根基）：生成脚本曾用 New-Guid 为文件
+    #     组件随机生成 GUID，违反 MSI 组件规则；Bootstrapper 升级先装新 bundle 后卸旧，
+    #     旧卸载按组件 GUID 判共享，GUID 漂移 = 删同路径新文件（2026-10-04 真机实测丢
+    #     1600+ 文件）。修复 = componentGuidMap.psd1 冻结已发布 GUID + UUIDv5 确定性派生。
+    gen = (root / "installer" / "PowerToysSetupVNext" / "generateAllFileComponents.ps1").read_text(encoding="utf-8-sig")
+    check(
+        "生成脚本不再使用 New-Guid（组件 GUID 稳定化）",
+        "New-Guid" not in gen,
+    )
+    check(
+        "组件 GUID 冻结表存在（componentGuidMap.psd1）",
+        (root / "installer" / "PowerToysSetupVNext" / "componentGuidMap.psd1").exists(),
+    )
     check(
         "PREVIOUSVERSIONSINSTALLED 检测存在",
         'Property="PREVIOUSVERSIONSINSTALLED"' in product,

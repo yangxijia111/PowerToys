@@ -4,6 +4,40 @@ Param(
     [string]$platform
 )
 
+# [fork-identity] 组件 GUID 稳定化（2026-10-04 升级链真机排障发现）：
+# 此脚本曾在构建时用 New-Guid 为文件组件生成随机 GUID —— 同一组件在两次构建间 GUID 不同，
+# 违反 MSI 组件规则（"同一组件的 GUID 永不变化"）。后果：Bootstrapper 升级顺序是
+# 先安装新 bundle、后卸载旧 bundle；旧产品卸载时按组件 GUID 判断文件是否被其他产品共享，
+# GUID 不一致 = 视为独占 → 物理删除与新版同路径的文件（preview.2 → preview.3 真机升级
+# 实测丢失 1600+ 文件、runner 因依赖缺失崩溃）。
+# 修复：componentGuidMap.psd1 冻结了 v0.1.0-preview.2 已发布 MSI 的全部组件 GUID
+# （保证已发布版本的升级路径）；新增组件用 UUID v5（RFC 4122，基于组件名确定性派生），
+# 从此任何组件的 GUID 跨构建保持稳定。防回归断言见 tools/check_upgrade_chain.py。
+$script:frozenComponentGuids = Import-PowerShellDataFile "$PSScriptRoot\componentGuidMap.psd1"
+# 稳定命名空间（一次性固定，勿改）：DNS 形式的 UUIDv5 namespace。
+$script:componentGuidNamespace = [guid]'6f9b7f6e-2c3a-5d44-9a41-1f2a3b4c5d6e'
+
+Function Get-StableComponentGuid() {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $True, Position = 1)]
+        [string]$ComponentId
+    )
+    if ($script:frozenComponentGuids.ContainsKey($ComponentId)) {
+        return $script:frozenComponentGuids[$ComponentId]
+    }
+    # UUID v5：SHA-1(namespace || name)，按 RFC 4122 设置 version/variant 位。
+    $nsBytes = $script:componentGuidNamespace.ToByteArray()
+    $nameBytes = [Text.Encoding]::UTF8.GetBytes($ComponentId)
+    $sha1 = [Security.Cryptography.SHA1]::Create()
+    $hash = $sha1.ComputeHash($nsBytes + $nameBytes)
+    $sha1.Dispose()
+    $guidBytes = $hash[0..15]
+    $guidBytes[7] = ($guidBytes[7] -band 0x0F) -bor 0x50   # version 5
+    $guidBytes[8] = ($guidBytes[8] -band 0x3F) -bor 0x80   # variant RFC 4122
+    return ([guid][byte[]]$guidBytes).ToString().ToUpper()
+}
+
 Function Generate-FileList() {
     [CmdletBinding()]
     Param(
@@ -115,7 +149,7 @@ Function Generate-FileComponents() {
     $componentDefs = "`r`n"
     $componentDefs +=
     @"
-            <Component Id="$($componentId)" Guid="$((New-Guid).ToString().ToUpper())">
+            <Component Id="$($componentId)" Guid="$(Get-StableComponentGuid -ComponentId $componentId)">
               <RegistryKey Root="`$(var.RegistryScope)" Key="Software\Classes\powertoys\components">
                 <RegistryValue Type="string" Name="$($componentId)" Value="" KeyPath="yes"/>
               </RegistryKey>`r`n
