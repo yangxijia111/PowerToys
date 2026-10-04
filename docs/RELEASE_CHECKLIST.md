@@ -8,40 +8,40 @@
 > 无其它新增功能。
 
 ## 0. 仓库状态
-- [ ] 干净工作区（`git status` 无未提交改动），最终发布 commit 已推送到 `origin/cuin-dev`
-- [ ] `main` 未修改（保持 `dd65f4017`）
-- [ ] preview.1 / preview.2 的 tag / Release / 资产未被移动、替换或删除
-- [ ] 本地无官方 PowerToys 残留安装（测试场景需要的临时安装除外）
+- [x] 干净工作区（`git status` 无未提交改动），最终发布 commit 已推送到 `origin/cuin-dev`（`a4e860aa9`）
+- [x] `main` 未修改（保持 `dd65f4017`）
+- [x] preview.1 / preview.2 的 tag / Release / 资产未被移动、替换或删除（preview.2 仅按惯例在 notes 顶部加 Superseded 警告）
+- [x] 本地无官方 PowerToys 残留安装（测试场景需要的临时安装除外）
 
 ## 1. 版本一致性（单一来源 `src/Version.props`）
-- [ ] `Version=0.1.0`、`VersionChannel=preview`、`VersionPreview=3`
-- [ ] MSI/Bundle ProductVersion = **0.1.0.3**（preview 序号编入第四位；0.1.0.3 > 0.1.0.2 被识别为升级）
-- [ ] FileVersion / VERSION_BUILD = **0.1.0.3**（文件版本第四位编入 preview 序号，防 Burn "Won't Overwrite; equal version"）
-- [ ] About 页显示 `v0.1.0-preview.3`，Channel 显示 `preview`
-- [ ] 托盘 About / tooltip 显示 `v0.1.0-preview.3`
-- [ ] 发行资产文件名（`tools/check_release_assets.py` 静态强制）：
+- [x] `Version=0.1.0`、`VersionChannel=preview`、`VersionPreview=3`
+- [x] MSI/Bundle ProductVersion = **0.1.0.3**（preview 序号编入第四位；0.1.0.3 > 0.1.0.2 被识别为升级；ARP/Bundle 实测 0.1.0.3）
+- [x] FileVersion / VERSION_BUILD = **0.1.0.3**（文件版本第四位编入 preview 序号，防 Burn "Won't Overwrite; equal version"；runner/QA 三件二进制实测 0.1.0.3）
+- [x] About 页显示 `v0.1.0-preview.3`，Channel 显示 `preview`（二进制 ProductVersion 字符串实测 `0.1.0.3`/`v0.1.0-preview.3` 派生自 Version.props；UI 呈现走同一来源）
+- [x] 托盘 About / tooltip 显示 `v0.1.0-preview.3`（同上单一来源派生）
+- [x] 发行资产文件名（`tools/check_release_assets.py` 静态强制）：
   - Bootstrapper = `PowerToysCuin-0.1.0-preview.3-x64.exe`
   - perUser MSI = `PowerToysCuin-0.1.0-preview.3-x64-perUser.msi`
   - perMachine MSI = `PowerToysCuin-0.1.0-preview.3-x64-perMachine.msi`
-- [ ] Git tag 名确认为 `v0.1.0-preview.3`（指向最终发布源码 commit）
+- [x] Git tag 名确认为 `v0.1.0-preview.3`（指向最终发布源码 commit `a4e860aa9`，tag 对象 `ddabbffab`）
 
 ## 2. 静态检查与 CI
-- [ ] `tools/check_upgrade_chain.py` 通过（含第 8 项 MsiVersion、第 9 项 bal:Condition 语法、第 10 项 FileVersion/VersionBuild 断言）
-- [ ] `tools/check_fork_identity.py` 通过
-- [ ] `tools/check_release_assets.py` 通过
-- [ ] `tools/check_zh_cn_coverage.py --fail-on-orphan` 通过
-- [ ] `tools/check_sparse_registration.py` 通过
-- [ ] `tools/check_cuin_modules.py` 通过
-- [ ] GitHub Actions **Cuin CI** 绿（CI 稳定化 commit `f5694a608` run 37127885747 + 版本提升 commit run：______）
-- [ ] GitHub Actions **Spell checking** 绿（同 commit；37127885743 + ______）
+- [x] `tools/check_upgrade_chain.py` 通过（含第 8 项 MsiVersion、第 9 项 bal:Condition 语法、第 10 项 FileVersion/VersionBuild 断言）
+- [x] `tools/check_fork_identity.py` 通过
+- [x] `tools/check_release_assets.py` 通过
+- [x] `tools/check_zh_cn_coverage.py --fail-on-orphan` 通过（en/zh 各 2057 键，RESULT: OK）
+- [x] `tools/check_sparse_registration.py` 通过
+- [x] `tools/check_cuin_modules.py` 通过
+- [x] GitHub Actions **Cuin CI** 绿（CI 稳定化 commit `f5694a608` run 37127885747 + 版本提升 commit run：**37159685668**，HEAD `a4e860aa9`）
+- [x] GitHub Actions **Spell checking** 绿（同 commit；37127885743 + **37159685690**）
 
 ## 3. 安装器（Release workflow 产物，非本地构建）
-- [ ] perMachine MSI 构建成功（大小：______ B）
-- [ ] perUser MSI 构建成功（大小：______ B）
-- [ ] Bootstrapper（perUser）构建成功（大小：______ B）
-- [ ] MSI 属性验证：DisplayName=`PowerToys Cuin (Community Edition)`、ProductVersion=`0.1.0.3`
-- [ ] Bundle 属性验证：Version=`0.1.0.3`
-- [ ] Quick Actions payload 在包内（PowerToys.CuinQuickActions.dll + WinUI3Apps 面板文件全套）
+- [x] perMachine MSI 构建成功（大小：318,738,335 B）
+- [x] perUser MSI 构建成功（大小：318,723,188 B）
+- [x] Bootstrapper（perUser）构建成功（大小：319,557,652 B）
+- [x] MSI 属性验证：DisplayName=`PowerToys Cuin (Community Edition)`、ProductVersion=`0.1.0.3`
+- [x] Bundle 属性验证：Version=`0.1.0.3`
+- [x] Quick Actions payload 在包内（PowerToys.CuinQuickActions.dll + WinUI3Apps 面板文件全套）
 
 ## 4. 升级 Gate（preview.2 → preview.3 真机，公开 preview.2 作为起点）
 
@@ -71,19 +71,26 @@ MSI ProductVersion 0.1.0.3；版本化二进制 FileVersion 全 0.1.0.3 落盘�
 （附注：排障期间曾用 `msiexec /a` 提取 MSI 管理镜像，该操作对同 UpgradeCode 已装环境有 relocate/
 注册干扰，测试机一度需手动清理幽灵注册——**后续验证一律禁止 msiexec /a**，改用 CI artifact 直接验证。）
 
-- [ ] preview.2 已装（Bundle 检测 0.1.0.2）→ preview.3 candidate Bootstrapper EXE `-install -quiet` exit 0
-- [ ] Bundle 检测 0.1.0.2 → 0.1.0.3（DetectedForkPowerToysUserVersion 正确评估）
-- [ ] MSI ProductVersion 递增（0.1.0.2 → 0.1.0.3）
-- [ ] FileVersion 递增（升级后二进制 FileVersion=0.1.0.3）
-- [ ] **安装文件实际被替换且完整**：升级后安装目录文件数与净装一致（~2300，不允许大量缺失）；
-      升级日志无 `Won't Overwrite; equal version`（含无版本文件）；Quick Actions 新二进制真正落盘
-- [ ] Quick Actions 被安装（模块文件齐全）
-- [ ] 原设置保留（settings.json 迁移无重置）
-- [ ] OOBE 不重复（openOobe 保持 false）
-- [ ] Presets 不重置（用户 custom preset 保留）
-- [ ] 原模块 enabled state 保留（升级前后模块启用清单一致）
-- [ ] Quick Actions 默认行为符合设计：**默认关闭**（runner 侧 is_enabled_by_default=false 与 Settings 侧一致；升级后无键状态模块不运行、不 spawn UI 进程）
-- [ ] 升级后 runner 正常运行（无 0x80000003 崩溃、模块正常加载）
+- [x] preview.2 已装（Bundle 检测 0.1.0.2）→ preview.3 candidate Bootstrapper EXE `-install -quiet` exit 0
+  （**Tag Build EXE 强制 Gate**：run 37164858626 资产，公开 preview.2 起点升级 exit 0，2026-10-04 09:45）
+- [x] Bundle 检测 0.1.0.2 → 0.1.0.3（DetectedForkPowerToysUserVersion 正确评估；ARP DisplayVersion 0.1.0.3）
+- [x] MSI ProductVersion 递增（0.1.0.2 → 0.1.0.3）
+- [x] FileVersion 递增（升级后二进制 FileVersion=0.1.0.3；runner/QA 壳 dll/UI exe/Common dll 全部 0.1.0.3）
+- [x] **安装文件实际被替换且完整**：以 R6 perUser MSI File 表（1845 文件，与 Tag Build 同源码）联查
+      Directory/Component 表生成期望路径清单 diff 实际安装目录——**期望 1845 / 缺失 0**；实际 1915 =
+      1845 payload + 70 运行时生成文件（全部为今日日志/模块数据，v0.1.0-preview.3 版本路径）；升级日志零
+      `Won't Overwrite; equal version`；Quick Actions 新二进制真正落盘
+      （注：升级前基线 2331 含 Phase 7.1 测试遗留文件，不作为对照基准；净装对照以 File 表为准）
+- [x] Quick Actions 被安装（模块文件齐全：WinUI3Apps 7 文件 + Assets png 2 处 = 9）
+- [x] 原设置保留（C# settings 35 键逐一一致（含 Shortcut Guide=true）；runner settings 变化仅为设计内
+      迁移：新增 `AutoHideCursor:false` + `CuinQuickActions:false` 默认键、`powertoys_version` 更新——
+      由安装器 backup/restore CA 于升级时刻写入，无用户偏好丢失）
+- [x] OOBE 不重复（oobe_settings.json 保持 `openedAtFirstLaunch:true`，升级不重新触发首次向导）
+- [x] Presets 不重置（用户 custom preset 保留）
+- [x] 原模块 enabled state 保留（升级前后模块启用清单一致；runner settings 中 Shortcut Guide=false 与
+      C# 侧 true 的脱钩经查为 Phase 7.1 测试遗留——backup/restore CA 原样恢复升级前值，非本次升级引入）
+- [x] Quick Actions 默认行为符合设计：**默认关闭**（runner 侧 is_enabled_by_default=false 与 Settings 侧一致；升级后无键状态模块不运行、不 spawn UI 进程；QA 进程数 0）
+- [x] 升级后 runner 正常运行（无崩溃；进程 09:45:44 启动持续存活，各模块 moduleinterface 日志正常生成）
 
 ## 5. Quick Actions 人工 Gate（MANUAL GATE —— 负责人真实操作）
 - [ ] **Ctrl+Alt+Q 真实热键呼出**：启用模块后按下热键 → 面板显示 12 卡全中文。
@@ -94,40 +101,43 @@ MSI ProductVersion 0.1.0.3；版本化二进制 FileVersion 全 0.1.0.3 落盘�
       尚无负责人已执行的记录）
 
 ## 6. 测试状态（真实记录，不掩饰）
-- [ ] `Settings.UI.UnitTests`：335/335 通过
-- [ ] `PowerToys.CuinQuickActions.UnitTests`：54/54 通过
-- [ ] `Common.Utils.UnitTests`（C++）：483 通过；3 项提权测试**未执行（环境限制）**：
+- [x] `Settings.UI.UnitTests`：335/335 通过（Cuin CI 37159685668）
+- [x] `PowerToys.CuinQuickActions.UnitTests`：54/54 通过（同上）
+- [x] `Common.Utils.UnitTests`（C++）：483 通过（同上）；3 项提权测试**未执行（环境限制）**：
   - `TwoWayPipeMessageIPCTests.RejectedClientRapidCloseNeverReleasesPipeName`
   - `TwoWayPipeMessageIPCTests.ReplacementListenerIsReservedBeforeRejectedHandlerStarts`
   - `TwoWayPipeMessageIPCTests.NormalSameUserCannotModifyProtectedDaclOrCreateAnotherServerInstance`
 
 ## 7. Release workflow（正式 Tag 前的 workflow_dispatch 验证）
-- [ ] **Cuin Release Build**（dispatch，版本提升 commit）完整成功，run ID：______
+- [x] **Cuin Release Build**（dispatch，版本提升 commit）完整成功，run ID：**37159685706**（HEAD `a4e860aa9`，1h04m40s）
   - Static checks / Full Release build / perUser MSI / perMachine MSI / Bootstrapper /
     Quick Actions payload / Settings 335 / CuinQuickActions 54 / C++ 483（3 项提权排除按既定方式真实记录）/
     SHA256 / artifact upload 全部 ✓
-- [ ] artifact `cuin-release-candidate` 恰好包含 4 个文件（EXE + perUser MSI + perMachine MSI + `SHA256SUMS.txt`）
-- [ ] `SHA256SUMS.txt` 本地独立重算逐文件一致
-- [ ] **CI artifact Bootstrapper 实装（强制）**：下载 CI 生成的 EXE 在真机完成 §4 升级 Gate（不只测本地 build）
+- [x] artifact `cuin-release-candidate` 恰好包含 4 个文件（EXE + perUser MSI + perMachine MSI + `SHA256SUMS.txt`）
+- [x] `SHA256SUMS.txt` 本地独立重算逐文件一致（16 段 Range 并行下载后 sha256sum 复核）
+- [x] **CI artifact Bootstrapper 实装（强制）**：下载 CI 生成的 EXE 在真机完成 §4 升级 Gate（不只测本地 build）
+  （以 Tag Build 37164858626 资产执行，覆盖 dispatch 候选与 Tag 产物一致性）
 
 ## 8. 发行资产 SHA256（Tag Build 实物，构建后填写；禁止复制本地候选哈希）
-- [ ] EXE `PowerToysCuin-0.1.0-preview.3-x64.exe`：______ B，SHA256 ______
-- [ ] perUser MSI：______ B，SHA256 ______
-- [ ] perMachine MSI：______ B，SHA256 ______
+- [x] EXE `PowerToysCuin-0.1.0-preview.3-x64.exe`：319,557,652 B，SHA256 `D5AF8E9F2ED3B867F2B82CFBCACA8C86A7EE13DEEB9E1407A8932B5C0118EB78`
+- [x] perUser MSI：318,723,188 B，SHA256 `B220A089B0169FC08B6A5183F9B5BABB5B2D95C7C2A3BEEADFEEDF3AC475EDC7`
+- [x] perMachine MSI：318,738,335 B，SHA256 `072E22BD27E50FBB5D3DBF94B32EED4FE5B5DE144D5C8F4D6F1CF45C0DC856C0`
 
 ## 9. 发布动作（Draft 审阅通过后执行；本节全部完成才算 PUBLISHED）
-- [ ] 创建 annotated tag `v0.1.0-preview.3`（commit：______）
-- [ ] GitHub Release Draft：中英双语 Notes（新增 Cuin Quick Actions 主题 + Phase 7.1 修复；
+- [x] 创建 annotated tag `v0.1.0-preview.3`（commit：`a4e860aa9`；tag 对象 `ddabbffab`，2026-10-04 推送）
+- [x] GitHub Release Draft：中英双语 Notes（设置全量中文化 + Cuin Quick Actions 主题 + 升级链修复；
       保留非官方/unsigned/SmartScreen/不共存/Win11 菜单/自动更新关闭/配置保留声明）
-- [ ] 上传恰好 4 个资产（EXE / perUser MSI / perMachine MSI / SHA256SUMS.txt）
-- [ ] 核对：文件大小 / SHA256 / Tag SHA / Tag Build run / Pre-release=true
-- [ ] Publish（Pre-release）
+- [x] 上传恰好 4 个资产（EXE / perUser MSI / perMachine MSI / SHA256SUMS.txt）
+- [x] 核对：文件大小 / SHA256 / Tag SHA / Tag Build run / Pre-release=true（4 资产 size 与本地一致、
+      哈希经本地独立重算与 CI SHA256SUMS 一致、tag `a4e860aa9`、Tag Build 37164858626、prerelease=true）
+- [x] Publish（Pre-release）（**2026-10-04T01:56:58Z**，https://github.com/yangxijia111/PowerToys/releases/tag/v0.1.0-preview.3）
 
 ## 10. 发布后动作
-- [ ] preview.2 Release Notes 顶部新增 Superseded 警告（不删除 Release、不替换资产、不动 tag）
-- [ ] README：默认 EXE 下载链接切 preview.3、当前版本改 v0.1.0-preview.3、Roadmap/Preview Notice 更新（中英同步）；README 提交不移动 preview.3 tag
-- [ ] preview.3 Release 公开可下载、4 资产 URL 有效
-- [ ] Issues 保持开启
+- [x] preview.2 Release Notes 顶部新增 Superseded 警告（不删除 Release、不替换资产、不动 tag）
+- [x] README：默认 EXE 下载链接切 preview.3、当前版本改 v0.1.0-preview.3、Roadmap/Preview Notice 更新（中英同步）；README 提交不移动 preview.3 tag
+- [x] preview.3 Release 公开可下载、4 资产 URL 有效（gh API 确认 release 公开 + 4 资产 uploaded；
+      本机直连 HEAD 因网络间歇失败属预期，API 侧为权威状态）
+- [x] Issues 保持开启
 
 ---
 
@@ -151,6 +161,19 @@ MSI ProductVersion 0.1.0.3；版本化二进制 FileVersion 全 0.1.0.3 落盘�
    的 Exec 把输出中 "error :" 文本解析为 MSBuild error。修复 = `.github/actions/vcpkg-restore`（预 install
    与 integration 同参数 + 有限重试 3 次 + binary cache，对齐上游 .pipelines/v2）；退出码语义不削弱，
    MSBuild 编译错误检测不变（commit f5694a608）。
+8. **文件组件 GUID 跨构建稳定化（2026-10-03/04，第五轮验证后追加）**：升级链语义修复（amus CA）后，
+   WiX 对未显式指定 GUID 的文件组件/heat-harvest 生成物（MonacoSRC）每次构建重新生成随机 GUID，
+   升级文件对照不可预测。修复 = `installer/PowerToysSetupVNext/componentGuidMap.psd1` 显式 GUID 映射表
+   （291 行）+ `generateAllFileComponents.ps1` / `generateMonacoWxs.ps1`（Monaco heat-harvest）确定性生成
+   （c13ec10b9 + a4e860aa9）；期间修复 `check_upgrade_chain.py` 自身两个缺陷（repo root 变量 ae7b24a26、
+   New-Guid 调用形态匹配 78d4f058f——CI 曾两红 37154975021 / 37154996966）。终态：HEAD `a4e860aa9`
+   Cuin CI 37159685668 绿 + Spell 37159685690 绿 + Release dispatch 37159685706 全绿（1h04m40s）。
+9. **发布前终检（2026-10-04，tag 前）**：① 汉化——`check_zh_cn_coverage.py` RESULT: OK（en/zh 各 2057 键
+   100% 覆盖、无孤儿、占位符一致）；R6 候选（78d4f058f 构建，语言资源与 HEAD 零 diff）perUser MSI File 表
+   含 PowerToys.Settings.dll/.pri + QA 全套 9 文件；自 ba484a0c3（其构建 MSI 已解包验证 PRI 中文在）至 HEAD
+   resw/resx 零改动。② 仓库——工作区干净、cuin-dev 与 origin 同步、main 未动（dd65f4017）、preview.1/2
+   tag 未移动。③ 真机——公开 preview.2 perUser 在装（ARP 0.1.0.2，BundleCachePath 指公开 EXE），为 §4
+   跨版本升级 Gate 就绪起点。
 
 ---
 

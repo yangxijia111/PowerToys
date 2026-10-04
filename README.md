@@ -26,22 +26,23 @@
 
 **PowerToys Cuin** 保留 [Microsoft PowerToys](https://github.com/microsoft/PowerToys) 成熟的核心功能,在此基础上做轻量的二次开发:
 
-- **中文体验优化**:为全部 31 个工具提供面向新手的中文标题与功能说明,并逐步覆盖设置界面高频文案。
+- **中文体验优化**:为全部 31 个工具提供面向新手的中文标题与功能说明;设置界面已**全量中文化**(2057 条资源 100% zh-CN 覆盖),支持中/EN 一键切换。
 - **降低上手门槛**:内置场景化推荐配置(Presets)与首次启动的快速设置向导。
 - **信息层级优化**:重新组织设置页导航分组,让工具更容易被找到。
+- **自有功能模块**:快捷操作中心(Cuin Quick Actions,Ctrl+Alt+Q 呼出 12 项系统快捷操作)。
 
-项目处于 **Binary Preview** 阶段,当前预览版 `v0.1.0-preview.2` 已发布(详见 [Roadmap](#roadmap路线图))。
+项目处于 **Binary Preview** 阶段,当前预览版 `v0.1.0-preview.3` 已发布(详见 [Roadmap](#roadmap路线图))。
 
 ### 下载(Downloads)
 
-- **普通用户推荐**:[`PowerToysCuin-0.1.0-preview.2-x64.exe`](https://github.com/yangxijia111/PowerToys/releases/download/v0.1.0-preview.2/PowerToysCuin-0.1.0-preview.2-x64.exe)(Bootstrapper,引导安装)
-- 高级用户可从 [GitHub Release v0.1.0-preview.2](https://github.com/yangxijia111/PowerToys/releases/tag/v0.1.0-preview.2) 获取 perUser / perMachine MSI 与 `SHA256SUMS.txt` 校验清单。
+- **普通用户推荐**:[`PowerToysCuin-0.1.0-preview.3-x64.exe`](https://github.com/yangxijia111/PowerToys/releases/download/v0.1.0-preview.3/PowerToysCuin-0.1.0-preview.3-x64.exe)(Bootstrapper,引导安装)
+- 高级用户可从 [GitHub Release v0.1.0-preview.3](https://github.com/yangxijia111/PowerToys/releases/tag/v0.1.0-preview.3) 获取 perUser / perMachine MSI 与 `SHA256SUMS.txt` 校验清单。
 - 下载前请先阅读下方 Preview Notice;哈希校验方式见 Release 页面说明。
 
 ### Preview Notice(预览版须知)
 
-- 本项目处于 **Binary Preview** 阶段,当前发布版本为 `v0.1.0-preview.2`(Pre-release,测试用途)。
-- `v0.1.0-preview.1` 已因 installer 缺陷(Bootstrapper EXE 启动失败)被 preview.2 替代;其 MSI 用户可直接覆盖升级。
+- 本项目处于 **Binary Preview** 阶段,当前发布版本为 `v0.1.0-preview.3`(Pre-release,测试用途)。
+- `v0.1.0-preview.1` 已因 installer 缺陷(Bootstrapper EXE 启动失败)被 preview.2 替代;`v0.1.0-preview.2` 已被 preview.3 替代;旧版用户可直接覆盖升级(配置完整保留)。
 - 这是**非 Microsoft 官方产品**;需要官方版本请前往 [microsoft/PowerToys](https://github.com/microsoft/PowerToys)。
 - **不支持与官方 PowerToys 同时安装**:安装本版本前请先退出并卸载官方 PowerToys——检测到官方版本时,Fork 安装器会直接阻止安装(错误 1603 并给出说明);若官方版本在 Fork 之后安装,二者 Shell 扩展、通知与设置可能互相覆盖,Fork 启动时也会给出明确提示。
 - 当前安装包**未经代码签名**(Unsigned Preview limitation):
@@ -149,11 +150,13 @@ git merge upstream/main
 - [x] 场景预设(Presets)与 OOBE 快速设置向导
 - [x] 品牌化(名称 / 图标 / 安装器产品名)
 - [x] 发行身份与官方隔离(安装器 UpgradeCode / Bundle / AppData / 更新端点;官方版本在场时阻止安装)
-- [ ] 更多设置页 zh-CN 覆盖(高频优先,持续进行)
-- [ ] 首个自有扩展模块(CustomModule)
-- [ ] 安装器整合自有语言包;从官方版本迁移到 Fork 的说明
+- [x] 设置界面全量中文化(2057 条资源 100% zh-CN 覆盖)+ 中/EN 一键切换(v0.1.0-preview.3)
+- [x] 首个自有扩展模块:快捷操作中心 Cuin Quick Actions(v0.1.0-preview.3)
+- [x] 安装器整合自有语言包(zh-CN 嵌入 PRI)
+- [ ] 从官方版本迁移到 Fork 的说明文档
 - [x] 公开 Preview 构建(v0.1.0-preview.1,2026-09-29 发布;因 installer 缺陷已被替代)
 - [x] v0.1.0-preview.2(2026-09-30):修复 Bootstrapper EXE 启动失败、preview 覆盖升级链与文件版本替换
+- [x] v0.1.0-preview.3(2026-10-04):设置界面全量中文化与一键切换、快捷操作中心模块、修复覆盖升级丢文件缺陷
 
 ### 问题反馈(Bug Report)
 
@@ -190,22 +193,23 @@ git merge upstream/main
 
 **PowerToys Cuin** keeps the mature core of [Microsoft PowerToys](https://github.com/microsoft/PowerToys) and adds lightweight community enhancements on top:
 
-- **Chinese experience**: beginner-oriented Chinese titles and descriptions for all 31 utilities, plus progressive coverage of high-frequency Settings strings.
+- **Chinese experience**: beginner-oriented Chinese titles and descriptions for all 31 utilities; the Settings UI is now **fully localized** (2057/2057 strings in zh-CN) with one-click Chinese/English switching.
 - **Lower the barrier to entry**: built-in scenario presets and a first-run quick-setup wizard.
 - **Better information hierarchy**: reorganized Settings navigation so utilities are easier to find.
+- **First custom module**: Quick Actions center (Ctrl+Alt+Q opens a panel with 12 system quick actions).
 
-The project is in the **Binary Preview** stage; the current preview release is `v0.1.0-preview.2` (see the [Roadmap](#roadmap-1)).
+The project is in the **Binary Preview** stage; the current preview release is `v0.1.0-preview.3` (see the [Roadmap](#roadmap-1)).
 
 ### Downloads
 
-- **Recommended for most users**: [`PowerToysCuin-0.1.0-preview.2-x64.exe`](https://github.com/yangxijia111/PowerToys/releases/download/v0.1.0-preview.2/PowerToysCuin-0.1.0-preview.2-x64.exe) (bootstrapper).
-- Advanced users can grab the perUser / perMachine MSIs and the `SHA256SUMS.txt` checksum list from [GitHub Release v0.1.0-preview.2](https://github.com/yangxijia111/PowerToys/releases/tag/v0.1.0-preview.2).
+- **Recommended for most users**: [`PowerToysCuin-0.1.0-preview.3-x64.exe`](https://github.com/yangxijia111/PowerToys/releases/download/v0.1.0-preview.3/PowerToysCuin-0.1.0-preview.3-x64.exe) (bootstrapper).
+- Advanced users can grab the perUser / perMachine MSIs and the `SHA256SUMS.txt` checksum list from [GitHub Release v0.1.0-preview.3](https://github.com/yangxijia111/PowerToys/releases/tag/v0.1.0-preview.3).
 - Please read the Preview Notice below before downloading; see the release page for checksum verification instructions.
 
 ### Preview Notice
 
-- This project is in the **Binary Preview** stage; the current release is `v0.1.0-preview.2` (pre-release, for testing).
-- `v0.1.0-preview.1` was superseded by preview.2 due to installer defects (Bootstrapper EXE failed to start); its MSI installations upgrade in place.
+- This project is in the **Binary Preview** stage; the current release is `v0.1.0-preview.3` (pre-release, for testing).
+- `v0.1.0-preview.1` was superseded by preview.2 due to installer defects (Bootstrapper EXE failed to start); `v0.1.0-preview.2` has in turn been superseded by preview.3 — older installations upgrade in place with all settings preserved.
 - This is **not an official Microsoft product**; for the official build go to [microsoft/PowerToys](https://github.com/microsoft/PowerToys).
 - **Co-installation with official PowerToys is not supported**: exit and uninstall the official version before installing this one — when an official version is detected, the fork installer blocks installation outright (error 1603 with an explanation). If the official version is installed *after* the fork, shell extensions, notifications and settings may overwrite each other — the fork also detects this at startup and warns explicitly.
 - The installer is **unsigned** (Unsigned Preview limitation):
@@ -312,11 +316,13 @@ git merge upstream/main
 - [x] Scenario presets and OOBE quick setup
 - [x] Branding (name / icon / installer product name)
 - [x] Distribution identity isolated from the official build (installer UpgradeCode / Bundle / AppData / update endpoint; installation is blocked when an official version is present)
-- [ ] More zh-CN coverage in Settings (high-frequency first, ongoing)
-- [ ] First custom module (CustomModule)
-- [ ] Installer with the fork language pack; migration notes from the official build to the fork
+- [x] Full Settings UI localization (2057/2057 strings in zh-CN) with one-click language switching (v0.1.0-preview.3)
+- [x] First custom module: Cuin Quick Actions center (v0.1.0-preview.3)
+- [x] Installer with the fork language pack (zh-CN embedded in PRI)
+- [ ] Migration notes from the official build to the fork
 - [x] Public Preview builds (v0.1.0-preview.1, released 2026-09-29; superseded)
 - [x] v0.1.0-preview.2 (2026-09-30): fixed the Bootstrapper EXE startup failure, preview in-place upgrade chain and file version replacement
+- [x] v0.1.0-preview.3 (2026-10-04): full Settings localization with language switching, Quick Actions module, fixed the in-place upgrade file-loss defect
 
 ### Bug Reports
 
